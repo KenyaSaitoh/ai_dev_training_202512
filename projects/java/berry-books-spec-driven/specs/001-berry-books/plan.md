@@ -267,12 +267,12 @@ pro.kensait.berrybooks/
 │   │   ├── CartBean            # Shopping cart controller
 │   │   ├── CartItem            # Cart item DTO
 │   │   └── CartSession         # Cart session facade
+│   ├── order/
+│   │   └── OrderBean           # Order processing controller
 │   ├── customer/
 │   │   └── CustomerBean        # Customer management controller
 │   ├── login/
 │   │   └── LoginBean           # Login controller
-│   ├── order/
-│   │   └── OrderBean           # Order processing controller
 │   └── filter/
 │       └── AuthenticationFilter # Authentication filter
 │
@@ -325,6 +325,45 @@ pro.kensait.berrybooks/
 | Exception | ErrorType + Exception | `OutOfStockException` |
 | Enum | PascalCase | `SettlementType` |
 | Utility | FeatureName + Util | `MessageUtil`, `AddressUtil` |
+
+### 5.3 主要クラスの責務
+
+#### 共通ユーティリティ (common/)
+
+**MessageUtil**
+- **責務**: メッセージリソース（messages.properties）からメッセージを取得
+- **タイプ**: ユーティリティクラス（final、static メソッド）
+- **主要メソッド**: `get(String key)`, `get(String key, Object... params)`
+
+**SettlementType**
+- **責務**: 決済方法を表す定数とユーティリティメソッドを提供
+- **タイプ**: Enum（列挙型）
+- **定数**: BANK_TRANSFER(1), CREDIT_CARD(2), CASH_ON_DELIVERY(3)
+- **主要メソッド**: `fromCode(Integer)`, `getDisplayNameByCode(Integer)`, `getAllCodes()`
+
+#### プレゼンテーション層 (web/)
+
+**SearchParam**
+- **責務**: 書籍検索パラメータを保持
+- **タイプ**: DTOクラス（Data Transfer Object）
+- **フィールド**: categoryId, keyword
+
+**CartItem**
+- **責務**: カート内の書籍情報を保持
+- **タイプ**: DTOクラス（Serializable）
+- **フィールド**: bookId, bookName, publisherName, price, count, version, removeフラグ
+
+**CartSession**
+- **責務**: セッションスコープでカート状態を管理
+- **タイプ**: @SessionScoped Bean
+- **フィールド**: cartItems, totalPrice, deliveryPrice, deliveryAddress
+
+#### ビジネスロジック層 (service/)
+
+**OrderTO, OrderHistoryTO, OrderSummaryTO**
+- **責務**: レイヤー間でのデータ転送
+- **タイプ**: Transfer Object（DTO）
+- **目的**: エンティティとプレゼンテーション層の疎結合化
 
 ---
 
@@ -834,4 +873,3 @@ gitGraph
 **ドキュメント終了**
 
 *この技術計画書は、アーキテクチャ、技術選択、デザインパターンを含む、システムの実装方法を記述しています。spec.md（何を・なぜ）を補完し、tasks.md（実装の詳細分解）の生成に使用されます。*
-

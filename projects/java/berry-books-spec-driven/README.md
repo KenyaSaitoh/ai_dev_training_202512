@@ -2,12 +2,72 @@
 
 ## 📖 概要
 
-Jakarta EE 10とJSF (Jakarta Server Faces) 4.0を使用したオンライン書店「**berry-books**」のWebアプリケーションです。
+Jakarta EE 10によるオンライン書店「**berry-books**」のWebアプリケーションです。
 書籍検索、ショッピングカート、注文処理などのEC機能を実装しています。
 
 このプロジェクトは**仕様駆動開発（SDD: Specification-Driven Development）** アプローチを採用し、GitHub Spec Kitを使用して仕様駆動開発を実践します。
 
-## 🚀 仕様駆動開発ワークフロー
+---
+
+## 🎯 すでにSpecが完成している場合の手順
+
+**このプロジェクトには、すでに完成したSpec（仕様書）が `specs/001-berry-books/` に用意されています。**
+
+### 既存のSpecファイル
+
+```
+specs/001-berry-books/
+├── spec.md          # 機能仕様（What & Why）
+├── plan.md          # 技術実装計画（How）
+├── data-model.md    # データモデル（ER図、テーブル定義）
+├── wireframes.md    # ワイヤーフレーム（PlantUML形式）
+└── tasks.md         # 実装タスク分解（100以上のタスク）
+```
+
+### 実装を開始する手順
+
+既存のSpecから実装を開始する場合は、**Implementフェーズから直接開始**できます。
+
+**注意:** tasks.mdの「フェーズ1: インフラストラクチャセットアップ」は、仕様駆動開発の対象外です。このフェーズは事前にセットアップ済みであることを前提としています。
+
+**AIエージェントへの指示:**
+```
+/projects/java/berry-books-spec-driven/.spec-kit/prompts/implement.md このプロンプトに従って、
+/projects/java/berry-books-spec-driven/specs/001-berry-books/tasks.md のタスクリストに従って
+実装を進めてください。
+
+フェーズ2の永続化レイヤーから開始してください。
+（フェーズ1のインフラストラクチャセットアップは事前完了済み）
+```
+
+**重要:** このプロジェクトは `projects/java/berry-books-spec-driven/` ディレクトリにあります。
+AIエージェントに指示を出す際は、リポジトリルートからの絶対パス（`/projects/java/berry-books-spec-driven/...`）を使用してください。
+
+**実装の進め方:**
+1. **フェーズ2（永続化レイヤー）から開始** - データベーススキーマとJPAエンティティの実装
+2. tasks.mdのタスクを上から順に実行
+3. [P]マークのタスクは並行実行可能
+4. 各タスク完了後、tasks.mdのチェックボックスを更新
+5. フェーズごとに動作確認を実施
+
+**実装フェーズの概要:**
+- **フェーズ2**: 永続化レイヤー（データベーススキーマ、JPAエンティティ）
+- **フェーズ3**: データアクセスレイヤー（DAO実装）
+- **フェーズ4**: ビジネスロジックレイヤー（サービス実装）
+- **フェーズ5**: プレゼンテーションレイヤー（Managed Bean実装）
+- **フェーズ6**: ビューレイヤー（XHTML、CSS実装）
+- **フェーズ7**: テスト（ユニットテスト、統合テスト）
+- **フェーズ8**: デプロイとドキュメント
+
+**参考資料:**
+- `/projects/java/berry-books-spec-driven/specs/001-berry-books/spec.md` - 機能要件とビジネスルール
+- `/projects/java/berry-books-spec-driven/specs/001-berry-books/plan.md` - アーキテクチャと技術設計
+- `/projects/java/berry-books-spec-driven/specs/001-berry-books/data-model.md` - データベーススキーマ
+- `/projects/java/berry-books-spec-driven/specs/001-berry-books/wireframes.md` - UI設計
+
+---
+
+## 🚀 SpecKit ワークフロー（新機能追加時）
 
 このプロジェクトは以下のSpec Kitワークフローに従います：
 
@@ -15,160 +75,229 @@ Jakarta EE 10とJSF (Jakarta Server Faces) 4.0を使用したオンライン書�
 /constitution → /specify → /plan → /tasks → /implement
 ```
 
-### 実際の使い方
+### ワークフローの概要
 
-Spec Kitは**Cline AIとの対話型ワークフロー**です。以下の手順で進めます：
+SpecKitは**AIエージェントとの対話型ワークフロー**です。各フェーズで、AIエージェントに適切なプロンプトを読み込ませて指示を出します。
 
-#### 1. Constitution（憲章）- 開発原則の確認
+---
 
-```bash
-npm run spec:constitution
+## 📋 各フェーズの実行方法
+
+### フェーズ 1: Constitution（憲章）- 開発原則の確認
+
+**目的:** プロジェクトの開発原則と憲章を作成・確認します。
+
+**AIエージェントへの指示例:**
+```
+/projects/java/berry-books-spec-driven/.spec-kit/prompts/constitution.md このプロンプトに従って、
+プロジェクトの憲章を /projects/java/berry-books-spec-driven/memory/constitution.md に作成してください。
 ```
 
-**何が起こるか:**
-- VS Codeで`.spec-kit/prompts/constitution.md`が開きます
-- そのファイルをCline AIに読み込ませて、憲章の作成/確認を依頼します
-- AIが`memory/constitution.md`を作成または更新します
+**生成されるファイル:**
+- `memory/constitution.md` - プロジェクトの開発原則と憲章
 
-**使い方:**
-1. コマンド実行でプロンプトファイルを開く
-2. Cline AIを起動
-3. プロンプトファイルの内容を参考に、AIに指示を出す
-4. 例: 「@.spec-kit/prompts/constitution.md このプロンプトに従って憲章を作成してください」
+---
 
-#### 2. Specify（仕様化）- 機能仕様の作成
+### フェーズ 2: Specify（仕様化）- 機能仕様の作成
 
-```bash
-npm run spec:specify
+**目的:** 新機能の仕様書を作成します。
+
+**AIエージェントへの指示例:**
 ```
+/projects/java/berry-books-spec-driven/.spec-kit/prompts/specify.md このプロンプトに従って、
+以下の機能の仕様を作成してください：
 
-**何が起こるか:**
-- `.spec-kit/prompts/specify.md`が開きます
-- AIに機能説明を渡すと、`specs/XXX-feature-name/spec.md`を生成します
-
-**使い方:**
-```
-「新しい機能：ユーザープロフィール編集画面
+【機能説明】
+新機能：ユーザープロフィール編集画面
 - ユーザーは自分のプロフィール情報を編集できる
-- 名前、メール、アバター画像を変更可能」
-
-という機能の仕様を作成してください
+- 名前、メール、アバター画像を変更可能
+- 変更履歴を保存
 ```
 
-#### 3. Plan（計画）- 技術実装計画
+**生成されるファイル:**
+- `specs/XXX-feature-name/spec.md` - 機能仕様書（What & Why）
+
+**既存の仕様例:**
+- `specs/001-berry-books/spec.md` - berry-books機能の完全な仕様
+
+---
+
+### フェーズ 3: Plan（計画）- 技術実装計画
+
+**目的:** 仕様書から技術的な実装計画を作成します。
+
+**AIエージェントへの指示例:**
+```
+/projects/java/berry-books-spec-driven/.spec-kit/prompts/plan.md このプロンプトに従って、
+/projects/java/berry-books-spec-driven/specs/001-berry-books/spec.md の仕様から
+技術実装計画を作成してください。
+```
+
+**生成されるファイル:**
+- `specs/XXX-feature-name/plan.md` - 技術実装計画（How）
+- `specs/XXX-feature-name/data-model.md` - データモデル（必要に応じて）
+- `specs/XXX-feature-name/wireframes.md` - ワイヤーフレーム（必要に応じて）
+
+**既存の計画例:**
+- `specs/001-berry-books/plan.md` - 技術スタック、アーキテクチャ設計
+- `specs/001-berry-books/data-model.md` - ER図、テーブル定義
+- `specs/001-berry-books/wireframes.md` - UI設計（PlantUML形式）
+
+---
+
+### フェーズ 4: Tasks（タスク化）- 実装タスクの分解
+
+**目的:** 実装計画を具体的なタスクに分解します。
+
+**AIエージェントへの指示例:**
+```
+/projects/java/berry-books-spec-driven/.spec-kit/prompts/tasks.md このプロンプトに従って、
+/projects/java/berry-books-spec-driven/specs/001-berry-books/plan.md の実装計画から
+タスクリストを作成してください。
+```
+
+**生成されるファイル:**
+- `specs/XXX-feature-name/tasks.md` - 実装タスクの段階的分解
+
+**既存のタスク例:**
+- `specs/001-berry-books/tasks.md` - 100以上の実装タスク、依存関係付き
+
+---
+
+### フェーズ 5: Implement（実装）- コード実装
+
+**目的:** タスクリストに従って実装を進めます。
+
+**AIエージェントへの指示例:**
+```
+/projects/java/berry-books-spec-driven/.spec-kit/prompts/implement.md このプロンプトに従って、
+/projects/java/berry-books-spec-driven/specs/001-berry-books/tasks.md のタスクリストに従って
+実装を進めてください。
+
+フェーズ2の永続化レイヤーから開始してください。
+（フェーズ1のインフラストラクチャセットアップは事前完了済み）
+```
+
+**実装対象:**
+- ソースコード（Java、XHTML、CSS等）
+- テストコード
+- 設定ファイル
+
+---
+
+## 💡 重要なポイント
+
+### SpecKitの特徴
+
+1. **AI対話型ワークフロー**: AIエージェント（Cline、Cursor、Windsurf等）と対話しながら手動で進める
+2. **プロンプトベース**: 各フェーズに対応するプロンプトファイルを使用
+3. **段階的実行**: 各フェーズを完了してから次に進む
+4. **ツール非依存**: npmコマンドは補助的、主な作業はAIエージェントとの対話
+
+### AIエージェントへの指示の基本パターン
+
+```
+/projects/java/berry-books-spec-driven/.spec-kit/prompts/<フェーズ名>.md このプロンプトに従って、
+<具体的な指示内容>
+```
+
+**パス指定のルール:**
+- リポジトリルートからの絶対パスを使用（`/projects/java/berry-books-spec-driven/...`）
+- プロジェクト内の相対パスは避ける（AIエージェントが混乱する可能性があるため）
+
+---
+
+## 🛠️ Spec Kit コマンド（補助ツール）
+
+以下のnpmコマンドは、プロンプトファイルを開くための補助ツールです：
 
 ```bash
+# 環境チェック
+npm run spec:check
+
+# プロンプト一覧表示
+npm run spec:prompts
+
+# 各フェーズのプロンプトを開く
+npm run spec:constitution
+npm run spec:specify
 npm run spec:plan
-```
-
-**何が起こるか:**
-- spec.mdを読み込み、技術的な実装計画（plan.md）を生成
-
-#### 4. Tasks（タスク化）- 実装タスクの分解
-
-```bash
 npm run spec:tasks
-```
-
-**何が起こるか:**
-- plan.mdを読み込み、具体的なタスクリスト（tasks.md）を生成
-
-#### 5. Implement（実装）- コード実装
-
-```bash
 npm run spec:implement
 ```
 
-**何が起こるか:**
-- tasks.mdを読み込み、順次実装を進める
+**注意:** これらのコマンドはプロンプトファイルを開くだけです。実際の作業はAIエージェントに指示を出して行います。
 
-### 💡 重要なポイント
-
-- **自動実行ではない**: npmコマンドはプロンプトファイルを開くだけ
-- **AI対話型**: Cline AI（Claude等）と対話しながら手動で進める
-- **LLM指定**: Clineの設定で使用するLLM（Claude 3.5 Sonnet推奨）を設定
-- **逐次実行**: 各フェーズを完了してから次に進む
-
-## 🛠️ Spec Kit コマンド
-
-### 環境チェック
-```bash
-npm run spec:check
-```
-Spec Kit環境が正しく設定されているか確認します。
-
-### プロンプト一覧表示
-```bash
-npm run spec:prompts
-```
-利用可能な全プロンプト（コマンド）を一覧表示します。
+---
 
 ## 🎯 実際の開発例
 
 ### 例：新機能「パスワードリセット」を追加する場合
 
-```bash
-# 1. 仕様化フェーズのプロンプトを開く
-npm run spec:specify
+#### ステップ 1: 仕様化
 
-# 2. Cline AIに以下のように指示
+**AIエージェントへの指示:**
 ```
-「@.spec-kit/prompts/specify.md
+/projects/java/berry-books-spec-driven/.spec-kit/prompts/specify.md このプロンプトに従って、
+以下の機能の仕様を作成してください：
 
 新機能：パスワードリセット機能
 - ユーザーはログイン画面から「パスワードを忘れた」をクリック
 - メールアドレスを入力してリセットリンクを送信
 - リンクから新しいパスワードを設定
 
-この仕様を specs/002-password-reset/spec.md に作成してください」
+仕様書は /projects/java/berry-books-spec-driven/specs/002-password-reset/spec.md に作成してください。
 ```
 
-# 3. 生成されたspec.mdを確認
+#### ステップ 2: 実装計画
 
-# 4. 実装計画を作成
-npm run spec:plan
-「@specs/002-password-reset/spec.md この仕様から plan.md を作成してください」
-
-# 5. タスク分解
-npm run spec:tasks
-「@specs/002-password-reset/plan.md このプランから tasks.md を作成してください」
-
-# 6. 実装
-npm run spec:implement
-「@specs/002-password-reset/tasks.md このタスクリストに従って実装してください」
+**AIエージェントへの指示:**
+```
+/projects/java/berry-books-spec-driven/.spec-kit/prompts/plan.md このプロンプトに従って、
+/projects/java/berry-books-spec-driven/specs/002-password-reset/spec.md の仕様から
+技術実装計画を作成してください。
 ```
 
-### LLMの設定方法
+#### ステップ 3: タスク分解
 
-**Clineでの推奨設定:**
+**AIエージェントへの指示:**
+```
+/projects/java/berry-books-spec-driven/.spec-kit/prompts/tasks.md このプロンプトに従って、
+/projects/java/berry-books-spec-driven/specs/002-password-reset/plan.md の実装計画から
+タスクリストを作成してください。
+```
 
-1. Clineの設定を開く
-2. **API Provider** → `Anthropic`を選択
-3. **Model** → `claude-3.5-sonnet-20241022`を選択
-4. APIキーを設定
+#### ステップ 4: 実装
 
-**推奨LLM:**
-- 🥇 **Claude 3.5 Sonnet** - 最も優れたコード生成・仕様書理解
-- 🥈 Claude 3.7 Sonnet (New) - 最新バージョン
-- 🥉 GPT-4o - OpenAI使用の場合
+**AIエージェントへの指示:**
+```
+/projects/java/berry-books-spec-driven/.spec-kit/prompts/implement.md このプロンプトに従って、
+/projects/java/berry-books-spec-driven/specs/002-password-reset/tasks.md のタスクリストに従って
+実装を進めてください。
+```
+
+---
 
 ## 📁 プロジェクト構成
 
 ```
 berry-books-spec-driven/
 ├── .spec-kit/
-│   └── prompts/           # Spec Kitプロンプトファイル（AIツール非依存）
-│       ├── constitution.md
-│       ├── specify.md
-│       ├── plan.md
-│       ├── tasks.md
-│       └── implement.md
-├── memory/                # プロジェクトの記憶（憲章など）
-│   └── constitution.md
-├── templates/             # 仕様書テンプレート
-├── docs/
-│   └── specs/            # 生成された仕様書
-├── spec/                 # 既存の仕様書（Excel等）
+│   └── prompts/           # Spec Kitプロンプトファイル
+│       ├── constitution.md  # 憲章作成プロンプト
+│       ├── specify.md       # 仕様化プロンプト
+│       ├── plan.md          # 計画プロンプト
+│       ├── tasks.md         # タスク化プロンプト
+│       └── implement.md     # 実装プロンプト
+├── memory/                # プロジェクトの記憶
+│   └── constitution.md    # 開発憲章
+├── specs/                 # 生成された仕様書
+│   └── 001-berry-books/
+│       ├── spec.md        # 機能仕様（What & Why）
+│       ├── plan.md        # 技術実装計画（How）
+│       ├── data-model.md  # データモデル
+│       ├── wireframes.md  # ワイヤーフレーム
+│       └── tasks.md       # 実装タスク分解
 ├── src/
 │   ├── main/
 │   │   ├── java/
@@ -180,6 +309,8 @@ berry-books-spec-driven/
 ├── package.json          # Spec Kit設定
 └── README.md
 ```
+
+---
 
 ## 🔧 セットアップ
 
@@ -202,6 +333,8 @@ npm install
 npm run spec:check
 ```
 
+---
+
 ## 📊 技術スタック
 
 | カテゴリ | 技術 | バージョン |
@@ -215,6 +348,8 @@ npm run spec:check
 | **ビルドツール** | Gradle | 8.x+ |
 | **仕様管理** | Spec Kit | 0.1.3 |
 
+---
+
 ## 📖 ドキュメント
 
 ### Constitution（開発憲章）
@@ -223,42 +358,30 @@ npm run spec:check
 ### Specifications（仕様書）
 **Feature 001: berry-books**
 - [spec.md](specs/001-berry-books/spec.md) - 機能仕様（What & Why）
-  - ユーザーストーリー、受容基準（Given-When-Then形式）
-  - ビジネスルール、ユーザーフロー
 - [plan.md](specs/001-berry-books/plan.md) - 技術実装計画（How）
-  - 技術スタック、アーキテクチャ設計
-  - デザインパターン、データフロー
 - [data-model.md](specs/001-berry-books/data-model.md) - データモデル
-  - ER図（Mermaid）、テーブル定義
-  - リレーションシップ、制約
 - [wireframes.md](specs/001-berry-books/wireframes.md) - ワイヤーフレーム
-  - PlantUML形式（draw.ioインポート可能）
-  - 全13画面のUI設計
 - [tasks.md](specs/001-berry-books/tasks.md) - タスク分解
-  - 実装タスクの段階的分解
-  - 依存関係、並列実行可能タスク
 
-## 🎯 仕様駆動開発の進め方
+---
 
-### 新機能開発の流れ
+## 🎯 SpecKitワークフローのまとめ
 
-1. **憲章の確認**: `npm run spec:constitution`で開発原則を確認
-2. **仕様化**: `npm run spec:specify`で機能仕様を作成
-3. **計画**: `npm run spec:plan`で実装計画を立案
-4. **タスク化**: `npm run spec:tasks`でタスクに分解
-5. **実装**: `npm run spec:implement`で実装を進める
+### 基本的な流れ
 
-### Clineでの実行方法
+1. **Constitution**: プロジェクトの開発原則を確立
+2. **Specify**: 機能の仕様書を作成（What & Why）
+3. **Plan**: 技術実装計画を作成（How）
+4. **Tasks**: 実装タスクに分解
+5. **Implement**: タスクに従って実装
 
-```bash
-# 1. ターミナルでコマンド実行
-npm run spec:specify
+### AIエージェントとの対話方法
 
-# 2. Clineチャットで指示
-「@.spec-kit/prompts/specify.md このプロンプトに従って仕様を作成してください」
+各フェーズで、以下のパターンでAIエージェントに指示を出します：
 
-# 3. 生成された仕様書を確認・修正
-# 4. 次のフェーズへ進む
+```
+/projects/java/berry-books-spec-driven/.spec-kit/prompts/<フェーズ名>.md このプロンプトに従って、
+<具体的な指示内容>
 ```
 
 ### リバースエンジニアリング完了
@@ -272,18 +395,15 @@ npm run spec:specify
 - ✅ wireframes.md - UI設計（PlantUML形式、draw.io互換、日本語）
 - ✅ tasks.md - 実装タスク分解（100以上のタスク、日本語）
 
-**特徴:**
-- 📝 全ドキュメント日本語化完了（変数名・技術用語は英語のまま）
-- 🎨 Mermaid/PlantUMLによる視覚化
-- 🤖 Cline等のAIエージェントで生成可能な形式
-- 📐 Spec Kit標準準拠
-- 🔄 仕様駆動開発の完全なサイクルを実証
+これらの仕様書を元に、AIエージェントが同じアプリケーションを完全に再実装できます。
 
-これらの仕様書を元に、Clineが同じアプリケーションを完全に再実装できます。
+---
 
 ## 📝 ライセンス
 
 このプロジェクトは教育目的で作成されています。
+
+---
 
 ## 🔗 関連リンク
 

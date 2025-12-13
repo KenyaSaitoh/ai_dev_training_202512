@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+                                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+    
+    <!-- Berry Books Persistence Unit -->
+    <persistence-unit name="BerryBooksPU" transaction-type="JTA">
+        
+        <!-- JTA Data Source JNDI Name -->
+        <jta-data-source>jdbc/HsqldbDS</jta-data-source>
+        
+        <!-- Entity Classes -->
+        <class>pro.kensait.berrybooks.entity.Publisher</class>
+        <class>pro.kensait.berrybooks.entity.Category</class>
+        <class>pro.kensait.berrybooks.entity.Book</class>
+        <class>pro.kensait.berrybooks.entity.Stock</class>
+        <class>pro.kensait.berrybooks.entity.Customer</class>
+        <class>pro.kensait.berrybooks.entity.OrderTran</class>
+        <class>pro.kensait.berrybooks.entity.OrderDetail</class>
+        <class>pro.kensait.berrybooks.entity.OrderDetailPK</class>
+        
+        <!-- Exclude unlisted classes -->
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        
+        <properties>
+            <!-- Schema Generation: none (use SQL scripts) -->
+            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
+            
+            <!-- EclipseLink Logging -->
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.level.sql" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            <property name="eclipselink.logging.timestamp" value="false"/>
+            <property name="eclipselink.logging.session" value="false"/>
+            <property name="eclipselink.logging.thread" value="false"/>
+            
+            <!-- Disable Second Level Cache for learning purposes -->
+            <property name="eclipselink.cache.shared.default" value="false"/>
+            
+            <!-- Connection Pool (managed by Payara) -->
+            <property name="eclipselink.jdbc.native-sql" value="true"/>
+        </properties>
+        
+    </persistence-unit>
+    
+</persistence>

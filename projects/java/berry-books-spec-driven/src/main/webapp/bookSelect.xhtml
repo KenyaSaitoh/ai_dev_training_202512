@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>berry-books - 検索結果</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+<h:body>
+    <div class="header-nav">
+        <div class="header-left">
+            <h:link value="berry-books" outcome="bookSearch" styleClass="search-link"/>
+        </div>
+        <div class="header-right">
+            <span style="margin-right: 20px; color: #333;">#{customerBean.customerName}さん</span>
+            <h:form style="display: inline; margin: 0;">
+                <h:commandLink value="ログアウト" action="#{loginBean.logout}" styleClass="search-link" 
+                               style="margin-right: 20px;"/>
+                <h:commandLink value="注文履歴" action="#{orderBean.loadOrderHistory}" 
+                               styleClass="search-link" style="margin-right: 20px;"/>
+                <h:link value="検索に戻る" outcome="bookSearch" styleClass="search-link"/>
+            </h:form>
+        </div>
+    </div>
+    
+    <h2>検索結果 (#{bookSearchBean.resultCount}件)</h2>
+    <hr/>
+    
+    <h:messages globalOnly="true" styleClass="error"/>
+    
+    <h:form>
+        <h:dataTable value="#{bookSearchBean.bookList}" var="book" 
+                     styleClass="book-table" rowClasses="book-row">
+            <h:column>
+                <f:facet name="header">ID</f:facet>
+                #{book.bookId}
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">書籍名</f:facet>
+                #{book.bookName}
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">著者</f:facet>
+                #{book.author}
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">カテゴリ</f:facet>
+                #{book.category.categoryName}
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">出版社</f:facet>
+                #{book.publisher.publisherName}
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">価格</f:facet>
+                <h:outputText value="#{book.price}">
+                    <f:convertNumber type="currency" currencySymbol="¥" groupingUsed="true"/>
+                </h:outputText>
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">在庫</f:facet>
+                #{book.quantity}
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">数量</f:facet>
+                <h:inputText value="#{book.orderCount}" size="3" 
+                             rendered="#{book.quantity > 0}"
+                             style="width: 60px; text-align: center;"/>
+                <h:outputText value="-" rendered="#{book.quantity == 0}"/>
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">操作</f:facet>
+                <h:commandButton value="カートへ" 
+                                 action="#{cartBean.addBook(book.bookId, book.orderCount)}"
+                                 rendered="#{book.quantity > 0}"
+                                 styleClass="cart-button"/>
+                <span class="out-of-stock" rendered="#{book.quantity == 0}">在庫なし</span>
+            </h:column>
+        </h:dataTable>
+        
+        <div style="margin-top: 30px;">
+            <h:commandLink value="カートを見る (#{cartBean.cartItemCount}点)" 
+                           action="#{cartBean.viewCart}"
+                           style="font-size: 1.1em; font-weight: 600;"/>
+        </div>
+    </h:form>
+</h:body>
+</html>

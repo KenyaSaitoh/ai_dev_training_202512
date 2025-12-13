@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>berry-books - 注文内容確認</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+<h:body>
+    <div class="header-nav">
+        <div class="header-left">
+            <h:link value="berry-books" outcome="bookSearch" styleClass="search-link"/>
+        </div>
+        <div class="header-right">
+            <span style="margin-right: 20px; color: #333;">#{customerBean.customerName}さん</span>
+            <h:form style="display: inline; margin: 0;">
+                <h:commandLink value="ログアウト" action="#{loginBean.logout}" styleClass="search-link"/>
+            </h:form>
+        </div>
+    </div>
+    
+    <h2>注文内容確認</h2>
+    <hr/>
+    
+    <h:messages globalOnly="true" styleClass="error"/>
+    
+    <h:form>
+        <h3>▼ 注文書籍</h3>
+        <h:dataTable value="#{cartSession.cartItems}" var="item" 
+                     styleClass="order-items-table">
+            <h:column>
+                <f:facet name="header">書籍名</f:facet>
+                #{item.bookName}
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">単価</f:facet>
+                <h:outputText value="#{item.price}">
+                    <f:convertNumber type="currency" currencySymbol="¥" groupingUsed="true"/>
+                </h:outputText>
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">数量</f:facet>
+                #{item.count}
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">小計</f:facet>
+                <h:outputText value="#{item.subtotal}">
+                    <f:convertNumber type="currency" currencySymbol="¥" groupingUsed="true"/>
+                </h:outputText>
+            </h:column>
+        </h:dataTable>
+        
+        <h3>▼ 配送先情報</h3>
+        <div style="margin-bottom: 20px;">
+            <label for="deliveryAddress" style="display: block; margin-bottom: 5px; font-weight: 600; color: #A32D3A;">配送先住所</label>
+            <h:inputTextarea id="deliveryAddress" value="#{cartSession.deliveryAddress}" 
+                             rows="3" cols="80" style="width: 100%; max-width: 600px;"/>
+        </div>
+        
+        <h3>▼ 決済方法</h3>
+        <div style="margin-bottom: 20px;">
+            <h:selectOneRadio value="#{orderBean.settlementType}" layout="pageDirection">
+                <f:selectItem itemValue="1" itemLabel="銀行振り込み"/>
+                <f:selectItem itemValue="2" itemLabel="クレジットカード"/>
+                <f:selectItem itemValue="3" itemLabel="代金引換"/>
+            </h:selectOneRadio>
+        </div>
+        
+        <h3>▼ 料金</h3>
+        <div style="max-width: 400px; margin-bottom: 30px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 10px; text-align: left; font-weight: 600;">商品合計</td>
+                    <td style="padding: 10px; text-align: right; font-size: 1.1em;">
+                        <h:outputText value="#{cartSession.totalPrice}">
+                            <f:convertNumber type="currency" currencySymbol="¥" groupingUsed="true"/>
+                        </h:outputText>
+                    </td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 10px; text-align: left; font-weight: 600;">配送料</td>
+                    <td style="padding: 10px; text-align: right; font-size: 1.1em; font-weight: 600; color: #CF3F4E;">
+                        <h:outputText value="#{cartSession.deliveryPrice}">
+                            <f:convertNumber type="currency" currencySymbol="¥" groupingUsed="true"/>
+                        </h:outputText>
+                    </td>
+                </tr>
+                <tr style="background-color: #FFF5F6;">
+                    <td style="padding: 10px; text-align: left; font-weight: 700; font-size: 1.2em;">総合計</td>
+                    <td style="padding: 10px; text-align: right; font-size: 1.4em; font-weight: 700; color: #CF3F4E;">
+                        <h:outputText value="#{cartSession.grandTotal}">
+                            <f:convertNumber type="currency" currencySymbol="¥" groupingUsed="true"/>
+                        </h:outputText>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <h:button value="カートに戻る" outcome="cartView" 
+                      style="margin-right: 20px;"/>
+            <h:commandButton value="注文を確定する" action="#{orderBean.placeOrder}"/>
+        </div>
+    </h:form>
+</h:body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>berry-books - 注文詳細</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+<h:body>
+    <div class="header-nav">
+        <div class="header-left">
+            <h:link value="berry-books" outcome="bookSearch" styleClass="search-link"/>
+        </div>
+        <div class="header-right">
+            <span style="margin-right: 20px; color: #333;">#{customerBean.customerName}さん</span>
+            <h:form style="display: inline; margin: 0;">
+                <h:commandLink value="ログアウト" action="#{loginBean.logout}" styleClass="search-link"/>
+            </h:form>
+        </div>
+    </div>
+    
+    <h2>注文詳細 - 注文番号 ##{orderBean.orderTran.orderTranId}</h2>
+    <hr/>
+    
+    <h:messages globalOnly="true" styleClass="error"/>
+    
+    <h3>▼ 注文情報</h3>
+    <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+        <table style="width: 100%; max-width: 600px;">
+            <tr>
+                <td style="padding: 8px; font-weight: 600; color: #A32D3A; width: 150px;">注文日:</td>
+                <td style="padding: 8px;">
+                    <h:outputText value="#{orderBean.orderTran.orderDate}">
+                        <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" type="localDateTime"/>
+                    </h:outputText>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; font-weight: 600; color: #A32D3A;">配送先:</td>
+                <td style="padding: 8px;">#{orderBean.orderTran.deliveryAddress}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; font-weight: 600; color: #A32D3A;">決済方法:</td>
+                <td style="padding: 8px;">
+                    <h:outputText value="#{orderBean.orderTran.settlementType}">
+                        <f:converter converterId="pro.kensait.berrybooks.util.SettlementTypeConverter"/>
+                    </h:outputText>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <h3>▼ 注文明細</h3>
+    <h:dataTable value="#{orderBean.orderTran.orderDetails}" var="detail" 
+                 styleClass="order-items-table">
+        <h:column>
+            <f:facet name="header">書籍名</f:facet>
+            #{detail.book.bookName}
+        </h:column>
+        
+        <h:column>
+            <f:facet name="header">単価</f:facet>
+            <h:outputText value="#{detail.price}">
+                <f:convertNumber type="currency" currencySymbol="¥" groupingUsed="true"/>
+            </h:outputText>
+        </h:column>
+        
+        <h:column>
+            <f:facet name="header">数量</f:facet>
+            #{detail.count}
+        </h:column>
+        
+        <h:column>
+            <f:facet name="header">小計</f:facet>
+            <h:outputText value="#{detail.price * detail.count}">
+                <f:convertNumber type="currency" currencySymbol="¥" groupingUsed="true"/>
+            </h:outputText>
+        </h:column>
+    </h:dataTable>
+    
+    <h3>▼ 料金</h3>
+    <div style="max-width: 400px; margin-bottom: 30px;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 10px; text-align: left; font-weight: 600;">商品合計</td>
+                <td style="padding: 10px; text-align: right; font-size: 1.1em;">
+                    <h:outputText value="#{orderBean.orderTran.totalPrice - orderBean.orderTran.deliveryPrice}">
+                        <f:convertNumber type="currency" currencySymbol="¥" groupingUsed="true"/>
+                    </h:outputText>
+                </td>
+            </tr>
+            <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 10px; text-align: left; font-weight: 600;">配送料</td>
+                <td style="padding: 10px; text-align: right; font-size: 1.1em; font-weight: 600; color: #CF3F4E;">
+                    <h:outputText value="#{orderBean.orderTran.deliveryPrice}">
+                        <f:convertNumber type="currency" currencySymbol="¥" groupingUsed="true"/>
+                    </h:outputText>
+                </td>
+            </tr>
+            <tr style="background-color: #FFF5F6;">
+                <td style="padding: 10px; text-align: left; font-weight: 700; font-size: 1.2em;">総合計</td>
+                <td style="padding: 10px; text-align: right; font-size: 1.4em; font-weight: 700; color: #CF3F4E;">
+                    <h:outputText value="#{orderBean.orderTran.totalPrice}">
+                        <f:convertNumber type="currency" currencySymbol="¥" groupingUsed="true"/>
+                    </h:outputText>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <div style="margin-top: 30px;">
+        <h:form>
+            <h:commandLink value="← 注文履歴に戻る" action="#{orderBean.backToOrderHistory}" 
+                           style="font-size: 1.1em;"/>
+        </h:form>
+    </div>
+</h:body>
+</html>

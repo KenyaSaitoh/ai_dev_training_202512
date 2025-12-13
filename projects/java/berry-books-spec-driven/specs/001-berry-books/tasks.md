@@ -261,43 +261,45 @@
 
 ### 5.1 共通ユーティリティ
 
-- [ ] [P] **タスク 5.1.1**: MessageUtilの実装
-  - MessageUtilクラスの作成
+- [X] [P] **タスク 5.1.1**: MessageUtilの実装
+  - MessageUtilクラスの作成（pro.kensait.berrybooks.common パッケージ）
+  - finalクラスとして定義
   - messages.propertiesの読み込み
-  - get(key)メソッドの実装
+  - get(String key)メソッドの実装
+  - get(String key, Object... params)メソッドの実装（パラメータ置換機能）
   - messages.propertiesファイルの作成（エラーメッセージ）
   - **想定時間**: 30分
 
-- [ ] [P] **タスク 5.1.2**: SettlementType Enumの実装
-  - SettlementType enumの作成
+- [X] [P] **タスク 5.1.2**: SettlementType Enumの実装
+  - SettlementType enumの作成（pro.kensait.berrybooks.common パッケージ）
   - コードの定義（1:銀行振込, 2:クレジット, 3:着払い）
   - fromCode()メソッドの実装
   - getDisplayNameByCode()メソッドの実装
   - getAllCodes()メソッドの実装
   - **想定時間**: 30分
 
-- [ ] [P] **タスク 5.1.3**: AddressUtilの実装
+- [X] [P] **タスク 5.1.3**: AddressUtilの実装
   - AddressUtilクラスの作成
   - 住所パース/バリデーションロジックの実装（必要な場合）
   - **想定時間**: 20分
 
 ### 5.2 セッション管理
 
-- [ ] **タスク 5.2.1**: CartItemの実装
+- [X] **タスク 5.2.1**: CartItemの実装
   - CartItemクラスの作成（DTO）
   - フィールドの追加: bookId, bookName, publisherName, price, count, version
   - 削除用のremoveフラグの追加
   - Serializableの実装
   - **想定時間**: 20分
 
-- [ ] [→] **タスク 5.2.2**: CartSessionの実装
+- [X] [→] **タスク 5.2.2**: CartSessionの実装
   - CartSessionクラスの作成 (@SessionScoped)
   - フィールドの追加: cartItems, totalPrice, deliveryPrice, deliveryAddress
   - clear()メソッドの実装
   - Serializableの実装
   - **想定時間**: 30分
 
-- [ ] **タスク 5.2.3**: CustomerBeanの実装（セッション）
+- [X] **タスク 5.2.3**: CustomerBeanの実装（セッション）
   - CustomerBeanクラスの作成 (@SessionScoped)
   - フィールドの追加: Customer customer
   - CustomerServiceの注入
@@ -307,7 +309,7 @@
   - Serializableの実装
   - **想定時間**: 45分
 
-- [ ] [→] **タスク 5.2.4**: LoginBeanの実装
+- [X] [→] **タスク 5.2.4**: LoginBeanの実装
   - LoginBeanクラスの作成 (@SessionScoped)
   - フィールドの追加: email, password
   - CustomerService, CustomerBeanの注入
@@ -319,11 +321,13 @@
 
 ### 5.3 Managed Bean
 
-- [ ] [P] **タスク 5.3.1**: BookSearchBeanの実装
-  - BookSearchBeanクラスの作成 (@SessionScoped)
+- [X] [P] **タスク 5.3.1**: BookSearchBeanの実装
+  - BookSearchBeanクラスの作成（pro.kensait.berrybooks.web.book パッケージ、@SessionScoped）
+  - SearchParamクラスの作成（pro.kensait.berrybooks.web.book パッケージ）
   - BookService, CategoryServiceの注入
-  - フィールドの追加: categoryId, keyword, bookList, categoryMap
+  - フィールドの追加: categoryId, keyword, bookList, categoryMap (Map<String, Integer>)
   - @PostConstruct init()メソッドの実装
+    - categoryMapの初期化（空文字列キーでnull値を追加）
   - search()メソッドの実装（静的クエリ）
   - search2()メソッドの実装（動的クエリ）
   - loadAllBooks()メソッドの実装
@@ -332,7 +336,7 @@
   - Serializableの実装
   - **想定時間**: 90分
 
-- [ ] [P] **タスク 5.3.2**: CartBeanの実装
+- [X] [P] **タスク 5.3.2**: CartBeanの実装
   - CartBeanクラスの作成 (@SessionScoped)
   - BookService, StockDao, CartSession, CustomerBean, DeliveryFeeServiceの注入
   - addBook(bookId, count)メソッドの実装
@@ -344,7 +348,7 @@
   - Serializableの実装
   - **想定時間**: 120分
 
-- [ ] [→] **タスク 5.3.3**: OrderBeanの実装
+- [X] [→] **タスク 5.3.3**: OrderBeanの実装
   - OrderBeanクラスの作成 (@ViewScoped)
   - OrderService, CartSession, CustomerBeanの注入
   - フィールドの追加: orderTran, orderList
@@ -363,8 +367,8 @@
 
 ### 5.4 セキュリティフィルター
 
-- [ ] **タスク 5.4.1**: AuthenticationFilterの実装
-  - AuthenticationFilterクラスの作成 (@WebFilter)
+- [X] **タスク 5.4.1**: AuthenticationFilterの実装
+  - AuthenticationFilterクラスの作成（pro.kensait.berrybooks.web.filter パッケージ、@WebFilter）
   - urlPatternsの追加: "*.xhtml"
   - publicPagesリストの定義 (index.xhtml, customerInput.xhtml, customerOutput.xhtml)
   - doFilter()メソッドの実装:
@@ -711,4 +715,3 @@
 **ドキュメント終了**
 
 *このタスク分解は、spec.md（何を）とplan.md（どのように）から導出された構造化実装計画を提供します。タスクは依存関係に応じて、並列化の機会を考慮しながら順次実行されるように設計されています。*
-

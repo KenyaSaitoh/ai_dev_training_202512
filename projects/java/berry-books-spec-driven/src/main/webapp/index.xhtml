@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>berry-books - ログイン</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+<h:body>
+    <h2 class="welcome-title">berry-books</h2>
+    <hr/>
+    
+    <h:form styleClass="login">
+        <h3>ログイン</h3>
+        
+        <h:messages globalOnly="true" styleClass="error"/>
+        
+        <table>
+            <tr>
+                <td>メールアドレス</td>
+                <td>
+                    <h:inputText id="email" value="#{loginBean.email}" required="true" 
+                                 requiredMessage="メールアドレスを入力してください">
+                        <f:validateLength maximum="60"/>
+                    </h:inputText>
+                    <h:message for="email" styleClass="error"/>
+                </td>
+            </tr>
+            <tr>
+                <td>パスワード</td>
+                <td>
+                    <h:inputSecret id="password" value="#{loginBean.password}" required="true"
+                                   requiredMessage="パスワードを入力してください">
+                        <f:validateLength maximum="60"/>
+                    </h:inputSecret>
+                    <h:message for="password" styleClass="error"/>
+                </td>
+            </tr>
+        </table>
+        
+        <h:commandButton value="ログイン" action="#{loginBean.login}"/>
+        
+        <br/>
+        <h:link value="新規会員登録はこちら" outcome="customerInput"/>
+    </h:form>
+</h:body>
+</html>

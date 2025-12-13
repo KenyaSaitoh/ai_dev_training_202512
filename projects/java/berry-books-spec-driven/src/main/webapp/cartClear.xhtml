@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html">
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>berry-books - カートクリア</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+<h:body>
+    <h2>カートをクリアしました</h2>
+    <hr/>
+    
+    <div style="text-align: center; margin: 50px auto; max-width: 600px;">
+        <h3 style="color: #388E3C; margin-bottom: 30px;">✓ カートを空にしました</h3>
+        
+        <p style="margin-bottom: 30px;">ショッピングカートの内容をすべて削除しました。</p>
+        
+        <h:link value="書籍検索に戻る" outcome="bookSearch" 
+                style="display: inline-block; margin-top: 20px; padding: 12px 24px; 
+                       background: linear-gradient(135deg, #CF3F4E 0%, #A32D3A 100%); 
+                       color: white; text-decoration: none; border-radius: 8px; 
+                       font-weight: 600;"/>
+    </div>
+</h:body>
+</html>
