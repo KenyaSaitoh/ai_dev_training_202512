@@ -1,9 +1,9 @@
-# berry-books - 技術実装計画
+# berry-books - アーキテクチャ設計書
 
-**Feature ID:** 001-berry-books  
-**Version:** 1.0.0  
-**Last Updated:** 2025-12-13  
-**Status:** 技術設計完了
+**プロジェクトID:** 001-berry-books  
+**バージョン:** 1.2.0  
+**最終更新日:** 2025-12-14  
+**ステータス:** アーキテクチャ設計完了
 
 ---
 
@@ -165,155 +165,74 @@ classDiagram
 
 ---
 
-## 4. データフローアーキテクチャ
+## 4. パッケージ構造と命名規則
 
-### 4.1 書籍検索フロー
-
-```mermaid
-sequenceDiagram
-    participant User as User
-    participant XHTML as bookSearch.xhtml
-    participant Bean as BookSearchBean
-    participant Service as BookService
-    participant DAO as BookDao
-    participant DB as Database
-    
-    User->>XHTML: Enter keyword "Spring"
-    XHTML->>Bean: search() method
-    Bean->>Service: searchBook(keyword)
-    Service->>DAO: findByKeyword(keyword)
-    DAO->>DB: SELECT * FROM BOOK<br/>WHERE BOOK_NAME LIKE '%Spring%'
-    DB-->>DAO: Result Set
-    DAO-->>Service: List<Book>
-    Service-->>Bean: List<Book>
-    Bean-->>XHTML: Update bookList
-    XHTML-->>User: Display search results
-```
-
-### 4.2 注文処理フロー（楽観的ロック付き）
-
-```mermaid
-sequenceDiagram
-    participant User as User
-    participant Bean as OrderBean
-    participant Service as OrderService
-    participant StockDAO as StockDao
-    participant OrderDAO as OrderTranDao
-    participant DB as Database
-    
-    User->>Bean: Click "Place Order"
-    Bean->>Service: orderBooks(OrderTO)
-    
-    Note over Service: @Transactional START
-    
-    Service->>StockDAO: findById(bookId)
-    StockDAO->>DB: SELECT * FROM STOCK
-    DB-->>StockDAO: Current stock (VERSION=2)
-    StockDAO-->>Service: Stock entity
-    
-    alt Stock Check
-        Service->>Service: Check if quantity >= order count
-        Service-->>Service: ✓ OK
-    else Insufficient Stock
-        Service-->>Bean: throw OutOfStockException
-        Bean-->>User: Error: "在庫不足です"
-    end
-    
-    Service->>StockDAO: update(Stock with VERSION=1)
-    StockDAO->>DB: UPDATE STOCK<br/>SET QUANTITY = ?<br/>WHERE BOOK_ID = ?<br/>AND VERSION = 1
-    
-    alt Version Match
-        DB-->>StockDAO: 1 row updated
-        Service->>OrderDAO: persist(OrderTran)
-        OrderDAO->>DB: INSERT INTO ORDER_TRAN
-        Service->>OrderDAO: persist(OrderDetail)
-        OrderDAO->>DB: INSERT INTO ORDER_DETAIL
-        
-        Note over Service: @Transactional COMMIT
-        
-        Service-->>Bean: OrderTran (success)
-        Bean-->>User: Navigate to success page
-    else Version Mismatch
-        DB-->>StockDAO: 0 rows updated
-        StockDAO-->>Service: OptimisticLockException
-        
-        Note over Service: @Transactional ROLLBACK
-        
-        Service-->>Bean: throw exception
-        Bean-->>User: Error: "他のユーザーが購入済み"
-    end
-```
-
----
-
-## 5. パッケージ構造
-
-### 5.1 パッケージ編成
+### 4.1 パッケージ編成
 
 ```
 pro.kensait.berrybooks/
-├── common/                      # Common utilities and constants
-│   ├── MessageUtil              # Message resource utility
-│   └── SettlementType          # Payment method enum
+├── common/                      # 共通ユーティリティと定数
+│   ├── MessageUtil              # メッセージリソースユーティリティ
+│   └── SettlementType          # 決済方法列挙型
 │
-├── util/                        # General utilities
-│   └── AddressUtil             # Address handling utility
+├── util/                        # 汎用ユーティリティ
+│   └── AddressUtil             # 住所処理ユーティリティ
 │
-├── web/                         # Presentation layer (JSF Managed Beans)
+├── web/                         # プレゼンテーション層（JSF Managed Beans）
 │   ├── book/
-│   │   ├── BookSearchBean      # Book search controller
-│   │   └── SearchParam         # Search parameter holder
+│   │   ├── BookSearchBean      # 書籍検索コントローラー
+│   │   └── SearchParam         # 検索パラメータホルダー
 │   ├── cart/
-│   │   ├── CartBean            # Shopping cart controller
-│   │   ├── CartItem            # Cart item DTO
-│   │   └── CartSession         # Cart session facade
+│   │   ├── CartBean            # ショッピングカートコントローラー
+│   │   ├── CartItem            # カートアイテムDTO
+│   │   └── CartSession         # カートセッションファサード
 │   ├── order/
-│   │   └── OrderBean           # Order processing controller
+│   │   └── OrderBean           # 注文処理コントローラー
 │   ├── customer/
-│   │   └── CustomerBean        # Customer management controller
+│   │   └── CustomerBean        # 顧客管理コントローラー
 │   ├── login/
-│   │   └── LoginBean           # Login controller
+│   │   └── LoginBean           # ログインコントローラー
 │   └── filter/
-│       └── AuthenticationFilter # Authentication filter
+│       └── AuthenticationFilter # 認証フィルター
 │
-├── service/                     # Business logic layer
+├── service/                     # ビジネスロジック層
 │   ├── book/
-│   │   └── BookService         # Book business logic
+│   │   └── BookService         # 書籍ビジネスロジック
 │   ├── category/
-│   │   └── CategoryService     # Category management
+│   │   └── CategoryService     # カテゴリ管理
 │   ├── customer/
-│   │   ├── CustomerService     # Customer management
+│   │   ├── CustomerService     # 顧客管理
 │   │   └── EmailAlreadyExistsException
 │   ├── delivery/
-│   │   └── DeliveryFeeService  # Delivery fee calculation
+│   │   └── DeliveryFeeService  # 配送料金計算
 │   └── order/
-│       ├── OrderService        # Order processing
-│       ├── OrderServiceIF      # Order service interface
-│       ├── OrderTO             # Order transfer object
-│       ├── OrderHistoryTO      # Order history DTO
-│       ├── OrderSummaryTO      # Order summary DTO
-│       └── OutOfStockException # Out of stock exception
+│       ├── OrderService        # 注文処理
+│       ├── OrderServiceIF      # 注文サービスインターフェース
+│       ├── OrderTO             # 注文転送オブジェクト
+│       ├── OrderHistoryTO      # 注文履歴DTO
+│       ├── OrderSummaryTO      # 注文サマリーDTO
+│       └── OutOfStockException # 在庫切れ例外
 │
-├── dao/                         # Data access layer
-│   ├── BookDao                 # Book data access
-│   ├── CategoryDao             # Category data access
-│   ├── CustomerDao             # Customer data access
-│   ├── StockDao                # Stock data access
-│   ├── OrderTranDao            # Order transaction data access
-│   └── OrderDetailDao          # Order detail data access
+├── dao/                         # データアクセス層
+│   ├── BookDao                 # 書籍データアクセス
+│   ├── CategoryDao             # カテゴリデータアクセス
+│   ├── CustomerDao             # 顧客データアクセス
+│   ├── StockDao                # 在庫データアクセス
+│   ├── OrderTranDao            # 注文トランザクションデータアクセス
+│   └── OrderDetailDao          # 注文明細データアクセス
 │
-└── entity/                      # Persistence layer (JPA entities)
-    ├── Book                    # Book entity
-    ├── Category                # Category entity
-    ├── Publisher               # Publisher entity
-    ├── Stock                   # Stock entity (with @Version)
-    ├── Customer                # Customer entity
-    ├── OrderTran               # Order transaction entity
-    ├── OrderDetail             # Order detail entity
-    └── OrderDetailPK           # Order detail composite key
+└── entity/                      # 永続化層（JPAエンティティ）
+    ├── Book                    # 書籍エンティティ
+    ├── Category                # カテゴリエンティティ
+    ├── Publisher               # 出版社エンティティ
+    ├── Stock                   # 在庫エンティティ（@Version付き）
+    ├── Customer                # 顧客エンティティ
+    ├── OrderTran               # 注文トランザクションエンティティ
+    ├── OrderDetail             # 注文明細エンティティ
+    └── OrderDetailPK           # 注文明細複合キー
 ```
 
-### 5.2 命名規則
+### 4.2 命名規則
 
 | コンポーネントタイプ | パターン | 例 |
 |---------------|---------|---------|
@@ -326,50 +245,11 @@ pro.kensait.berrybooks/
 | Enum | PascalCase | `SettlementType` |
 | Utility | FeatureName + Util | `MessageUtil`, `AddressUtil` |
 
-### 5.3 主要クラスの責務
-
-#### 共通ユーティリティ (common/)
-
-**MessageUtil**
-- **責務**: メッセージリソース（messages.properties）からメッセージを取得
-- **タイプ**: ユーティリティクラス（final、static メソッド）
-- **主要メソッド**: `get(String key)`, `get(String key, Object... params)`
-
-**SettlementType**
-- **責務**: 決済方法を表す定数とユーティリティメソッドを提供
-- **タイプ**: Enum（列挙型）
-- **定数**: BANK_TRANSFER(1), CREDIT_CARD(2), CASH_ON_DELIVERY(3)
-- **主要メソッド**: `fromCode(Integer)`, `getDisplayNameByCode(Integer)`, `getAllCodes()`
-
-#### プレゼンテーション層 (web/)
-
-**SearchParam**
-- **責務**: 書籍検索パラメータを保持
-- **タイプ**: DTOクラス（Data Transfer Object）
-- **フィールド**: categoryId, keyword
-
-**CartItem**
-- **責務**: カート内の書籍情報を保持
-- **タイプ**: DTOクラス（Serializable）
-- **フィールド**: bookId, bookName, publisherName, price, count, version, removeフラグ
-
-**CartSession**
-- **責務**: セッションスコープでカート状態を管理
-- **タイプ**: @SessionScoped Bean
-- **フィールド**: cartItems, totalPrice, deliveryPrice, deliveryAddress
-
-#### ビジネスロジック層 (service/)
-
-**OrderTO, OrderHistoryTO, OrderSummaryTO**
-- **責務**: レイヤー間でのデータ転送
-- **タイプ**: Transfer Object（DTO）
-- **目的**: エンティティとプレゼンテーション層の疎結合化
-
 ---
 
-## 6. 状態管理
+## 5. 状態管理（CDIスコープ）
 
-### 6.1 CDIスコープ
+### 5.1 CDIスコープ
 
 ```mermaid
 graph LR
@@ -386,45 +266,11 @@ graph LR
 | @SessionScoped | ユーザーセッション | ログイン状態、ショッピングカート | **はい** |
 | @ApplicationScoped | アプリケーション起動〜終了 | Services、DAOs、ユーティリティ | いいえ |
 
-### 6.2 セッション状態設計
-
-```mermaid
-classDiagram
-    class CartSession {
-        <<SessionScoped>>
-        +List~CartItem~ cartItems
-        +BigDecimal totalPrice
-        +BigDecimal deliveryPrice
-        +String deliveryAddress
-        +clear()
-        +addItem()
-        +removeItem()
-    }
-    
-    class CustomerBean {
-        <<SessionScoped>>
-        +Customer customer
-        +boolean isLoggedIn()
-        +logout()
-    }
-    
-    class LoginBean {
-        <<SessionScoped>>
-        +String email
-        +String password
-        +login()
-        +logout()
-    }
-    
-    CustomerBean --> CartSession: uses
-    LoginBean --> CustomerBean: manages
-```
-
 ---
 
-## 7. トランザクション管理
+## 6. トランザクション管理
 
-### 7.1 トランザクション境界
+### 6.1 トランザクション境界
 
 ```mermaid
 graph TD
@@ -442,7 +288,9 @@ graph TD
     J --> L[Throw Exception]
 ```
 
-**トランザクション戦略:**
+### 6.2 トランザクション戦略
+
+**基本方針:**
 - **トランザクションタイプ**: JTA (Jakarta Transactions)
 - **宣言**: サービスレイヤーで `@Transactional`
 - **伝播**: REQUIRED (デフォルト) - 既存に参加または新規作成
@@ -458,9 +306,9 @@ graph TD
 
 ---
 
-## 8. 並行制御
+## 7. 並行制御（楽観的ロック）
 
-### 8.1 楽観的ロック戦略
+### 7.1 楽観的ロック戦略
 
 ```mermaid
 stateDiagram-v2
@@ -484,18 +332,28 @@ stateDiagram-v2
     ErrorDisplay --> [*]
 ```
 
-**実装詳細:**
+### 7.2 実装詳細
+
+**技術仕様:**
 - **バージョンカラム**: `STOCK.VERSION` (BIGINT NOT NULL)
 - **JPAアノテーション**: Stock エンティティに `@Version`
 - **更新クエリ**: 自動的に WHERE 句 `AND VERSION = ?` を追加
 - **例外**: バージョン不一致時に `OptimisticLockException`
 - **ユーザーアクション**: ユーザーに通知、カート再確認を許可
 
+**処理フロー:**
+
+1. **カート追加時**: 在庫エンティティからVERSION値を取得し、カートアイテムに保存
+2. **注文確定時**: カートアイテムに保存したVERSION値で在庫を更新
+3. **バージョンチェック**: データベースのWHERE句に「AND VERSION = ?」条件を追加
+4. **成功時**: 在庫数を減算し、VERSION値を自動インクリメント
+5. **失敗時**: OptimisticLockExceptionをスロー、ユーザーにエラー表示
+
 ---
 
-## 9. エラーハンドリング戦略
+## 8. エラーハンドリング戦略
 
-### 9.1 例外階層
+### 8.1 例外階層
 
 ```mermaid
 classDiagram
@@ -519,7 +377,7 @@ classDiagram
     }
 ```
 
-### 9.2 エラーハンドリングフロー
+### 8.2 エラーハンドリングフロー
 
 ```mermaid
 flowchart TD
@@ -534,17 +392,25 @@ flowchart TD
     
     F --> I[Stay on Current Page]
     G --> J[Redirect to Error Page]
-    H --> I
+    E --> I
     
     I --> K[Allow User Recovery]
     J --> L[Contact Support]
 ```
 
+### 8.3 エラーハンドリング方針
+
+| 例外タイプ | ログレベル | ユーザー表示 | アクション |
+|-----------|----------|-------------|----------|
+| ビジネス例外 | WARN | 分かりやすいメッセージ | 現在のページに留まる |
+| システム例外 | ERROR（スタックトレース付き） | 汎用エラーメッセージ | エラーページにリダイレクト |
+| 検証例外 | INFO | 検証エラーメッセージ | 現在のページに留まる |
+
 ---
 
-## 10. セキュリティアーキテクチャ
+## 9. セキュリティアーキテクチャ
 
-### 10.1 認証フロー
+### 9.1 認証フロー
 
 ```mermaid
 sequenceDiagram
@@ -581,7 +447,7 @@ sequenceDiagram
     Bean-->>User: Navigate to bookSearch
 ```
 
-### 10.2 セキュリティ対策
+### 9.2 セキュリティ対策
 
 | 対策 | 実装 | 制限事項 |
 |---------|---------------|------------|
@@ -592,19 +458,24 @@ sequenceDiagram
 | **CSRF保護** | JSF ViewState | 基本的な保護 |
 | **SQLインジェクション** | JPA/JPQL (Prepared Statements) | パラメータ化クエリ |
 
-**セキュリティ制約:**
-- 🔒 以下を除く全ページで認証必須:
-  - `index.xhtml` (ログインページ)
-  - `customerInput.xhtml` (登録ページ)
-  - `customerOutput.xhtml` (登録完了)
+### 9.3 セキュリティ制約
+
+**公開ページ（認証不要）:**
+- `index.xhtml` (ログインページ)
+- `customerInput.xhtml` (登録ページ)
+- `customerOutput.xhtml` (登録完了)
+
+**保護ページ（認証必須）:**
+- 上記以外の全ページ
 
 ---
 
-## 11. データベース構成
+## 10. データベース構成
 
-### 11.1 永続化構成
+### 10.1 永続化構成
 
 **persistence.xml:**
+
 ```xml
 <persistence-unit name="BerryBooksPU" transaction-type="JTA">
     <jta-data-source>jdbc/HsqldbDS</jta-data-source>
@@ -617,7 +488,7 @@ sequenceDiagram
 </persistence-unit>
 ```
 
-### 11.2 コネクションプール
+### 10.2 コネクションプール
 
 | パラメータ | 値 | 備考 |
 |-----------|-------|-------|
@@ -630,17 +501,23 @@ sequenceDiagram
 | **最小プールサイズ** | 10 | 最小接続数 |
 | **最大プールサイズ** | 50 | 最大接続数 |
 
+### 10.3 データベース制約
+
+- **トランザクション分離レベル**: READ_COMMITTED（デフォルト）
+- **接続タイムアウト**: 30秒
+- **アイドルタイムアウト**: 300秒
+
 ---
 
-## 12. ログ戦略
+## 11. ログ戦略
 
-### 12.1 ログフレームワーク
+### 11.1 ログフレームワーク
 
 ```
 SLF4J (API) → Logback (Implementation)
 ```
 
-### 12.2 ログレベル
+### 11.2 ログレベル
 
 | レベル | 用途 | 例 |
 |-------|-------|---------|
@@ -650,7 +527,7 @@ SLF4J (API) → Logback (Implementation)
 | **DEBUG** | 詳細フロー、パラメータ値 | "Stock version: 1, quantity: 10" |
 | **TRACE** | 非常に詳細なデバッグ | このプロジェクトでは未使用 |
 
-### 12.3 ログパターン
+### 11.3 ログパターン
 
 ```
 標準形式:
@@ -665,11 +542,25 @@ java.lang.RuntimeException: ...
     at ...
 ```
 
+### 11.4 ログ出力方針
+
+**ログ出力対象:**
+- 全パブリックサービスメソッドのエントリ
+- ビジネス例外の発生
+- システム例外の発生（スタックトレース付き）
+- トランザクション開始・コミット・ロールバック
+- 重要な状態変更（在庫更新、注文作成など）
+
+**ログ出力対象外:**
+- 単純なGetter/Setter
+- プライベートメソッド（必要に応じて）
+- 正常系の詳細フロー（DEBUGレベルで出力）
+
 ---
 
-## 13. ビルド＆デプロイ
+## 12. ビルド＆デプロイ
 
-### 13.1 ビルドプロセス
+### 12.1 ビルドプロセス
 
 ```mermaid
 graph LR
@@ -682,7 +573,7 @@ graph LR
     G --> H[Deploy to Payara]
 ```
 
-### 13.2 Gradleタスク
+### 12.2 Gradleタスク
 
 | タスク | コマンド | 説明 |
 |------|---------|-------------|
@@ -692,40 +583,7 @@ graph LR
 | アンデプロイ | `./gradlew :projects:java:berry-books:undeploy` | Payaraから削除 |
 | DB初期化 | `./gradlew :projects:java:berry-books:setupHsqldb` | データベース初期化 |
 
----
-
-## 14. テスト戦略
-
-### 14.1 テストピラミッド
-
-```mermaid
-graph TD
-    A[Manual Testing] --> B[Integration Tests]
-    B --> C[Unit Tests]
-    
-    C --> D[Service Layer Tests<br/>80%+ Coverage]
-    C --> E[DAO Layer Tests<br/>Key Queries]
-    
-    B --> F[End-to-End Flows<br/>Happy Path]
-    B --> G[Error Scenarios<br/>Edge Cases]
-    
-    A --> H[User Acceptance<br/>Main Features]
-```
-
-### 14.2 テストカバレッジ
-
-| レイヤー | カバレッジ目標 | テストフレームワーク |
-|-------|----------------|---------------|
-| サービスレイヤー | 80%以上 | JUnit 5 + Mockito |
-| DAOレイヤー | 主要メソッド | JUnit 5 + インメモリDB |
-| 統合テスト | 主要フロー | 手動テスト |
-| UI | 重要パス | 手動テスト |
-
----
-
-## 15. デプロイアーキテクチャ
-
-### 15.1 開発環境
+### 12.3 デプロイ構成
 
 ```mermaid
 graph LR
@@ -752,8 +610,6 @@ graph LR
     F --> G
 ```
 
-### 15.2 デプロイ構成
-
 | コンポーネント | 配置場所 | ポート | 備考 |
 |-----------|---------|------|-------|
 | Payara Server | `./payara6/` | 8080 (HTTP), 4848 (Admin) | スタンドアロンインストール |
@@ -763,9 +619,56 @@ graph LR
 
 ---
 
-## 16. パフォーマンス考慮事項
+## 13. テスト戦略
 
-### 16.1 最適化戦略
+### 13.1 テストピラミッド
+
+```mermaid
+graph TD
+    A[Manual Testing] --> B[Integration Tests]
+    B --> C[Unit Tests]
+    
+    C --> D[Service Layer Tests<br/>80%+ Coverage]
+    C --> E[DAO Layer Tests<br/>Key Queries]
+    
+    B --> F[End-to-End Flows<br/>Happy Path]
+    B --> G[Error Scenarios<br/>Edge Cases]
+    
+    A --> H[User Acceptance<br/>Main Features]
+```
+
+### 13.2 テストカバレッジ
+
+| レイヤー | カバレッジ目標 | テストフレームワーク |
+|-------|----------------|---------------|
+| サービスレイヤー | 80%以上 | JUnit 5 + Mockito |
+| DAOレイヤー | 主要メソッド | JUnit 5 + インメモリDB |
+| 統合テスト | 主要フロー | 手動テスト |
+| UI | 重要パス | 手動テスト |
+
+### 13.3 テスト方針
+
+**ユニットテスト:**
+- サービスレイヤーの全パブリックメソッド
+- ビジネスロジックの境界値テスト
+- エラーシナリオのテスト
+- Mockitoを使用してDAOをモック
+
+**統合テスト:**
+- 主要な業務フローのEnd-to-Endテスト
+- 楽観的ロックの動作確認
+- トランザクション境界の確認
+
+**手動テスト:**
+- UI/UXの確認
+- ブラウザ互換性
+- 主要機能の受入テスト
+
+---
+
+## 14. パフォーマンス考慮事項
+
+### 14.1 最適化戦略
 
 | 戦略 | 実装 | メリット |
 |----------|---------------|---------|
@@ -775,40 +678,18 @@ graph LR
 | **セッション管理** | @SessionScoped (カート/ログイン) | データベースクエリの削減 |
 | **楽観的ロック** | @Version (データベースロックなし) | 高並行性 |
 
-### 16.2 期待パフォーマンス
+### 14.2 期待パフォーマンス
 
 | 指標 | 目標値 | 測定条件 |
 |--------|--------|-------------|
-| 検索クエリ | < 2秒 | カテゴリ/キーワードで50冊 |
-| 注文処理 | < 3秒 | 在庫更新を含む |
-| ページロード | < 3秒 | ファーストペイント |
+| 検索クエリ | 2秒以内 | カテゴリ/キーワードで50冊 |
+| 注文処理 | 3秒以内 | 在庫更新を含む |
+| ページロード | 3秒以内 | ファーストペイント |
 | 同時ユーザー数 | 50ユーザー | 開発環境 |
 
 ---
 
-## 17. 将来の拡張（スコープ外）
-
-### 17.1 技術的改善
-
-- [ ] REST API layer (JAX-RS)
-- [ ] Password hashing (BCrypt)
-- [ ] HTTPS support
-- [ ] OAuth 2.0 authentication
-- [ ] Caching layer (EhCache)
-- [ ] Message queue (JMS)
-- [ ] Microservices architecture
-
-### 17.2 インフラ改善
-
-- [ ] ロードバランサー
-- [ ] データベースレプリケーション
-- [ ] 静的アセット用CDN
-- [ ] モニタリングと可観測性 (Prometheus, Grafana)
-- [ ] CI/CDパイプライン
-
----
-
-## 18. 技術リスクと軽減策
+## 15. 技術リスクと軽減策
 
 | リスク | 影響 | 発生確率 | 軽減策 |
 |------|--------|-------------|------------|
@@ -820,9 +701,9 @@ graph LR
 
 ---
 
-## 19. 開発ガイドライン
+## 16. 開発ガイドライン
 
-### 19.1 コード標準
+### 16.1 コード標準
 
 - **Javaバージョン**: 適切な箇所でJava 21機能を使用
 - **コードスタイル**: Jakarta EE規約に従う
@@ -831,7 +712,7 @@ graph LR
 - **エラーハンドリング**: 例外を握りつぶさない
 - **NULL安全性**: 適切な箇所でOptionalを使用
 
-### 19.2 Gitワークフロー
+### 16.2 Gitワークフロー
 
 ```mermaid
 gitGraph
@@ -852,9 +733,31 @@ gitGraph
 
 ---
 
-## 20. 参考資料
+## 17. 将来の拡張（スコープ外）
 
-### 20.1 技術ドキュメント
+### 17.1 技術的改善
+
+- REST API layer (JAX-RS)
+- Password hashing (BCrypt)
+- HTTPS support
+- OAuth 2.0 authentication
+- Caching layer (EhCache)
+- Message queue (JMS)
+- Microservices architecture
+
+### 17.2 インフラ改善
+
+- ロードバランサー
+- データベースレプリケーション
+- 静的アセット用CDN
+- モニタリングと可観測性 (Prometheus, Grafana)
+- CI/CDパイプライン
+
+---
+
+## 18. 参考資料
+
+### 18.1 技術ドキュメント
 
 - [Jakarta EE 10 Platform Specification](https://jakarta.ee/specifications/platform/10/)
 - [Jakarta Faces 4.0 Specification](https://jakarta.ee/specifications/faces/4.0/)
@@ -862,7 +765,7 @@ gitGraph
 - [Payara Server Documentation](https://docs.payara.fish/)
 - [EclipseLink JPA Documentation](https://www.eclipse.org/eclipselink/documentation/)
 
-### 20.2 ベストプラクティス
+### 18.2 ベストプラクティス
 
 - [Jakarta EE Design Patterns](https://www.oracle.com/java/technologies/design-patterns.html)
 - [Optimistic Locking in JPA](https://thorben-janssen.com/optimistic-locking-in-jpa-hibernate/)
@@ -870,6 +773,18 @@ gitGraph
 
 ---
 
+## 19. 改訂履歴
+
+| バージョン | 日付 | 作成者 | 変更内容 |
+|-----------|------|--------|---------|
+| 1.0.0 | 2025-12-14 | System | アーキテクチャ設計書を新規作成（plan.mdから再編成） |
+| 1.1.0 | 2025-12-14 | System | クラス設計の詳細をfunctional-design.mdに移動（パッケージ構造の方針のみ残す） |
+| 1.1.1 | 2025-12-14 | System | ドキュメント説明を更新（アーキテクチャ設計書としての位置づけ明確化） |
+| 1.2.0 | 2025-12-14 | System | ファイル名変更と用語統一（technical-design.md → architecture.md、「技術設計/方式設計」→「アーキテクチャ設計」） |
+
+---
+
 **ドキュメント終了**
 
-*この技術計画書は、アーキテクチャ、技術選択、デザインパターンを含む、システムの実装方法を記述しています。spec.md（何を・なぜ）を補完し、tasks.md（実装の詳細分解）の生成に使用されます。*
+*このアーキテクチャ設計書は、システムの技術スタック、アーキテクチャパターン、技術方針を記述しています。要件の概要は requirements.md、機能の詳細設計とクラス設計は functional-design.md を参照してください。*
+

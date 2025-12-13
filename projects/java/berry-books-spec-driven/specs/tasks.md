@@ -32,14 +32,12 @@
   - Jakarta EE 10依存関係でbuild.gradleを設定
   - ソースディレクトリのセットアップ (src/main/java, src/main/resources, src/main/webapp)
   - settings.gradleの設定
-  - **想定時間**: 30分
 
 - [ ] [→] **タスク 1.1.2**: アプリケーションサーバーの設定
   - Payara Server 6.xのインストール
   - ドメイン設定（ポート、ログ）
   - JNDIデータソースのセットアップ (jdbc/HsqldbDS)
   - サーバー起動テスト
-  - **想定時間**: 30分
 
 - [ ] [→] **タスク 1.1.3**: データベースの設定
   - HSQLDB 2.7.xのインストール
@@ -48,14 +46,12 @@
     - 2_BOOKSTORE_DDL.sql
     - 3_BOOKSTORE_DML.sql
   - データベース接続テスト
-  - **想定時間**: 45分
 
 - [ ] [→] **タスク 1.1.4**: ログの設定
   - SLF4J + Logback依存関係の追加
   - logback.xml設定ファイルの作成
   - ログレベルの設定（開発用INFO）
   - ログ出力テスト
-  - **想定時間**: 15分
 
 ---
 
@@ -67,32 +63,27 @@
   - PUBLISHERテーブルの実装
   - CATEGORYテーブルの実装
   - マスタデータの挿入
-  - **想定時間**: 30分
 
 - [ ] [P] **タスク 2.1.2**: BOOKテーブルの作成
   - 外部キー付きBOOKテーブルの実装
   - インデックスの作成 (CATEGORY_ID, BOOK_NAME)
   - サンプル書籍データの挿入（50件）
-  - **想定時間**: 45分
 
 - [ ] [P] **タスク 2.1.3**: STOCKテーブルの作成
   - VERSIONカラム付きSTOCKテーブルの実装
   - BOOKテーブルへのリンク（1:1関係）
   - 在庫データの挿入（BOOKレコードに対応）
-  - **想定時間**: 30分
 
 - [ ] [P] **タスク 2.1.4**: CUSTOMERテーブルの作成
   - CUSTOMERテーブルの実装
   - EMAIL に UNIQUE 制約を追加
   - テスト顧客データの挿入（3-5件）
-  - **想定時間**: 30分
 
 - [ ] [→] **タスク 2.1.5**: 注文テーブルの作成
   - ORDER_TRANテーブルの実装
   - ORDER_DETAILテーブルの実装（複合キー）
   - 外部キーリレーションシップの作成
   - テスト注文データの挿入
-  - **想定時間**: 45分
 
 ### 2.2 JPAエンティティ
 
@@ -101,32 +92,27 @@
   - EclipseLinkプロバイダーの設定
   - トランザクションタイプをJTAに設定
   - データソースJNDIルックアップの設定
-  - **想定時間**: 20分
 
 - [ ] [P] **タスク 2.2.2**: マスタエンティティの実装
   - Categoryエンティティの作成
   - Publisherエンティティの作成
   - JPAアノテーションの追加 (@Entity, @Table, @Id)
-  - **想定時間**: 30分
 
 - [ ] [P] **タスク 2.2.3**: Bookエンティティの実装
   - Bookエンティティの作成
   - @ManyToOneリレーションシップの追加 (Category, Publisher)
   - STOCK用の@SecondaryTableの追加（quantityフィールド）
   - エンティティマッピングのテスト
-  - **想定時間**: 45分
 
 - [ ] [P] **タスク 2.2.4**: Stockエンティティの実装
   - Stockエンティティの作成
   - 楽観的ロック用の@Versionアノテーションの追加
   - バージョン管理のテスト
-  - **想定時間**: 30分
 
 - [ ] [P] **タスク 2.2.5**: Customerエンティティの実装
   - Customerエンティティの作成
   - バリデーションアノテーションの追加 (@NotNull, @Email)
   - エンティティマッピングのテスト
-  - **想定時間**: 30分
 
 - [ ] [→] **タスク 2.2.6**: 注文エンティティの実装
   - OrderTranエンティティの作成
@@ -134,7 +120,6 @@
   - OrderDetailPK（複合キークラス）の作成
   - @OneToManyリレーションシップの追加 (OrderTran → OrderDetail)
   - エンティティリレーションシップのテスト
-  - **想定時間**: 60分
 
 ---
 
@@ -151,20 +136,17 @@
   - findByKeyword()の実装
   - findByCategoryAndKeyword()の実装
   - findByCriteriaAPI()の実装（動的クエリ）
-  - **想定時間**: 90分
 
 - [ ] [P] **タスク 3.1.2**: CategoryDaoの実装
   - CategoryDaoクラスの作成
   - findAll()の実装
   - findById()の実装
-  - **想定時間**: 30分
 
 - [ ] [P] **タスク 3.1.3**: StockDaoの実装
   - StockDaoクラスの作成
   - findById()の実装
   - update()の実装（楽観的ロック処理付き）
   - バージョン競合検出のテスト
-  - **想定時間**: 45分
 
 - [ ] [P] **タスク 3.1.4**: CustomerDaoの実装
   - CustomerDaoクラスの作成
@@ -172,7 +154,6 @@
   - findByEmail()の実装（ログイン用）
   - persist()の実装（登録用）
   - emailExists()の実装（重複チェック）
-  - **想定時間**: 60分
 
 - [ ] [→] **タスク 3.1.5**: OrderTranDaoの実装
   - OrderTranDaoクラスの作成
@@ -181,14 +162,12 @@
   - findByIdWithDetails()の実装（JOIN FETCH）
   - findByCustomerId()の実装（注文履歴）
   - findOrderHistoryByCustomerId()の実装（DTOプロジェクション付き）
-  - **想定時間**: 90分
 
 - [ ] [→] **タスク 3.1.6**: OrderDetailDaoの実装
   - OrderDetailDaoクラスの作成
   - persist()の実装
   - findById()の実装（複合キー）
   - findByOrderTranId()の実装
-  - **想定時間**: 45分
 
 ---
 
@@ -206,14 +185,12 @@
   - searchBook(categoryId, keyword)の実装
   - searchBookWithCriteria()の実装（動的）
   - ログ追加（メソッドエントリポイント）
-  - **想定時間**: 90分
 
 - [ ] [P] **タスク 4.1.2**: CategoryServiceの実装
   - CategoryServiceクラスの作成
   - CategoryDaoの注入
   - getAllCategories()の実装
   - getCategoryMap()の実装（ドロップダウン用）
-  - **想定時間**: 30分
 
 - [ ] [P] **タスク 4.1.3**: CustomerServiceの実装
   - CustomerServiceクラスの作成
@@ -224,7 +201,6 @@
   - getCustomer(customerId)の実装
   - getCustomerByEmail()の実装
   - ログとバリデーションの追加
-  - **想定時間**: 75分
 
 - [ ] [P] **タスク 4.1.4**: DeliveryFeeServiceの実装
   - DeliveryFeeServiceクラスの作成
@@ -233,7 +209,6 @@
   - isFreeDelivery(totalPrice)の実装
   - ビジネスルール定数の追加
   - 配送料計算ロジックのテスト
-  - **想定時間**: 45分
 
 - [ ] [→] **タスク 4.1.5**: OrderServiceの実装
   - OrderServiceIFインターフェースの作成
@@ -253,7 +228,6 @@
     - OrderDetail作成
     - 例外ハンドリング
   - 全メソッドへのログ追加
-  - **想定時間**: 180分（3時間）
 
 ---
 
@@ -268,7 +242,6 @@
   - get(String key)メソッドの実装
   - get(String key, Object... params)メソッドの実装（パラメータ置換機能）
   - messages.propertiesファイルの作成（エラーメッセージ）
-  - **想定時間**: 30分
 
 - [X] [P] **タスク 5.1.2**: SettlementType Enumの実装
   - SettlementType enumの作成（pro.kensait.berrybooks.common パッケージ）
@@ -276,12 +249,10 @@
   - fromCode()メソッドの実装
   - getDisplayNameByCode()メソッドの実装
   - getAllCodes()メソッドの実装
-  - **想定時間**: 30分
 
 - [X] [P] **タスク 5.1.3**: AddressUtilの実装
   - AddressUtilクラスの作成
   - 住所パース/バリデーションロジックの実装（必要な場合）
-  - **想定時間**: 20分
 
 ### 5.2 セッション管理
 
@@ -290,14 +261,12 @@
   - フィールドの追加: bookId, bookName, publisherName, price, count, version
   - 削除用のremoveフラグの追加
   - Serializableの実装
-  - **想定時間**: 20分
 
 - [X] [→] **タスク 5.2.2**: CartSessionの実装
   - CartSessionクラスの作成 (@SessionScoped)
   - フィールドの追加: cartItems, totalPrice, deliveryPrice, deliveryAddress
   - clear()メソッドの実装
   - Serializableの実装
-  - **想定時間**: 30分
 
 - [X] **タスク 5.2.3**: CustomerBeanの実装（セッション）
   - CustomerBeanクラスの作成 (@SessionScoped)
@@ -307,7 +276,6 @@
   - isLoggedIn()メソッドの実装
   - logout()メソッドの実装
   - Serializableの実装
-  - **想定時間**: 45分
 
 - [X] [→] **タスク 5.2.4**: LoginBeanの実装
   - LoginBeanクラスの作成 (@SessionScoped)
@@ -317,7 +285,6 @@
   - logout()メソッドの実装
   - ナビゲーションロジックの追加
   - Serializableの実装
-  - **想定時間**: 45分
 
 ### 5.3 Managed Bean
 
@@ -334,7 +301,6 @@
   - refreshBookList()メソッドの実装
   - ログの追加
   - Serializableの実装
-  - **想定時間**: 90分
 
 - [X] [P] **タスク 5.3.2**: CartBeanの実装
   - CartBeanクラスの作成 (@SessionScoped)
@@ -346,7 +312,6 @@
   - viewCart()メソッドの実装
   - エラーメッセージハンドリングの追加
   - Serializableの実装
-  - **想定時間**: 120分
 
 - [X] [→] **タスク 5.3.3**: OrderBeanの実装
   - OrderBeanクラスの作成 (@ViewScoped)
@@ -363,7 +328,6 @@
   - ナビゲーションロジックの追加
   - エラーメッセージハンドリングの追加
   - Serializableの実装
-  - **想定時間**: 120分
 
 ### 5.4 セキュリティフィルター
 
@@ -377,7 +341,6 @@
     - セッションにCustomerBeanがあるかチェック
     - 未認証の場合ログインにリダイレクト
   - ログの追加
-  - **想定時間**: 60分
 
 ---
 
@@ -392,13 +355,11 @@
   - フォームのスタイル（入力フィールド、ボタン）
   - エラーメッセージのスタイル
   - レスポンシブデザインルールの追加
-  - **想定時間**: 60分
 
 - [ ] [P] **タスク 6.1.2**: 書籍カバー画像の追加
   - images/covers/ディレクトリの作成
   - no-image.jpgプレースホルダーの追加
   - 書籍カバー画像の追加（50枚）
-  - **想定時間**: 30分
 
 ### 6.2 XHTMLページ
 
@@ -407,27 +368,23 @@
   - 登録ページへのリンク追加
   - エラーメッセージ表示の追加
   - LoginBean.login()への接続
-  - **想定時間**: 45分
 
 - [ ] [P] **タスク 6.2.2**: customerInput.xhtmlの作成（登録ページ）
   - 登録フォームの作成（name, email, password, birthday, address）
   - バリデーションメッセージの追加
   - CustomerBean.register()への接続
   - customerOutput.xhtmlへのナビゲーション
-  - **想定時間**: 60分
 
 - [ ] [P] **タスク 6.2.3**: customerOutput.xhtmlの作成（登録成功）
   - 成功メッセージの表示
   - 登録顧客情報の表示
   - ログインページへのリンク追加
-  - **想定時間**: 20分
 
 - [ ] [→] **タスク 6.2.4**: bookSearch.xhtmlの作成（検索ページ）
   - 検索フォームの作成（カテゴリドロップダウン、キーワード入力）
   - 検索ボタンの追加（BookSearchBean.search()へ接続）
   - 「全書籍を表示」リンクの追加
   - ナビゲーションメニューの追加（ログアウト、注文履歴）
-  - **想定時間**: 45分
 
 - [ ] [→] **タスク 6.2.5**: bookSelect.xhtmlの作成（検索結果ページ）
   - 書籍リストテーブルの作成 (h:dataTable)
@@ -436,7 +393,6 @@
   - CartBean.addBook()への接続
   - ナビゲーションメニューの追加
   - 在庫切れ書籍の「カートへ」ボタンを無効化
-  - **想定時間**: 75分
 
 - [ ] [→] **タスク 6.2.6**: cartView.xhtmlの作成（カートページ）
   - カートアイテムテーブルの作成
@@ -448,7 +404,6 @@
   - 「注文手続きへ」ボタンの追加
   - CartBeanメソッドへの接続
   - 空カートエラーハンドリングの追加
-  - **想定時間**: 75分
 
 - [ ] [→] **タスク 6.2.7**: bookOrder.xhtmlの作成（注文入力ページ）
   - カートサマリーの表示（読み取り専用）
@@ -460,20 +415,17 @@
   - 「注文確定」ボタンの追加
   - OrderBean.placeOrder()への接続
   - エラーメッセージ表示の追加（在庫不足、楽観的ロック）
-  - **想定時間**: 90分
 
 - [ ] [→] **タスク 6.2.8**: orderSuccess.xhtmlの作成（注文完了ページ）
   - 成功メッセージの表示
   - 注文IDの表示
   - 注文履歴へのリンク追加
   - 買い物を続けるリンク追加
-  - **想定時間**: 30分
 
 - [ ] [→] **タスク 6.2.9**: orderError.xhtmlの作成（注文エラーページ）
   - エラーメッセージの表示（OutOfStockException, OptimisticLockException）
   - カートへ戻るリンクの追加
   - 検索ページへのリンク追加
-  - **想定時間**: 30分
 
 - [ ] [→] **タスク 6.2.10**: orderHistory.xhtmlの作成（注文履歴ページ - バリエーション1）
   - 注文リストテーブルの作成 (h:dataTable)
@@ -481,17 +433,14 @@
   - 注文詳細ページへのリンク追加
   - OrderBean.loadOrderHistory()への接続
   - ナビゲーションメニューの追加
-  - **想定時間**: 60分
 
 - [ ] [P] **タスク 6.2.11**: orderHistory2.xhtmlの作成（注文履歴ページ - バリエーション2）
   - orderHistory.xhtmlと同じだがDTOプロジェクション使用
   - OrderBean.loadOrderHistory2()への接続
-  - **想定時間**: 45分
 
 - [ ] [P] **タスク 6.2.12**: orderHistory3.xhtmlの作成（注文履歴ページ - バリエーション3）
   - orderHistory.xhtmlと同じだがJOIN FETCH使用
   - OrderBean.loadOrderHistory3()への接続
-  - **想定時間**: 45分
 
 - [ ] [→] **タスク 6.2.13**: orderDetail.xhtmlの作成（注文詳細ページ）
   - 注文ヘッダーの表示（orderTranId, orderDate, deliveryAddress等）
@@ -500,12 +449,10 @@
   - 総合計の表示
   - OrderBean.getOrderDetail()への接続
   - 注文履歴へ戻るリンクの追加
-  - **想定時間**: 60分
 
 - [ ] [P] **タスク 6.2.14**: cartClear.xhtmlの作成（カートクリア確認）
   - カートクリアメッセージの表示
   - 検索ページへ戻るリンクの追加
-  - **想定時間**: 15分
 
 ### 6.3 JSF設定
 
@@ -513,7 +460,6 @@
   - ナビゲーションルールの設定（必要な場合）
   - マネージドBeanスキャンの設定
   - メッセージバンドルの設定
-  - **想定時間**: 20分
 
 - [ ] **タスク 6.3.2**: web.xmlの作成
   - Faces Servletの設定
@@ -521,12 +467,10 @@
   - JSFパラメータの設定 (PROJECT_STAGE, STATE_SAVING_METHOD)
   - セッションタイムアウトの設定（60分）
   - ウェルカムファイルの設定 (index.xhtml)
-  - **想定時間**: 30分
 
 - [ ] **タスク 6.3.3**: beans.xmlの作成
   - CDI Bean検出の有効化
   - bean-discovery-mode="all"の設定
-  - **想定時間**: 10分
 
 ---
 
@@ -539,7 +483,6 @@
   - getBooksAll()のテスト
   - searchBook()メソッドのテスト
   - DAOメソッド呼び出しの検証
-  - **想定時間**: 60分
 
 - [ ] [P] **タスク 7.1.2**: OrderServiceのテスト
   - OrderTranDao, OrderDetailDao, StockDao, BookDaoのモック
@@ -547,14 +490,12 @@
   - orderBooks()のテスト - OutOfStockException
   - orderBooks()のテスト - OptimisticLockException
   - getOrderHistory()メソッドのテスト
-  - **想定時間**: 120分
 
 - [ ] [P] **タスク 7.1.3**: DeliveryFeeServiceのテスト
   - calculateDeliveryFee()のテスト - 標準（800円）
   - calculateDeliveryFee()のテスト - 沖縄（1700円）
   - calculateDeliveryFee()のテスト - 送料無料（5000円以上）
   - エッジケースのテスト（4999円、5000円、5001円）
-  - **想定時間**: 45分
 
 - [ ] [P] **タスク 7.1.4**: CustomerServiceのテスト
   - CustomerDaoのモック
@@ -562,13 +503,11 @@
   - registerCustomer()のテスト - EmailAlreadyExistsException
   - authenticate()のテスト - 成功
   - authenticate()のテスト - 失敗
-  - **想定時間**: 60分
 
 - [ ] [P] **タスク 7.1.5**: SettlementType Enumのテスト
   - fromCode()メソッドのテスト
   - getDisplayNameByCode()メソッドのテスト
   - 無効コードのテスト
-  - **想定時間**: 30分
 
 ### 7.2 統合テスト（手動）
 
@@ -582,7 +521,6 @@
   - 注文確定
   - 注文完了の確認
   - 注文履歴の確認
-  - **想定時間**: 60分
 
 - [ ] **タスク 7.2.2**: 同時注文シナリオのテスト
   - 2つのブラウザセッションを開く
@@ -590,7 +528,6 @@
   - セッション1で注文確定（成功すべき）
   - セッション2で注文確定（OptimisticLockExceptionで失敗すべき）
   - セッション2でエラーメッセージを確認
-  - **想定時間**: 30分
 
 - [ ] **タスク 7.2.3**: 認証フローのテスト
   - ログイン成功のテスト
@@ -598,13 +535,11 @@
   - 保護ページへのアクセステスト（リダイレクトすべき）
   - ログアウトのテスト
   - セッションタイムアウトのテスト
-  - **想定時間**: 45分
 
 - [ ] **タスク 7.2.4**: 登録フローのテスト
   - 新規顧客登録（成功）
   - 重複メール登録の試行（失敗すべき）
   - 登録後のログイン確認
-  - **想定時間**: 30分
 
 ---
 
@@ -616,14 +551,12 @@
   - archiveFileNameの設定
   - webAppDirectoryの設定
   - WAR生成のテスト
-  - **想定時間**: 20分
 
 - [ ] **タスク 8.1.2**: デプロイスクリプトの作成
   - build.gradleにdeployタスクを作成
   - undeployタスクの作成
   - setupHsqldbタスクの作成
   - Payaraへのデプロイテスト
-  - **想定時間**: 45分
 
 ### 8.2 ドキュメント
 
@@ -633,19 +566,16 @@
   - Gradleコマンドの記述
   - アクセスURLの記述
   - ログイン認証情報の記述
-  - **想定時間**: 60分
 
 - [ ] [P] **タスク 8.2.2**: アーキテクチャのドキュメント化
   - アーキテクチャ図の作成
   - パッケージ構造の記述
   - 使用デザインパターンの記述
-  - **想定時間**: 45分
 
 - [ ] [P] **タスク 8.2.3**: APIドキュメントの作成
   - ServiceレイヤーのJavaDoc
   - DAOレイヤーのJavaDoc
   - ビジネスルールの記述
-  - **想定時間**: 60分
 
 ### 8.3 最終検証
 
@@ -654,21 +584,18 @@
   - ログカバレッジの確認
   - エラーハンドリングの検証
   - NULL安全性の確認
-  - **想定時間**: 90分
 
 - [ ] **タスク 8.3.2**: パフォーマンステスト
   - 50同時ユーザーでのテスト
   - レスポンスタイム3秒未満の確認
   - データベースコネクションプールの確認
   - メモリ使用量の監視
-  - **想定時間**: 60分
 
 - [ ] **タスク 8.3.3**: セキュリティ監査
   - 全ページでの認証確認
   - セッション管理の確認
   - 入力検証の確認
   - パスワード保存の確認（平文の制限を認識）
-  - **想定時間**: 45分
 
 ---
 

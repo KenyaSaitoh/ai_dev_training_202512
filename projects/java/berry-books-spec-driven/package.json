@@ -2,22 +2,7 @@
   "name": "berry-books-spec-driven",
   "version": "1.0.0",
   "description": "Jakarta EE 10とJSF (Jakarta Server Faces) 4.0を使用したオンライン書店「**berry-books**」のWebアプリケーションです。 書籍検索、ショッピングカート、注文処理などのEC機能を実装しています。",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "spec:check": "npx @letuscode/spec-kit check",
-    "spec:prompts": "npx @letuscode/spec-kit prompts",
-    "spec:constitution": "code .spec-kit/prompts/constitution.md",
-    "spec:specify": "code .spec-kit/prompts/specify.md",
-    "spec:plan": "code .spec-kit/prompts/plan.md",
-    "spec:tasks": "code .spec-kit/prompts/tasks.md",
-    "spec:implement": "code .spec-kit/prompts/implement.md"
-  },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "devDependencies": {
-    "@letuscode/spec-kit": "^0.1.3"
-  }
+  "license": "ISC"
 }
