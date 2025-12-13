@@ -26,7 +26,7 @@ npm run spec:constitution
 ```
 
 **何が起こるか:**
-- VS Codeで`.workflows/commands/constitution.md`が開きます
+- VS Codeで`.spec-kit/prompts/constitution.md`が開きます
 - そのファイルをCline AIに読み込ませて、憲章の作成/確認を依頼します
 - AIが`memory/constitution.md`を作成または更新します
 
@@ -34,7 +34,7 @@ npm run spec:constitution
 1. コマンド実行でプロンプトファイルを開く
 2. Cline AIを起動
 3. プロンプトファイルの内容を参考に、AIに指示を出す
-4. 例: 「@.workflows/commands/constitution.md このプロンプトに従って憲章を作成してください」
+4. 例: 「@.spec-kit/prompts/constitution.md このプロンプトに従って憲章を作成してください」
 
 #### 2. Specify（仕様化）- 機能仕様の作成
 
@@ -43,7 +43,7 @@ npm run spec:specify
 ```
 
 **何が起こるか:**
-- `.workflows/commands/specify.md`が開きます
+- `.spec-kit/prompts/specify.md`が開きます
 - AIに機能説明を渡すと、`specs/XXX-feature-name/spec.md`を生成します
 
 **使い方:**
@@ -113,7 +113,7 @@ npm run spec:specify
 
 # 2. Cline AIに以下のように指示
 ```
-「@.workflows/commands/specify.md
+「@.spec-kit/prompts/specify.md
 
 新機能：パスワードリセット機能
 - ユーザーはログイン画面から「パスワードを忘れた」をクリック
@@ -156,8 +156,8 @@ npm run spec:implement
 
 ```
 berry-books-spec-driven/
-├── .workflows/
-│   └── commands/          # Cline用のSpec Kitコマンド
+├── .spec-kit/
+│   └── prompts/           # Spec Kitプロンプトファイル（AIツール非依存）
 │       ├── constitution.md
 │       ├── specify.md
 │       ├── plan.md
@@ -255,7 +255,7 @@ npm run spec:check
 npm run spec:specify
 
 # 2. Clineチャットで指示
-「@.workflows/commands/specify.md このプロンプトに従って仕様を作成してください」
+「@.spec-kit/prompts/specify.md このプロンプトに従って仕様を作成してください」
 
 # 3. 生成された仕様書を確認・修正
 # 4. 次のフェーズへ進む

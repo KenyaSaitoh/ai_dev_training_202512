@@ -7,11 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "spec:check": "npx @letuscode/spec-kit check",
     "spec:prompts": "npx @letuscode/spec-kit prompts",
-    "spec:constitution": "code .workflows/commands/constitution.md",
-    "spec:specify": "code .workflows/commands/specify.md",
-    "spec:plan": "code .workflows/commands/plan.md",
-    "spec:tasks": "code .workflows/commands/tasks.md",
-    "spec:implement": "code .workflows/commands/implement.md"
+    "spec:constitution": "code .spec-kit/prompts/constitution.md",
+    "spec:specify": "code .spec-kit/prompts/specify.md",
+    "spec:plan": "code .spec-kit/prompts/plan.md",
+    "spec:tasks": "code .spec-kit/prompts/tasks.md",
+    "spec:implement": "code .spec-kit/prompts/implement.md"
   },
   "keywords": [],
   "author": "",

@@ -5,7 +5,7 @@ package-lock.json
 
 # Spec Kit
 /memory/*.backup
-/.workflows/*.backup
+/.spec-kit/*.backup
 
 # Build
 build/
