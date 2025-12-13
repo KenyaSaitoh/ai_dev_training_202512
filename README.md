@@ -104,20 +104,16 @@ chmod +x projects/python/accounting_glue/*.sh
 
 ```bash
 # プロジェクトのデータベーステーブルとデータを作成
-# 例：berry-books-1、berry-books-2、berry-books-rest共通
+# 例：berry-books-1、berry-books-rest共通
 ./gradlew :projects:java:berry-books-1:setupHsqldb
 
 # プロジェクトをビルド
 ./gradlew :projects:java:berry-books-1:war
 # または
-./gradlew :projects:java:berry-books-2:war
-# または
 ./gradlew :projects:java:berry-books-rest:war
 
 # プロジェクトをデプロイ
 ./gradlew :projects:java:berry-books-1:deploy
-# または
-./gradlew :projects:java:berry-books-2:deploy
 # または
 ./gradlew :projects:java:berry-books-rest:deploy
 ```
@@ -128,8 +124,6 @@ chmod +x projects/python/accounting_glue/*.sh
 # プロジェクトをアンデプロイ
 # 例：berry-books-1の場合
 ./gradlew :projects:java:berry-books-1:undeploy
-# 例：berry-books-2の場合
-./gradlew :projects:java:berry-books-2:undeploy
 # 例：berry-books-restの場合
 ./gradlew :projects:java:berry-books-rest:undeploy
 ```
@@ -141,9 +135,6 @@ chmod +x projects/python/accounting_glue/*.sh
 # 例：berry-books-1の場合
 ./gradlew :projects:java:berry-books-1:war
 ./gradlew :projects:java:berry-books-1:deploy
-# 例：berry-books-2の場合
-./gradlew :projects:java:berry-books-2:war
-./gradlew :projects:java:berry-books-2:deploy
 # 例：berry-books-restの場合
 ./gradlew :projects:java:berry-books-rest:war
 ./gradlew :projects:java:berry-books-rest:deploy
@@ -154,7 +145,6 @@ chmod +x projects/python/accounting_glue/*.sh
 プロジェクトごとのアクセスURL例：
 ```
 http://localhost:8080/berry-books-1
-http://localhost:8080/berry-books-2
 http://localhost:8080/berry-books-rest/customers/1
 ```
 
