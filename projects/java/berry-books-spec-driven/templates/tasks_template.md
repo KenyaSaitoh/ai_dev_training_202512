@@ -1,9 +1,9 @@
 # [PROJECT_NAME] - 実装タスク
 
-**Feature ID:** [FEATURE_ID]  
-**Version:** 1.0.0  
-**Last Updated:** [DATE]  
-**Status:** [STATUS]
+**プロジェクトID:** [PROJECT_ID]  
+**バージョン:** 1.0.0  
+**最終更新日:** [DATE]  
+**ステータス:** [STATUS]
 
 ---
 

@@ -1,9 +1,9 @@
-# berry-books - 振る舞い仕様（Acceptance Criteria）
+# berry-books - 振る舞い仕様書（Acceptance Criteria）
 
-**Feature ID:** 001-berry-books  
-**Version:** 1.1.0  
+**プロジェクトID:** berry-books  
+**バージョン:** 1.1.0  
 **Last Updated:** 2025-12-14  
-**Status:** Updated with detailed acceptance criteria
+**ステータス:** 受入基準詳細化
 
 ---
 
@@ -14,9 +14,9 @@
 
 **関連ドキュメント:**
 - [requirements.md](requirements.md) - ビジネス要件（What & Why）
-- [functional-design.md](functional-design.md) - 機能設計（Flows & UI）
-- [architecture.md](architecture.md) - アーキテクチャ設計
-- [data-model.md](data-model.md) - データモデル
+- [functional_design.md](functional_design.md) - 機能設計（Flows & UI）
+- [architecture_design.md](architecture_design.md) - アーキテクチャ設計
+- [data_model.md](data_model.md) - データモデル
 - [tasks.md](tasks.md) - 実装タスク
 
 ---
@@ -635,7 +635,7 @@ And 「書籍検索へ」リンクが表示される
 
 ---
 
-## エッジケース＆エラーシナリオ
+## 例外・エラーシナリオ
 
 ### 在庫管理
 
@@ -785,7 +785,7 @@ And 「書籍検索へ」リンクが表示される
 - [ ] **顧客管理・認証**: 全6シナリオ実行
 - [ ] **注文履歴参照**: 全3シナリオ実行
 
-### エッジケース＆エラーテスト
+### 例外・エラーテスト
 
 - [ ] **在庫管理**: 全6ケース実行
 - [ ] **認証・セッション**: 全7ケース実行

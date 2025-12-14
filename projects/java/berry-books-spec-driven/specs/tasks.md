@@ -1,9 +1,9 @@
 # berry-books - 実装タスク
 
-**Feature ID:** 001-berry-books  
-**Version:** 1.0.0  
-**Last Updated:** 2025-12-13  
-**Status:** タスク分解完了
+**プロジェクトID:** berry-books  
+**バージョン:** 1.0.0  
+**最終更新日:** 2025-12-13  
+**ステータス:** タスク分解完了
 
 ---
 
@@ -495,7 +495,7 @@
   - calculateDeliveryFee()のテスト - 標準（800円）
   - calculateDeliveryFee()のテスト - 沖縄（1700円）
   - calculateDeliveryFee()のテスト - 送料無料（5000円以上）
-  - エッジケースのテスト（4999円、5000円、5001円）
+  - 境界値テスト（4999円、5000円、5001円）
 
 - [ ] [P] **タスク 7.1.4**: CustomerServiceのテスト
   - CustomerDaoのモック

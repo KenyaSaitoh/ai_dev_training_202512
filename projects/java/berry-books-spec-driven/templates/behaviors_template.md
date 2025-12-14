@@ -1,9 +1,9 @@
-# [PROJECT_NAME] - 振る舞い仕様（Acceptance Criteria）
+# [PROJECT_NAME] - 振る舞い仕様書（Acceptance Criteria）
 
-**Feature ID:** [FEATURE_ID]  
-**Version:** 1.0.0  
-**Last Updated:** [DATE]  
-**Status:** [STATUS]
+**プロジェクトID:** [PROJECT_ID]  
+**バージョン:** 1.0.0  
+**最終更新日:** [DATE]  
+**ステータス:** [STATUS]
 
 ---
 
@@ -13,10 +13,12 @@
 各シナリオはGiven-When-Then形式で記述され、ブラックボックステストの基礎となる。
 
 **関連ドキュメント:**
-- [requirements.md](requirements.md) - ビジネス要件（What & Why）
-- [functional-design.md](functional-design.md) - 機能設計（Flows & UI）
-- [architecture.md](architecture.md) - アーキテクチャ設計
-- [data-model.md](data-model.md) - データモデル
+- [requirements.md](requirements.md) - 要件定義書（What & Why）
+- [functional_design.md](functional_design.md) - 機能設計書（Flows & UI）
+- [architecture_design.md](architecture_design.md) - アーキテクチャ設計書
+- [data_model.md](data_model.md) - データモデル仕様書
+- [screen_design.md](screen_design.md) - 画面仕様書
+- [external_interface.md](external_interface.md) - 外部インターフェース仕様書
 - [tasks.md](tasks.md) - 実装タスク
 
 ---
@@ -61,7 +63,7 @@ And [システムの状態は変更されない]
 
 ---
 
-## エッジケース＆エラーシナリオ
+## 例外・エラーシナリオ
 
 ### [カテゴリ名1]
 
@@ -115,7 +117,7 @@ And [システムの状態は変更されない]
 - [ ] **[機能名1]**: 全Xシナリオ実行
 - [ ] **[機能名2]**: 全Yシナリオ実行
 
-### エッジケース＆エラーテスト
+### 例外・エラーテスト
 
 - [ ] **[カテゴリ1]**: 全Xケース実行
 - [ ] **[カテゴリ2]**: 全Yケース実行

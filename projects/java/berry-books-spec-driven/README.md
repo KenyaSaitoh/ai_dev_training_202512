@@ -5,77 +5,98 @@
 Jakarta EE 10によるオンライン書店「**berry-books**」のWebアプリケーションです。
 書籍検索、ショッピングカート、注文処理などのEC機能を実装しています。
 
-このプロジェクトは**仕様駆動開発（SDD: Specification-Driven Development）** アプローチを採用し、仕様駆動開発を実践します。
+このプロジェクトは**仕様駆動開発（SDD: Specification-Driven Development）** アプローチを採用し、完成したSPECから生成AIによる実装を実践します。
 
 ---
 
-## 🎯 2つの開発シナリオ
+## 🎯 このプロジェクトの位置付け
 
-このプロジェクトでは、以下の2つの開発シナリオをサポートしています：
+### 完成したSPECが存在する
+**このプロジェクト（berry-books）は、完成したSPECが `specs/` に用意されています。**
 
-### シナリオ1: フルスクラッチ開発（新規プロジェクト）
-ゼロからアプリケーション全体を構築する場合。憲章作成から要件定義、設計、実装まで全フェーズを実行します。
+仕様駆動開発の実装フェーズに焦点を当てており、**生成AIにSPECを読ませて実装させる**ことを目的としています。
 
-**対象:**
-- 新規プロジェクトの立ち上げ
-- 既存システムの全面リプレイス
-- プロトタイプの開発
+### 2つの利用シナリオ
 
-**仕様書の配置:** `specs/` 直下に全ドキュメントを配置
-
-### シナリオ2: 既存プロジェクトへの機能追加
-既に稼働しているプロジェクトに新機能を追加する場合。既存のアーキテクチャを前提に、新機能の要件定義から実装まで実行します。
+#### シナリオ1: berry-booksの実装（完成したSPECから）
+完成したSPECを使って、生成AIにアプリケーション全体を実装させます。
 
 **対象:**
-- 新機能の追加（例: パスワードリセット機能）
+- 仕様駆動開発の実装フェーズの学習
+- 生成AIによるコード生成の実践
+- 完全なSPECからの実装体験
+
+**実装の開始方法:** 下記の「シナリオ1: 実装フェーズの実行」を参照
+
+#### シナリオ2: 既存プロジェクトへの機能追加
+既に稼働しているberry-booksに新機能を追加する場合。既存のアーキテクチャを前提に、新機能のSPECを作成し、実装します。
+
+**対象:**
+- 新機能の追加（例: 在庫アラート機能）
 - 既存機能の改善・拡張
 - 新しいユーザーストーリーの実装
 
-**仕様書の配置:** `specs/002-feature-name/` のような個別フォルダに配置
+**SPECの作成方法:** 下記の「シナリオ2: 機能追加の実行」を参照
+
+**SPECの配置:** `specs/002-feature-name/` のような個別フォルダに配置
 
 ---
 
-## 📦 シナリオ1: フルスクラッチ開発（新規プロジェクト）
+## 📦 シナリオ1: 実装フェーズの実行（完成したSPECから）
 
-**このプロジェクト（berry-books）は、シナリオ1のサンプルとして完成したSpec（仕様書）が `specs/` に用意されています。**
+**このプロジェクト（berry-books）は、完成したSPECが `specs/` に用意されています。**
 
-### 既存のSpecファイル
+### 既存のSPECファイル
 
 ```
 specs/
-├── requirements.md      # 要件定義書（What & Why）
-├── architecture.md      # アーキテクチャ設計書
-├── functional-design.md # 機能設計書（基本設計、クラス設計含む）
-├── behaviors.md         # 振る舞い仕様（Acceptance Criteria）
-├── data-model.md        # データモデル（ER図、テーブル定義）
-├── wireframes.md        # ワイヤーフレーム（PlantUML形式）
-└── tasks.md             # 実装タスク分解（100以上のタスク）
+├── requirements.md         # 要件定義書（What & Why）
+├── architecture_design.md  # アーキテクチャ設計書
+├── functional_design.md    # 機能設計書（基本設計、クラス設計含む）
+├── behaviors.md            # 振る舞い仕様書（Acceptance Criteria）
+├── data_model.md           # データモデル仕様書（ER図、テーブル定義）
+├── screen_design.md        # 画面設計書（PlantUML形式）
+├── external_interface.md   # 外部インターフェース仕様書
+└── tasks.md                # 実装タスク分解（100以上のタスク）
 ```
 
-### 実装を開始する手順
+### 実装の実行手順
 
-既存のSpecから実装を開始する場合は、**Implementフェーズから直接開始**できます。
+**ステップ1: タスク分解の実行（必要に応じて）**
 
-**注意:** tasks.mdの「フェーズ1: インフラストラクチャセットアップ」は、仕様駆動開発の対象外です。このフェーズは事前にセットアップ済みであることを前提としています。
+既に `tasks.md` が存在しますが、SPECを修正した場合や新規プロジェクトの場合は、タスク分解を実行します。
 
-**AIエージェントへの指示:**
+**生成AIへの指示:**
 ```
-/projects/java/berry-books-spec-driven/prompts/implement.md このプロンプトに従って、
-/projects/java/berry-books-spec-driven/specs/tasks.md のタスクリストに従って
-実装を進めてください。
+@prompts/tasks.md このプロンプトに従って、
+@specs/ のSPECからタスクリストを生成してください。
+
+生成したタスクリストは specs/tasks.md に保存してください。
+```
+
+**ステップ2: 実装の実行**
+
+タスクリストに従って、生成AIに実装を依頼します。
+
+**生成AIへの指示:**
+```
+@prompts/implement.md このプロンプトに従って、
+@specs/tasks.md のタスクリストに基づいて実装を進めてください。
 
 フェーズ2の永続化レイヤーから開始してください。
 （フェーズ1のインフラストラクチャセットアップは事前完了済み）
 ```
 
-**重要:** このプロジェクトは `projects/java/berry-books-spec-driven/` ディレクトリにあります。
-AIエージェントに指示を出す際は、リポジトリルートからの絶対パス（`/projects/java/berry-books-spec-driven/...`）を使用してください。
+**重要なポイント:**
+- 生成AIは `prompts/implement.md` を読み、そこに記載された指示に従います
+- `specs/` 配下の全てのSPECを参照しながら実装を進めます
+- `tasks.md` のタスクを上から順に実行し、完了したタスクにチェックマークを付けます
 
 **実装の進め方:**
 1. **フェーズ2（永続化レイヤー）から開始** - データベーススキーマとJPAエンティティの実装
-2. tasks.mdのタスクを上から順に実行
-3. [P]マークのタスクは並行実行可能
-4. 各タスク完了後、tasks.mdのチェックボックスを更新
+2. `tasks.md`のタスクを上から順に実行
+3. `[P]`マークのタスクは並行実行可能
+4. 各タスク完了後、`tasks.md`のチェックボックスを更新
 5. フェーズごとに動作確認を実施
 
 **実装フェーズの概要:**
@@ -84,195 +105,192 @@ AIエージェントに指示を出す際は、リポジトリルートからの
 - **フェーズ4**: ビジネスロジックレイヤー（サービス実装）
 - **フェーズ5**: プレゼンテーションレイヤー（Managed Bean実装）
 - **フェーズ6**: ビューレイヤー（XHTML、CSS実装）
-- **フェーズ7**: テスト（ユニットテスト、統合テスト）
+- **フェーズ7**: テスト（ユニットテスト、結合テスト）
 - **フェーズ8**: デプロイとドキュメント
 
-**参考資料:**
-- `/projects/java/berry-books-spec-driven/specs/requirements.md` - 要件定義（機能要件とビジネスルール）
-- `/projects/java/berry-books-spec-driven/specs/architecture.md` - アーキテクチャ設計（技術スタックとアーキテクチャ）
-- `/projects/java/berry-books-spec-driven/specs/functional-design.md` - 機能設計（クラス設計と詳細仕様）
-- `/projects/java/berry-books-spec-driven/specs/behaviors.md` - 振る舞い仕様（テスト仕様）
-- `/projects/java/berry-books-spec-driven/specs/data-model.md` - データベーススキーマ
-- `/projects/java/berry-books-spec-driven/specs/wireframes.md` - UI設計
+**生成AIが参照するSPEC:**
+- `specs/requirements.md` - 要件定義書
+- `specs/architecture_design.md` - アーキテクチャ設計書
+- `specs/functional_design.md` - 機能設計書
+- `specs/behaviors.md` - 振る舞い仕様書
+- `specs/data_model.md` - データモデル仕様書
+- `specs/screen_design.md` - 画面設計書
+- `specs/external_interface.md` - 外部インターフェース仕様書
+
+**注意:** `tasks.md`の「フェーズ1: インフラストラクチャセットアップ」は、仕様駆動開発の対象外です。このフェーズは事前にセットアップ済みであることを前提としています
 
 ---
 
-## 🚀 シナリオ2: 既存プロジェクトへの機能追加
+## 🚀 シナリオ2: 機能追加の実行（新規featureの追加）
 
 既存のberry-booksプロジェクトに新機能を追加する場合のワークフローです。
 
 ### ワークフロー
 
 ```
-/constitution → /requirements → /architecture → /design → /tasks → /implement
+SPEC作成（手動） → タスク分解（AI） → 実装（AI）
 ```
 
-このワークフローは、日本のウォーターフォール開発手法に沿っています：
-- **要件定義** → **アーキテクチャ設計** → **基本設計** → **実装**
+**重要:** SPECの作成は手動で行います。`templates/` フォルダのテンプレートか、既存の `specs/` のSPECを参考にしてください。
 
 ### 重要な違い
 
-| 項目 | フルスクラッチ | 機能追加 |
+| 項目 | ベースプロジェクト（001） | 機能追加（002以降） |
 |------|------------|---------|
-| 憲章 | 新規作成 | 既存を参照 |
+| 憲章 | 既に存在 | 既存を参照 |
 | アーキテクチャ | 全体設計 | 既存に準拠 |
-| 仕様書の配置 | `specs/` | `specs/002-feature-name/` |
+| SPECの配置 | `specs/` | `specs/002-feature-name/` |
 | 実装範囲 | 全レイヤー | 必要な部分のみ |
+| SPEC作成 | テンプレート参照 | テンプレート参照 |
 
-### 個別featureの仕様書配置
+### 個別featureのSPEC配置
 
 新機能ごとに専用のフォルダを作成します：
 
 ```
 specs/
-├── requirements.md           # 001: ベースプロジェクト（berry-books本体）
-├── architecture.md
-├── functional-design.md
-├── ...
-└── 002-inventory-alert/      # 002: 在庫管理機能の改善
+├── requirements.md              # 001: ベースプロジェクト（berry-books本体）
+├── architecture_design.md
+├── functional_design.md
+├── behaviors.md
+├── data_model.md
+├── screen_design.md
+├── external_interface.md
+├── tasks.md
+└── 002-inventory-alert/         # 002: 在庫アラート機能
+    ├── requirements.md          # 新機能の要件定義
+    ├── architecture_design.md   # アーキテクチャの差分
+    ├── functional_design.md     # 機能設計
+    ├── behaviors.md             # 受入基準
+    ├── data_model.md            # データモデル仕様書の差分（必要に応じて）
+    ├── screen_design.md         # 画面設計（必要に応じて）
+    └── tasks.md                 # 実装タスク
+└── 003-message-properties/     # 003: メッセージのプロパティ化
     ├── requirements.md
-    ├── architecture.md
-    ├── functional-design.md
-    ├── behaviors.md
-    ├── tasks.md
-    └── ...
-└── 003-message-properties/  # 003: メッセージのプロパティ対応
-    ├── requirements.md
-    └── ...
+    ├── functional_design.md
+    └── tasks.md
 ```
 
-### ワークフローの概要
+### SPECの作成方法
 
-このプロジェクトは**AIエージェントとの対話型ワークフロー**です。各フェーズで、AIエージェントに適切なプロンプトを読み込ませて指示を出します。
+**ステップ1: SPECを作成**
+
+`templates/` フォルダのテンプレートを使って、新機能のSPECを作成します。
+
+例えば、`specs/002-inventory-alert/` に以下のファイルを作成：
+- `requirements.md` - 要件定義書
+- `functional_design.md` - 機能設計書
+- `behaviors.md` - 振る舞い仕様書
+- その他、必要に応じて
+
+**ステップ2: テンプレートを参考に記述**
+
+`templates/` のテンプレートの構成を参考に、新機能の仕様を記述します。
+
+**参考資料:**
+- `templates/` - 各SPECのテンプレート（構成と記述例）
+- `specs/` - ベースプロジェクトの完成したSPEC（記述の参考）
+
+**ステップ3: 既存SPECとの整合性確認**
+
+新機能のSPECが既存のアーキテクチャと整合していることを確認します：
+- ベースプロジェクトの `specs/architecture_design.md` に準拠
+- 既存のクラスやテーブルとの連携を考慮
+- 命名規則やコーディング規約を踏襲
 
 ---
 
-## 📋 各フェーズの実行方法（両シナリオ共通）
+## 📋 生成AIへの指示方法
 
-### フェーズ 1: Constitution（憲章）- 開発原則の確認
+このプロジェクトでは、`prompts/` フォルダにある3つのプロンプトファイルを使用して、生成AIに指示を出します。
 
-**目的:** プロジェクトの開発原則と憲章を作成・確認します。
+### 利用可能なプロンプトファイル
 
-**AIエージェントへの指示例:**
 ```
-/projects/java/berry-books-spec-driven/prompts/constitution.md このプロンプトに従って、
-プロジェクトの憲章を /projects/java/berry-books-spec-driven/memory/constitution.md に作成してください。
+prompts/
+├── constitution.md  # プロジェクト憲章の作成・更新
+├── tasks.md         # SPECから実装タスクへの分解
+└── implement.md     # タスクリストに基づく実装
+```
+
+---
+
+### プロンプト1: Constitution（憲章の作成）
+
+**目的:** プロジェクトの開発原則と憲章を作成・更新します。
+
+**生成AIへの指示:**
+```
+@prompts/constitution.md このプロンプトに従って、
+プロジェクトの憲章を memory/constitution.md に作成してください。
 ```
 
 **生成されるファイル:**
 - `memory/constitution.md` - プロジェクトの開発原則と憲章
 
----
-
-### フェーズ 2: Requirements（要件定義）- 要件定義書の作成
-
-**目的:** 新機能の要件定義書を作成します。
-
-**AIエージェントへの指示例:**
-```
-/projects/java/berry-books-spec-driven/prompts/requirements.md このプロンプトに従って、
-以下の機能の要件定義を作成してください：
-
-【機能説明】
-新機能：ユーザープロフィール編集画面
-- ユーザーは自分のプロフィール情報を編集できる
-- 名前、メール、アバター画像を変更可能
-- 変更履歴を保存
-```
-
-**生成されるファイル:**
-- **フルスクラッチ**: `specs/requirements.md`
-- **機能追加**: `specs/002-inventory-alert/requirements.md`（例）
-
-**既存の要件定義例:**
-- `specs/requirements.md` - berry-books（001）の完全な要件定義
+**注意:** 既にベースプロジェクトの憲章が存在する場合は、このステップはスキップできます。
 
 ---
 
-### フェーズ 3: Architecture（アーキテクチャ設計）- 技術設計書の作成
+### プロンプト2: Tasks（タスク分解）
 
-**目的:** 要件定義から技術アーキテクチャを設計します。
+**目的:** 完成したSPECから具体的な実装タスクに分解します。
 
-**AIエージェントへの指示例:**
+**生成AIへの指示:**
 ```
-/projects/java/berry-books-spec-driven/prompts/architecture.md このプロンプトに従って、
-/projects/java/berry-books-spec-driven/specs/requirements.md の要件から
-アーキテクチャ設計書を作成してください。
+@prompts/tasks.md このプロンプトに従って、
+@specs/ のSPECから実装タスクリストを生成してください。
+
+生成したタスクリストは specs/tasks.md に保存してください。
 ```
 
-**生成されるファイル:**
-- **フルスクラッチ**: `specs/architecture.md`
-- **機能追加**: `specs/002-inventory-alert/architecture.md`（差分のみ、例）
+または、機能追加の場合：
 
-**既存のアーキテクチャ設計例:**
-- `specs/architecture.md` - berry-books（001）の完全なアーキテクチャ設計
-
----
-
-### フェーズ 4: Design（基本設計）- 機能設計書の作成
-
-**目的:** アーキテクチャに基づいて機能詳細とクラス設計を行います。
-
-**AIエージェントへの指示例:**
 ```
-/projects/java/berry-books-spec-driven/prompts/design.md このプロンプトに従って、
-/projects/java/berry-books-spec-driven/specs/requirements.md と
-/projects/java/berry-books-spec-driven/specs/architecture.md を参照して
-機能設計書を作成してください。
+@prompts/tasks.md このプロンプトに従って、
+@specs/002-inventory-alert/ のSPECから実装タスクリストを生成してください。
+
+生成したタスクリストは specs/002-inventory-alert/tasks.md に保存してください。
 ```
 
 **生成されるファイル:**
-- **フルスクラッチ**: 
-  - `specs/functional-design.md`
-  - `specs/data-model.md`
-  - `specs/wireframes.md`
-  - `specs/behaviors.md`
-- **機能追加**:
-  - `specs/002-inventory-alert/functional-design.md`（例）
-  - `specs/002-inventory-alert/data-model.md`（必要に応じて）
-  - `specs/002-inventory-alert/wireframes.md`（必要に応じて）
-  - `specs/002-inventory-alert/behaviors.md`
-
-**既存の機能設計例:**
-- `specs/functional-design.md` - berry-books（001）の完全な機能設計
-- `specs/data-model.md` - ER図、テーブル定義
-- `specs/wireframes.md` - UI設計（PlantUML形式）
-- `specs/behaviors.md` - 振る舞い仕様（Acceptance Criteria）
-
----
-
-### フェーズ 5: Tasks（タスク化）- 実装タスクの分解
-
-**目的:** 設計ドキュメントから具体的な実装タスクに分解します。
-
-**AIエージェントへの指示例:**
-```
-/projects/java/berry-books-spec-driven/prompts/tasks.md このプロンプトに従って、
-/projects/java/berry-books-spec-driven/specs/ の設計ドキュメントから
-タスクリストを作成してください。
-```
-
-**生成されるファイル:**
-- **フルスクラッチ**: `specs/tasks.md`
+- **ベースプロジェクト**: `specs/tasks.md`
 - **機能追加**: `specs/002-inventory-alert/tasks.md`（例）
+
+**プロンプトが参照するSPEC:**
+- `requirements.md` - 要件定義書
+- `architecture_design.md` - アーキテクチャ設計書
+- `functional_design.md` - 機能設計書
+- `data_model.md` - データモデル仕様書
+- `screen_design.md` - 画面設計書
+- `behaviors.md` - 振る舞い仕様書
+- `external_interface.md` - 外部インターフェース仕様書
 
 **既存のタスク例:**
 - `specs/tasks.md` - berry-books（001）の100以上の実装タスク、依存関係付き
 
 ---
 
-### フェーズ 6: Implement（実装）- コード実装
+### プロンプト3: Implement（実装）
 
 **目的:** タスクリストに従って実装を進めます。
 
-**AIエージェントへの指示例:**
+**生成AIへの指示:**
 ```
-/projects/java/berry-books-spec-driven/prompts/implement.md このプロンプトに従って、
-/projects/java/berry-books-spec-driven/specs/tasks.md のタスクリストに従って
-実装を進めてください。
+@prompts/implement.md このプロンプトに従って、
+@specs/tasks.md のタスクリストに基づいて実装を進めてください。
 
 フェーズ2の永続化レイヤーから開始してください。
 （フェーズ1のインフラストラクチャセットアップは事前完了済み）
+```
+
+または、機能追加の場合：
+
+```
+@prompts/implement.md このプロンプトに従って、
+@specs/002-inventory-alert/tasks.md のタスクリストに基づいて実装を進めてください。
+
+注意: 既存コードの修正は慎重に行い、既存機能に影響を与えないようにしてください。
 ```
 
 **実装対象:**
@@ -280,150 +298,122 @@ specs/
 - テストコード
 - 設定ファイル
 
+**プロンプトが参照するSPEC:**
+- `tasks.md` - 実装タスク分解
+- `requirements.md` - 要件定義書
+- `architecture_design.md` - アーキテクチャ設計書
+- `functional_design.md` - 機能設計書
+- `data_model.md` - データモデル仕様書
+- `screen_design.md` - 画面設計書
+- `behaviors.md` - 振る舞い仕様書
+- `external_interface.md` - 外部インターフェース仕様書
+
+**実装の進め方:**
+1. タスクリストを上から順に実行
+2. `[P]`マークのタスクは並行実行可能
+3. 各タスク完了後、`tasks.md`のチェックボックスを更新
+4. フェーズごとに動作確認を実施
+
 ---
 
 ## 💡 重要なポイント
 
-### ワークフローの特徴
+### 仕様駆動開発の実装フェーズに特化
 
-1. **AI対話型ワークフロー**: AIエージェント（Cline、Cursor、Windsurf等）と対話しながら手動で進める
-2. **プロンプトベース**: 各フェーズに対応するプロンプトファイルを使用
-3. **段階的実行**: 各フェーズを完了してから次に進む
+このプロジェクトは、**完成したSPECを使って生成AIに実装させる**ことに焦点を当てています。
 
-### AIエージェントへの指示の基本パターン
+**重要な前提:**
+1. **SPECは既に完成している** - `specs/` フォルダに全てのSPECが存在
+2. **実装だけを生成AIに依頼** - タスク分解と実装のみを生成AIが担当
+3. **SPECの作成は手動** - 新規featureの場合、テンプレートを使って人間が作成
+
+### プロンプトファイルの使い方
+
+**3つのプロンプトファイル:**
+- `prompts/constitution.md` - プロジェクト憲章の作成（初回のみ）
+- `prompts/tasks.md` - SPECから実装タスクへの分解
+- `prompts/implement.md` - タスクリストに基づく実装
+
+**基本的な実行フロー:**
+```
+SPEC作成（手動） → タスク分解（AI） → 実装（AI）
+```
+
+### 生成AIへの指示の基本パターン
+
+Cursor等の生成AIツールで、`@` 記法を使ってファイルを参照します：
 
 ```
-/projects/java/berry-books-spec-driven/prompts/<フェーズ名>.md このプロンプトに従って、
-<具体的な指示内容>
+@prompts/<プロンプト名>.md このプロンプトに従って、
+@specs/ のSPECから<具体的な指示内容>
 ```
 
-**パス指定のルール:**
-- リポジトリルートからの絶対パスを使用（`/projects/java/berry-books-spec-driven/...`）
-- プロジェクト内の相対パスは避ける（AIエージェントが混乱する可能性があるため）
+**例:**
+```
+@prompts/tasks.md このプロンプトに従って、
+@specs/ のSPECから実装タスクリストを生成してください。
+```
+
+### 新規featureのSPEC作成
+
+新規featureを追加する場合、SPECは手動で作成します：
+
+1. **テンプレートを参考に作成**: `templates/` フォルダのテンプレートを参考に、新機能のSPECを作成
+2. **既存SPECを参考**: `specs/` の既存SPECを参考に記述スタイルを合わせる
+3. **整合性を確認**: 既存のアーキテクチャと整合していることを確認
 
 ---
 
 ## 🎯 実際の開発例（シナリオ2: 機能追加）
 
-### 例1: 在庫管理機能の改善
+### 例1: 在庫アラート機能の追加
 
 **前提条件:**
 - berry-booksプロジェクトが既に稼働している
 - 既存の在庫管理機能（Stock エンティティ、楽観的ロック）がある
 - 新機能は `specs/002-inventory-alert/` に配置
 
-#### ステップ 0: ディレクトリ作成
+#### ステップ1: SPECの作成（手動）
 
-```bash
-mkdir -p specs/002-inventory-alert
-```
+`templates/` フォルダのテンプレートを使って、`specs/002-inventory-alert/` に新機能のSPECを作成します：
 
-#### ステップ 1: 要件定義
-
-**AIエージェントへの指示:**
-```
-/projects/java/berry-books-spec-driven/prompts/requirements.md このプロンプトに従って、
-以下の機能の要件定義を作成してください：
-
-新機能：在庫アラート機能
+**`specs/002-inventory-alert/requirements.md`:**
 - 在庫数が閾値（例：5冊）を下回ったら管理者に通知
 - 管理者画面で在庫アラート一覧を表示
 - 書籍ごとに閾値を設定可能
 - 在庫補充後、アラートを解除
 
-要件定義書は /projects/java/berry-books-spec-driven/specs/002-inventory-alert/requirements.md に作成してください。
-```
-
-#### ステップ 2: アーキテクチャ設計
-
-**AIエージェントへの指示:**
-```
-/projects/java/berry-books-spec-driven/prompts/architecture.md このプロンプトに従って、
-/projects/java/berry-books-spec-driven/specs/002-inventory-alert/requirements.md の要件から
-アーキテクチャ設計書を作成してください。
-
-注意: 既存のberry-booksアーキテクチャ（/projects/java/berry-books-spec-driven/specs/architecture.md）
-に準拠し、追加・変更点のみを記述してください。
-既存のStock、StockDao、BookServiceとの連携を考慮してください。
-```
-
-#### ステップ 3: 機能設計
-
-**AIエージェントへの指示:**
-```
-/projects/java/berry-books-spec-driven/prompts/design.md このプロンプトに従って、
-/projects/java/berry-books-spec-driven/specs/002-inventory-alert/requirements.md と
-/projects/java/berry-books-spec-driven/specs/002-inventory-alert/architecture.md を参照して
-機能設計書を作成してください。
-
-注意: 
+**`specs/002-inventory-alert/functional_design.md`:**
 - 既存のStockエンティティに閾値フィールドを追加
 - 新規InventoryAlertエンティティとInventoryAlertDaoを設計
 - 既存のOrderServiceでの在庫減少時にアラートチェックを追加
-```
 
-#### ステップ 4: タスク分解
+**`specs/002-inventory-alert/behaviors.md`:**
+- Given-When-Then形式で受入基準を記述
 
-**AIエージェントへの指示:**
+**参考:** `specs/` の既存SPECと `templates/` のテンプレートを参考に記述してください。
+
+#### ステップ2: タスク分解（生成AI）
+
+**生成AIへの指示:**
 ```
-/projects/java/berry-books-spec-driven/prompts/tasks.md このプロンプトに従って、
-/projects/java/berry-books-spec-driven/specs/002-inventory-alert/ の設計ドキュメントから
-タスクリストを作成してください。
+@prompts/tasks.md このプロンプトに従って、
+@specs/002-inventory-alert/ のSPECから実装タスクリストを生成してください。
+
+生成したタスクリストは specs/002-inventory-alert/tasks.md に保存してください。
 
 注意: 既存ファイルの修正タスクと新規ファイル作成タスクを明確に区別してください。
 ```
 
-#### ステップ 5: 実装
+#### ステップ3: 実装（生成AI）
 
-**AIエージェントへの指示:**
+**生成AIへの指示:**
 ```
-/projects/java/berry-books-spec-driven/prompts/implement.md このプロンプトに従って、
-/projects/java/berry-books-spec-driven/specs/002-inventory-alert/tasks.md のタスクリストに従って
-実装を進めてください。
+@prompts/implement.md このプロンプトに従って、
+@specs/002-inventory-alert/tasks.md のタスクリストに基づいて実装を進めてください。
 
 注意: 既存コードの修正は慎重に行い、既存機能に影響を与えないようにしてください。
 ```
-
----
-
-### 例2: メッセージのプロパティ対応
-
-**前提条件:**
-- berry-booksプロジェクトが既に稼働している
-- 現在はJavaコード内にハードコードされたエラーメッセージがある
-- 新機能は `specs/003-message-properties/` に配置
-
-#### ステップ 0: ディレクトリ作成
-
-```bash
-mkdir -p specs/003-message-properties
-```
-
-#### ステップ 1: 要件定義
-
-**AIエージェントへの指示:**
-```
-/projects/java/berry-books-spec-driven/prompts/requirements.md このプロンプトに従って、
-以下の機能の要件定義を作成してください：
-
-新機能：メッセージのプロパティ化
-- Javaコード内のハードコードされたメッセージを messages.properties に外部化
-- エラーメッセージ、警告メッセージ、情報メッセージを対象
-- MessageUtilクラスを使用したメッセージの取得
-- 既存のコードを修正してプロパティファイルからメッセージを取得するように変更
-- メッセージIDの命名規則を定義（例: error.validation.required）
-
-要件定義書は /projects/java/berry-books-spec-driven/specs/003-message-properties/requirements.md に作成してください。
-```
-
-#### ステップ 2以降
-
-同様のワークフローで、アーキテクチャ設計、機能設計、タスク分解、実装を進めます。
-
-**注意点:**
-- 既存のmessages.propertiesファイルがある場合は、それを拡張する
-- MessageUtilクラスが既に存在する場合は、その使い方に従う
-- 全てのハードコードメッセージを洗い出し、段階的に外部化する
 
 ---
 
@@ -431,27 +421,33 @@ mkdir -p specs/003-message-properties
 
 ```
 berry-books-spec-driven/
-├── prompts/               # 仕様作成プロンプトファイル
-│   ├── constitution.md   # 憲章作成プロンプト
-│   ├── requirements.md   # 要件定義プロンプト
-│   ├── architecture.md   # アーキテクチャ設計プロンプト
-│   ├── design.md         # 機能設計プロンプト
-│   ├── tasks.md          # タスク化プロンプト
-│   └── implement.md      # 実装プロンプト
-├── memory/               # プロジェクトの記憶
-│   └── constitution.md   # 開発憲章
-├── specs/                # 生成された仕様書
-│   ├── requirements.md      # 001: ベースプロジェクト要件定義書
-│   ├── architecture.md      # 001: アーキテクチャ設計書
-│   ├── functional-design.md # 001: 機能設計書
-│   ├── behaviors.md         # 001: 振る舞い仕様
-│   ├── data-model.md        # 001: データモデル
-│   ├── wireframes.md        # 001: ワイヤーフレーム
-│   ├── tasks.md             # 001: 実装タスク分解
-│   └── 002-inventory-alert/ # 002: 個別機能（例: 在庫アラート機能）
+├── prompts/                  # 生成AI用プロンプトファイル
+│   ├── constitution.md       # 憲章作成プロンプト
+│   ├── tasks.md              # タスク分解プロンプト
+│   └── implement.md          # 実装プロンプト
+├── templates/                # SPECテンプレート
+│   ├── requirements_template.md
+│   ├── architecture_design_template.md
+│   ├── functional_design_template.md
+│   ├── behaviors_template.md
+│   ├── data_model_template.md
+│   ├── screen_design_template.md
+│   ├── external_interface_template.md
+│   └── tasks_template.md
+├── memory/                   # プロジェクトの記憶
+│   └── constitution.md       # 開発憲章
+├── specs/                    # 完成したSPEC（ベースプロジェクト）
+│   ├── requirements.md       # 001: 要件定義書
+│   ├── architecture_design.md  # 001: アーキテクチャ設計書
+│   ├── functional_design.md  # 001: 機能設計書
+│   ├── behaviors.md          # 001: 振る舞い仕様書
+│   ├── data_model.md         # 001: データモデル仕様書
+│   ├── screen_design.md      # 001: 画面設計書
+│   ├── external_interface.md # 001: 外部インターフェース仕様書
+│   ├── tasks.md              # 001: 実装タスク分解
+│   └── 002-inventory-alert/  # 002: 個別機能（例: 在庫アラート機能）
 │       ├── requirements.md
-│       ├── architecture.md
-│       ├── functional-design.md
+│       ├── functional_design.md
 │       ├── behaviors.md
 │       └── tasks.md
 ├── src/
@@ -464,6 +460,15 @@ berry-books-spec-driven/
 │   └── hsqldb/
 └── README.md
 ```
+
+**主要フォルダの説明:**
+
+- **`prompts/`**: 生成AIに指示を出すためのプロンプトファイル（3つ）
+- **`templates/`**: 新規featureのSPECを作成する際のテンプレート
+- **`memory/`**: プロジェクトの憲章（開発原則）
+- **`specs/`**: 完成したSPEC（ベースプロジェクト + 個別feature）
+- **`src/`**: 実装コード（生成AIが生成）
+- **`sql/`**: SQL（生成AIが生成）
 
 ---
 
@@ -497,20 +502,40 @@ berry-books-spec-driven/
 ### Constitution（開発憲章）
 - [Constitution（開発憲章）](memory/constitution.md) - プロジェクト全体の開発原則
 
-### Specifications（仕様書）
+### Specifications（SPEC）
 
 **Feature 001: berry-books（ベースプロジェクト）**
 - [requirements.md](specs/requirements.md) - 要件定義書
-- [architecture.md](specs/architecture.md) - アーキテクチャ設計書
-- [functional-design.md](specs/functional-design.md) - 機能設計書（基本設計）
-- [behaviors.md](specs/behaviors.md) - 振る舞い仕様（Acceptance Criteria）
-- [data-model.md](specs/data-model.md) - データモデル
-- [wireframes.md](specs/wireframes.md) - ワイヤーフレーム
+- [architecture_design.md](specs/architecture_design.md) - アーキテクチャ設計書
+- [functional_design.md](specs/functional_design.md) - 機能設計書（基本設計）
+- [behaviors.md](specs/behaviors.md) - 振る舞い仕様書（Acceptance Criteria）
+- [data_model.md](specs/data_model.md) - データモデル仕様書
+- [screen_design.md](specs/screen_design.md) - 画面設計書
+- [external_interface.md](specs/external_interface.md) - 外部インターフェース仕様書
 - [tasks.md](specs/tasks.md) - タスク分解
 
 **Feature 002以降: 個別機能追加**
 - 個別機能は `specs/002-feature-name/` のようなフォルダで管理
 - 例: `specs/002-inventory-alert/`（在庫アラート）, `specs/003-message-properties/`（メッセージ外部化）など
+
+### Templates（テンプレート）
+
+新規featureのSPECを作成する際のテンプレート：
+- [requirements_template.md](templates/requirements_template.md) - 要件定義書テンプレート
+- [architecture_design_template.md](templates/architecture_design_template.md) - アーキテクチャ設計書テンプレート
+- [functional_design_template.md](templates/functional_design_template.md) - 機能設計書テンプレート
+- [behaviors_template.md](templates/behaviors_template.md) - 振る舞い仕様書テンプレート
+- [data_model_template.md](templates/data_model_template.md) - データモデル仕様書テンプレート
+- [screen_design_template.md](templates/screen_design_template.md) - 画面設計書テンプレート
+- [external_interface_template.md](templates/external_interface_template.md) - 外部インターフェース仕様書テンプレート
+- [tasks_template.md](templates/tasks_template.md) - タスク分解テンプレート
+
+### Prompts（プロンプト）
+
+生成AIに指示を出すためのプロンプトファイル：
+- [constitution.md](prompts/constitution.md) - プロジェクト憲章作成プロンプト
+- [tasks.md](prompts/tasks.md) - タスク分解プロンプト
+- [implement.md](prompts/implement.md) - 実装プロンプト
 
 ---
 
@@ -518,47 +543,58 @@ berry-books-spec-driven/
 
 ### 基本的な流れ
 
-**シナリオ1: フルスクラッチ開発**
-1. **Constitution**: プロジェクトの開発原則を確立
-2. **Requirements**: 要件定義書を作成（What & Why）
-3. **Architecture**: アーキテクチャ設計を作成（技術スタック、全体設計）
-4. **Design**: 機能設計書を作成（基本設計、クラス設計）
-5. **Tasks**: 実装タスクに分解
-6. **Implement**: タスクに従って実装（全レイヤー）
-
-**シナリオ2: 機能追加**
-1. **Constitution**: 既存の憲章を参照（新規作成不要）
-2. **Requirements**: 新機能の要件定義書を作成（`specs/002-inventory-alert/` など）
-3. **Architecture**: 既存アーキテクチャに準拠し、差分のみ記述
-4. **Design**: 新機能の機能設計書を作成（既存クラスの拡張含む）
-5. **Tasks**: 実装タスクに分解（既存ファイル修正/新規作成を区別）
-6. **Implement**: タスクに従って実装（必要な部分のみ）
-
-このワークフローは、日本のウォーターフォール開発手法に沿っています。
-
-### AIエージェントとの対話方法
-
-各フェーズで、以下のパターンでAIエージェントに指示を出します：
+**シナリオ1: ベースプロジェクトの実装（完成したSPECから）**
 
 ```
-/projects/java/berry-books-spec-driven/prompts/<フェーズ名>.md このプロンプトに従って、
-<具体的な指示内容>
+SPEC（既存） → タスク分解（AI） → 実装（AI）
+```
+
+1. **SPECの確認**: `specs/` フォルダの完成したSPECを確認
+2. **Tasks（AI）**: `@prompts/tasks.md` を使って実装タスクに分解
+3. **Implement（AI）**: `@prompts/implement.md` を使ってタスクに従って実装
+
+**シナリオ2: 機能追加（新規featureの追加）**
+
+```
+SPEC作成（手動） → タスク分解（AI） → 実装（AI）
+```
+
+1. **SPECの作成（手動）**: `templates/` のテンプレートを参考に新機能のSPECを作成
+2. **整合性確認**: 既存のSPECとの整合性を確認
+3. **Tasks（AI）**: `@prompts/tasks.md` を使って実装タスクに分解
+4. **Implement（AI）**: `@prompts/implement.md` を使ってタスクに従って実装
+
+### 生成AIへの指示の基本パターン
+
+Cursor等の生成AIツールで、`@` 記法を使ってファイルを参照します：
+
+**タスク分解:**
+```
+@prompts/tasks.md このプロンプトに従って、
+@specs/ のSPECから実装タスクリストを生成してください。
+```
+
+**実装:**
+```
+@prompts/implement.md このプロンプトに従って、
+@specs/tasks.md のタスクリストに基づいて実装を進めてください。
 ```
 
 ### リバースエンジニアリング完了
 
-本プロジェクトの仕様書は、berry-books-fnプロジェクトの既存実装からリバースエンジニアリングで作成されました。
+本プロジェクトのSPECは、berry-books-fnプロジェクトの既存実装からリバースエンジニアリングで作成されました。
 
-**生成された仕様書:**
-- ✅ requirements.md - 要件定義（ビジネス要件、機能要件、日本語）
-- ✅ architecture.md - アーキテクチャ設計（技術スタック、アーキテクチャパターン、Mermaid図使用、日本語）
-- ✅ functional-design.md - 機能設計（クラス設計、ユーザーフロー、日本語）
-- ✅ behaviors.md - 振る舞い仕様（Acceptance Criteria、Gherkin形式、日本語）
-- ✅ data-model.md - データモデル（ER図、日本語）
-- ✅ wireframes.md - UI設計（PlantUML形式、draw.io互換、日本語）
-- ✅ tasks.md - 実装タスク分解（100以上のタスク、日本語）
+**完成したSPEC:**
+- ✅ requirements.md - 要件定義書（ビジネス要件、機能要件）
+- ✅ architecture_design.md - アーキテクチャ設計書（技術スタック、アーキテクチャパターン、Mermaid図）
+- ✅ functional_design.md - 機能設計書（クラス設計、ユーザーフロー）
+- ✅ behaviors.md - 振る舞い仕様書（Acceptance Criteria、Gherkin形式）
+- ✅ data_model.md - データモデル仕様書（ER図、テーブル定義）
+- ✅ screen_design.md - 画面設計書（PlantUML形式、draw.io互換）
+- ✅ external_interface.md - 外部インターフェース仕様書（テンプレート）
+- ✅ tasks.md - 実装タスク分解（100以上のタスク、依存関係付き）
 
-これらの仕様書を元に、AIエージェントが同じアプリケーションを完全に再実装できます。
+これらのSPECと生成AIプロンプトを使って、生成AIが同じアプリケーションを完全に再実装できます。
 
 ---
 

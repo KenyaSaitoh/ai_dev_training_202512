@@ -2,18 +2,19 @@
 
 1. 利用可能な設計ドキュメントをロードして分析してください：
    - **必須**: requirements.md で機能概要と成功基準を確認
-   - **必須**: architecture.md で技術スタック、アーキテクチャ、ライブラリを確認
-   - **必須**: functional-design.md でクラス設計と機能フローを確認
-   - **存在する場合**: data-model.md でエンティティとデータベーススキーマを確認
-   - **存在する場合**: wireframes.md でUI画面とレイアウトを確認
-   - **存在する場合**: behaviors.md で受入基準（Given-When-Then）を確認
+   - **必須**: architecture_design.md で技術スタック、アーキテクチャ、ライブラリを確認
+   - **必須**: functional_design.md でクラス設計と機能フローを確認
+   - **存在する場合**: data_model.md（データモデル仕様書）でエンティティとデータベーススキーマを確認
+   - **存在する場合**: screen_design.md（画面仕様書）でUI画面とレイアウトを確認
+   - **存在する場合**: behaviors.md（振る舞い仕様書）で受入基準（Given-When-Then）を確認
+   - **存在する場合**: external_interface.md（外部インターフェース仕様書）で外部連携を確認
    - **存在する場合**: contracts/ でAPIエンドポイントを確認
    - **存在する場合**: research.md で技術的決定を確認
    - **存在する場合**: quickstart.md でテストシナリオを確認
 
    注意: 全てのプロジェクトに全てのドキュメントがあるわけではありません。例えば：
-   - CLIツールにはwireframes.mdやcontracts/がないかもしれません
-   - シンプルなライブラリにはdata-model.mdが不要かもしれません
+   - CLIツールにはscreen_design.mdやcontracts/がないかもしれません
+   - シンプルなライブラリにはdata_model.mdが不要かもしれません
    - 利用可能なものに基づいてタスクを生成します
 
 2. テンプレートに従ってタスクを生成してください：
