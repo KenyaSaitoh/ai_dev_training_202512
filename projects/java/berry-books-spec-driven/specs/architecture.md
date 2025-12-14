@@ -351,7 +351,7 @@ stateDiagram-v2
 
 ---
 
-## 8. エラーハンドリング戦略
+## 8. エラーハンドリング方針
 
 ### 8.1 例外階層
 
@@ -408,7 +408,7 @@ flowchart TD
 
 ---
 
-## 9. セキュリティアーキテクチャ
+## 9. セキュリティ
 
 ### 9.1 認証フロー
 
@@ -654,7 +654,7 @@ graph TD
 - エラーシナリオのテスト
 - Mockitoを使用してDAOをモック
 
-**統合テスト:**
+**結合テスト:**
 - 主要な業務フローのEnd-to-Endテスト
 - 楽観的ロックの動作確認
 - トランザクション境界の確認
@@ -770,21 +770,4 @@ gitGraph
 - [Jakarta EE Design Patterns](https://www.oracle.com/java/technologies/design-patterns.html)
 - [Optimistic Locking in JPA](https://thorben-janssen.com/optimistic-locking-in-jpa-hibernate/)
 - [CDI Scopes Best Practices](https://jakarta.ee/specifications/cdi/4.0/jakarta-cdi-spec-4.0.html)
-
----
-
-## 19. 改訂履歴
-
-| バージョン | 日付 | 作成者 | 変更内容 |
-|-----------|------|--------|---------|
-| 1.0.0 | 2025-12-14 | System | アーキテクチャ設計書を新規作成（plan.mdから再編成） |
-| 1.1.0 | 2025-12-14 | System | クラス設計の詳細をfunctional-design.mdに移動（パッケージ構造の方針のみ残す） |
-| 1.1.1 | 2025-12-14 | System | ドキュメント説明を更新（アーキテクチャ設計書としての位置づけ明確化） |
-| 1.2.0 | 2025-12-14 | System | ファイル名変更と用語統一（technical-design.md → architecture.md、「技術設計/方式設計」→「アーキテクチャ設計」） |
-
----
-
-**ドキュメント終了**
-
-*このアーキテクチャ設計書は、システムの技術スタック、アーキテクチャパターン、技術方針を記述しています。要件の概要は requirements.md、機能の詳細設計とクラス設計は functional-design.md を参照してください。*
 

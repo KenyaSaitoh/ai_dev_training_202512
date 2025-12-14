@@ -58,18 +58,27 @@ classDiagram
 
 ## 3. テーブル定義
 
-### 3.1 [TABLE_NAME_1]
+### 3.1 [TABLE_NAME_1] ([テーブル名])
 
-**テーブル概要:**  
-[テーブルの目的と説明]
+**目的:** [テーブルの目的と説明]
 
-**物理テーブル名:** `[PHYSICAL_TABLE_NAME]`
+| カラム | 型 | 制約 | 説明 |
+|--------|------|-------------|-------------|
+| [COLUMN_NAME_1] | [TYPE] | PRIMARY KEY, IDENTITY | [説明]（自動採番） |
+| [COLUMN_NAME_2] | [TYPE] | NOT NULL | [説明] |
+| [COLUMN_NAME_3] | [TYPE] | NULL | [説明] |
 
-| カラム名 | 物理名 | 型 | NULL | デフォルト | 制約 | 説明 |
-|---------|-------|-----|------|-----------|------|------|
-| [論理名1] | [物理名1] | [TYPE] | [YES/NO] | [DEFAULT] | PK | [説明] |
-| [論理名2] | [物理名2] | [TYPE] | [YES/NO] | [DEFAULT] | FK | [説明] |
-| [論理名3] | [物理名3] | [TYPE] | [YES/NO] | [DEFAULT] | - | [説明] |
+**外部キー:**
+- `[COLUMN_NAME]` → `[REF_TABLE]([REF_COLUMN])`
+
+**ビジネスルール:**
+- [ルール1]
+- [ルール2]
+
+**サンプルデータ:**
+```
+[サンプルデータの例]
+```
 
 **インデックス:**
 - PRIMARY KEY: `[COLUMN_NAME]`
@@ -138,40 +147,31 @@ classDiagram
 
 ---
 
-## 6. DDLスクリプト
+## 6. サンプルデータ（最小セット）
 
-### 6.1 テーブル作成
-
-```sql
-CREATE TABLE [TABLE_NAME] (
-    [column1] [TYPE] PRIMARY KEY,
-    [column2] [TYPE] NOT NULL,
-    [column3] [TYPE],
-    CONSTRAINT [FK_NAME] FOREIGN KEY ([column]) REFERENCES [REF_TABLE]([ref_column])
-);
-
-CREATE INDEX [INDEX_NAME] ON [TABLE_NAME]([column]);
-```
-
-### 6.2 初期データ
+### 6.1 マスタデータ ([TABLE_NAME_1])
 
 ```sql
-INSERT INTO [TABLE_NAME] ([column1], [column2], [column3]) VALUES
-    ([value1], [value2], [value3]),
-    ([value1], [value2], [value3]);
+INSERT INTO [TABLE_NAME_1] ([COLUMN1], [COLUMN2]) VALUES
+([VALUE1], '[VALUE2]'),
+([VALUE1], '[VALUE2]'),
+([VALUE1], '[VALUE2]');
 ```
 
----
+### 6.2 テストデータ (CUSTOMER例)
 
-## 7. 改訂履歴
+```sql
+INSERT INTO CUSTOMER (CUSTOMER_ID, CUSTOMER_NAME, EMAIL, PASSWORD, BIRTHDAY, ADDRESS) VALUES
+(1, 'Alice', 'alice@gmail.com', 'password', '1998-04-10', '東京都中央区1-1-1'),
+(2, 'Bob', 'bob@gmail.com', 'password', '1988-05-10', '東京都杉並区2-2-2');
+```
 
-| バージョン | 日付 | 作成者 | 変更内容 |
-|-----------|------|--------|---------|
-| 1.0.0 | [DATE] | [AUTHOR] | データモデルを新規作成 |
+### 6.3 テストデータ (BOOK例)
 
----
+```sql
+INSERT INTO BOOK (BOOK_ID, BOOK_NAME, AUTHOR, CATEGORY_ID, PUBLISHER_ID, PRICE) VALUES
+(1, 'Java SEディープダイブ', 'Michael Johnson', 1, 3, 3400),
+(9, 'SpringBoot in Cloud', 'Paul Martin', 2, 3, 3000);
+```
 
-**ドキュメント終了**
-
-*このデータモデル仕様は、データベース設計とエンティティ設計を記述しています。機能詳細は functional-design.md、アーキテクチャは architecture.md を参照してください。*
-
+**注記:** 詳細なサンプルデータは実際のDMLスクリプトを参照する。

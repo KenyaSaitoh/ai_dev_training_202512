@@ -146,12 +146,12 @@
 ```plantuml
 @startsalt
 {+
-  {/ <b>berry-books</b> | <&person> 山田太郎さん | <&account-logout> ログアウト | <&list> 注文履歴 }
+  {/ <b>berry-books</b> | <&person> Aliceさん | <&account-logout> ログアウト | <&list> 注文履歴 }
   ..
   {
     <b>書籍を検索</b>
     ==
-    カテゴリ | { ^選択してください^ | Java | SpringBoot | SQL | ... }
+    カテゴリ | { ^選択してください^ | Java | Jakarta EE | SQL | ... }
     .
     キーワード | "                              " [  検索  ]
     .
@@ -202,7 +202,7 @@ ELSE
 ```plantuml
 @startsalt
 {+
-  {/ <b>berry-books</b> | <&person> 山田太郎さん | <&account-logout> ログアウト | <&list> 注文履歴 | <&magnifying-glass> 検索に戻る }
+  {/ <b>berry-books</b> | <&person> Aliceさん | <&account-logout> ログアウト | <&list> 注文履歴 | <&magnifying-glass> 検索に戻る }
   ..
   {
     <b>検索結果 (50件)</b>
@@ -212,7 +212,7 @@ ELSE
       --
       . 001 | Java SEディープダイブ          | Michael Johnson | Java    | ネットワーク...  | 3,400円 | 10  | [1^] | [カートへ]
       . 002 | JVMとバイトコードの探求         | James Lopez     | Java    | デジタル...     | 4,200円 | 5   | [1^] | [カートへ]
-      . 003 | Spring Boot in Cloud         | Paul Martin     | Spring  | ネットワーク...  | 3,000円 | 0   | [-]  | {-在庫なし-}
+      . 003 | Javaアーキテクトのための設計原理 | David Jones     | Java    | クラウドキャ...  | 3,000円 | 1   | [1^] | [カートへ]
       . ... | ...                          | ...             | ...     | ...            | ...    | ... | ...  | ...
     }
     ==
@@ -256,7 +256,7 @@ ELSE
 ```plantuml
 @startsalt
 {+
-  {/ <b>berry-books</b> | <&person> 山田太郎さん | <&account-logout> ログアウト | <&magnifying-glass> 書籍検索 }
+  {/ <b>berry-books</b> | <&person> Aliceさん | <&account-logout> ログアウト | <&magnifying-glass> 書籍検索 }
   ..
   {
     <b>ショッピングカート</b>
@@ -264,17 +264,17 @@ ELSE
     {#
       . 削除 | 書籍名                    | 出版社              | 価格      | 数量 | 小計
       --
-      . [X]  | Java SEディープダイブ      | ネットワークノード... | 3,400円   | 2   | 6,800円
-      . [X]  | Spring Boot in Cloud     | ネットワークノード... | 3,000円   | 1   | 3,000円
-      . [ ]  | SQLの冒険～RDBの深層       | クラウドキャス...    | 3,600円   | 1   | 3,600円
+      . [X]  | Java SEディープダイブ      | ネットワークノード... | 3,400円   | 1   | 3,400円
+      . [X]  | SpringBoot in Cloud      | ネットワークノード... | 3,000円   | 1   | 3,000円
+      . [ ]  | SQLの冒険～RDBの深層       | コードブレイク...    | 2,200円   | 1   | 2,200円
     }
     ==
     [  選択した書籍を削除  ]  [  カートをクリア  ]
     ..
     {
-      . | 商品合計 | <b>13,400円</b>
+      . | 商品合計 | <b>8,600円</b>
       . | 配送料   | 計算中...
-      . | <b>合計</b> | <b>13,400円</b>
+      . | <b>合計</b> | <b>8,600円</b>
     }
     ==
     [  買い物を続ける  ]  [    注文手続きへ    ]
@@ -321,7 +321,7 @@ ELSE
 ```plantuml
 @startsalt
 {+
-  {/ <b>berry-books</b> | <&person> 山田太郎さん | <&account-logout> ログアウト }
+  {/ <b>berry-books</b> | <&person> Aliceさん | <&account-logout> ログアウト }
   ..
   {
     <b>注文内容確認</b>
@@ -330,9 +330,9 @@ ELSE
     {#
       . 書籍名                    | 単価      | 数量 | 小計
       --
-      . Java SEディープダイブ      | 3,400円   | 2   | 6,800円
-      . Spring Boot in Cloud     | 3,000円   | 1   | 3,000円
-      . SQLの冒険～RDBの深層       | 3,600円   | 1   | 3,600円
+      . Java SEディープダイブ      | 3,400円   | 1   | 3,400円
+      . SpringBoot in Cloud      | 3,000円   | 1   | 3,000円
+      . SQLの冒険～RDBの深層       | 2,200円   | 1   | 2,200円
     }
     ..
     <b>▼ 配送先情報</b>
@@ -346,9 +346,9 @@ ELSE
     ..
     <b>▼ 料金</b>
     {
-      . | 商品合計   | 13,400円
-      . | 配送料     | <b>800円</b>
-      . | <b>総合計</b> | <b>14,200円</b>
+      . | 商品合計   | 8,600円
+      . | 配送料     | <b>500円</b>
+      . | <b>総合計</b> | <b>9,100円</b>
     }
     ==
     [  カートに戻る  ]  [    注文を確定する    ]
@@ -401,7 +401,7 @@ ELSE
 ```plantuml
 @startsalt
 {+
-  {/ <b>berry-books</b> | <&person> 山田太郎さん | <&account-logout> ログアウト }
+  {/ <b>berry-books</b> | <&person> Aliceさん | <&account-logout> ログアウト }
   ..
   {
     .
@@ -412,7 +412,7 @@ ELSE
     {
       注文番号: <b>#1001</b>
       注文日時: 2025-12-13 14:30:25
-      総合計:   <b>14,200円</b>
+      総合計:   <b>6,100円</b>
     }
     .
     配送先住所に商品をお届けします。
@@ -446,7 +446,7 @@ ELSE
 ```plantuml
 @startsalt
 {+
-  {/ <b>berry-books</b> | <&person> 山田太郎さん | <&account-logout> ログアウト | <&magnifying-glass> 書籍検索 }
+  {/ <b>berry-books</b> | <&person> Aliceさん | <&account-logout> ログアウト | <&magnifying-glass> 書籍検索 }
   ..
   {
     <b>注文履歴</b>
@@ -454,9 +454,10 @@ ELSE
     {#
       . 注文ID | 注文日      | 配送先           | 決済方法         | 合計金額   | 詳細
       --
-      . 1003  | 2025-12-13 | 東京都渋谷区...   | クレジットカード  | 14,200円  | [詳細]
-      . 1002  | 2025-12-10 | 東京都渋谷区...   | 銀行振り込み     | 5,400円   | [詳細]
-      . 1001  | 2025-12-05 | 沖縄県那覇市...   | 着払い          | 8,900円   | [詳細]
+      . 1004  | 2023-06-01 | 東京都中央区...   | 銀行振り込み     | 5,300円   | [詳細]
+      . 1003  | 2023-05-01 | 東京都中央区...   | 着払い          | 12,000円  | [詳細]
+      . 1002  | 2023-04-01 | 東京都中央区...   | クレジットカード  | 6,200円   | [詳細]
+      . 1001  | 2023-03-01 | 東京都中央区...   | 銀行振り込み     | 6,100円   | [詳細]
     }
     ==
     <&arrow-left> 書籍検索に戻る
@@ -495,16 +496,16 @@ ELSE
 ```plantuml
 @startsalt
 {+
-  {/ <b>berry-books</b> | <&person> 山田太郎さん | <&account-logout> ログアウト }
+  {/ <b>berry-books</b> | <&person> Aliceさん | <&account-logout> ログアウト }
   ..
   {
     <b>注文詳細 - 注文番号 #1001</b>
     ==
     <b>▼ 注文情報</b>
     {
-      注文日:     2025-12-05
-      配送先:     沖縄県那覇市おもろまち1-2-3
-      決済方法:   着払い
+      注文日:     2023-03-01
+      配送先:     東京都中央区1-1-1
+      決済方法:   銀行振り込み
     }
     ..
     <b>▼ 注文明細</b>
@@ -512,14 +513,14 @@ ELSE
       . 書籍名                    | 単価      | 数量 | 小計
       --
       . Java SEディープダイブ      | 3,400円   | 1   | 3,400円
-      . Spring Boot in Cloud     | 3,000円   | 2   | 6,000円
+      . SQLの冒険～RDBの深層       | 2,200円   | 1   | 2,200円
     }
     ..
     <b>▼ 料金</b>
     {
-      . | 商品合計   | 9,400円
-      . | 配送料     | 1,700円
-      . | <b>総合計</b> | <b>11,100円</b>
+      . | 商品合計   | 5,600円
+      . | 配送料     | 500円
+      . | <b>総合計</b> | <b>6,100円</b>
     }
     ==
     <&arrow-left> 注文履歴に戻る
@@ -542,7 +543,7 @@ ELSE
 ```plantuml
 @startsalt
 {+
-  {/ <b>berry-books</b> | <&person> 山田太郎さん | <&account-logout> ログアウト }
+  {/ <b>berry-books</b> | <&person> Aliceさん | <&account-logout> ログアウト }
   ..
   {
     .
@@ -651,17 +652,5 @@ ELSE
 @endsalt
 ```
 
-### draw.ioへのインポート手順
 
-1. draw.ioを開く
-2. **File** → **Import from** → **Text**
-3. **PlantUML**を選択
-4. 上記のPlantUMLコードを貼り付け
-5. **Insert**をクリック
-
----
-
-**Document End**
-
-*このワイヤーフレーム仕様は、PlantUML形式で記述されており、draw.ioにインポート可能です。AIが理解しやすく、実装時の参照として使用できます。*
 

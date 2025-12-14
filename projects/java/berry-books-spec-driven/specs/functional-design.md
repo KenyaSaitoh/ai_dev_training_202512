@@ -340,11 +340,11 @@ sequenceDiagram
     participant DAO as BookDao
     participant DB as データベース
     
-    User->>View: キーワード入力「Spring」
+    User->>View: キーワード入力「SpringBoot」
     View->>Bean: search() メソッド
     Bean->>Service: searchBook(keyword)
     Service->>DAO: findByKeyword(keyword)
-    DAO->>DB: SELECT * FROM BOOK<br/>WHERE BOOK_NAME LIKE '%Spring%'
+    DAO->>DB: SELECT * FROM BOOK<br/>WHERE BOOK_NAME LIKE '%SpringBoot%'
     DB-->>DAO: 結果セット
     DAO-->>Service: List<Book>
     Service-->>Bean: List<Book>
@@ -814,20 +814,3 @@ classDiagram
     CustomerBean --> CartSession: uses
     LoginBean --> CustomerBean: manages
 ```
-
----
-
-## 9. 改訂履歴
-
-| バージョン | 日付 | 作成者 | 変更内容 |
-|-----------|------|--------|---------|
-| 1.0.0 | 2025-12-14 | System | 機能設計書を新規作成（spec.mdから再編成） |
-| 1.1.0 | 2025-12-14 | System | クラス設計セクションを追加（technical-design.mdから移動） |
-| 1.1.1 | 2025-12-14 | System | ドキュメント説明を更新（基本設計書としての位置づけ明確化） |
-
----
-
-**ドキュメント終了**
-
-*この機能設計書（基本設計書）は、システムの各機能の詳細設計とクラス設計を記述しています。要件の概要は requirements.md、アーキテクチャ設計は architecture.md を参照してください。*
-

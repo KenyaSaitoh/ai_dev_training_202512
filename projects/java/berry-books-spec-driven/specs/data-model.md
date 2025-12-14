@@ -158,8 +158,6 @@ classDiagram
 1: デジタルフロンティア出版
 2: コードブレイクプレス
 3: ネットワークノード出版
-4: クラウドキャスティング社
-5: データドリフト社
 ```
 
 ---
@@ -182,12 +180,6 @@ classDiagram
 1: Java
 2: SpringBoot
 3: SQL
-4: HTML/CSS
-5: JavaScript
-6: Python
-7: 生成AI
-8: クラウド
-9: AWS
 ```
 
 ---
@@ -222,8 +214,7 @@ classDiagram
 **サンプルデータ:**
 ```
 1, 'Java SEディープダイブ', 'Michael Johnson', 1, 3, 3400
-2, 'JVMとバイトコードの探求', 'James Lopez', 1, 1, 4200
-...
+9, 'SpringBoot in Cloud', 'Paul Martin', 2, 3, 3000
 ```
 
 ---
@@ -611,59 +602,50 @@ WHERE BOOK_ID = ? AND VERSION = ?
 
 ---
 
-## 8. サンプルデータセット
+## 8. サンプルデータ（最小セット）
 
 ### 8.1 マスタデータ (PUBLISHER)
 
-```
+```sql
 INSERT INTO PUBLISHER (PUBLISHER_ID, PUBLISHER_NAME) VALUES
 (1, 'デジタルフロンティア出版'),
 (2, 'コードブレイクプレス'),
-(3, 'ネットワークノード出版'),
-(4, 'クラウドキャスティング社'),
-(5, 'データドリフト社');
+(3, 'ネットワークノード出版');
 ```
 
 ### 8.2 マスタデータ (CATEGORY)
 
-```
+```sql
 INSERT INTO CATEGORY (CATEGORY_ID, CATEGORY_NAME) VALUES
 (1, 'Java'),
 (2, 'SpringBoot'),
-(3, 'SQL'),
-(4, 'HTML/CSS'),
-(5, 'JavaScript'),
-(6, 'Python'),
-(7, '生成AI'),
-(8, 'クラウド'),
-(9, 'AWS');
+(3, 'SQL');
 ```
 
 ### 8.3 テストデータ (CUSTOMER)
 
-```
+```sql
 INSERT INTO CUSTOMER (CUSTOMER_ID, CUSTOMER_NAME, EMAIL, PASSWORD, BIRTHDAY, ADDRESS) VALUES
-(1, 'Alice', 'alice@gmail.com', 'password', '1990-01-01', '東京都渋谷区'),
-(2, 'Bob', 'bob@gmail.com', 'password', '1985-05-15', '大阪府大阪市'),
-(3, 'Charlie', 'charlie@gmail.com', 'password', '1992-12-25', '沖縄県那覇市');
+(1, 'Alice', 'alice@gmail.com', 'password', '1998-04-10', '東京都中央区1-1-1'),
+(2, 'Bob', 'bob@gmail.com', 'password', '1988-05-10', '東京都杉並区2-2-2');
 ```
 
 ### 8.4 テストデータ (BOOK)
 
-```
+```sql
 INSERT INTO BOOK (BOOK_ID, BOOK_NAME, AUTHOR, CATEGORY_ID, PUBLISHER_ID, PRICE) VALUES
-(1, 'Java SEディープダイブ', 'Michael Johnson', 1, 3, 3400),
-(2, 'SpringBoot in Cloud', 'Paul Martin', 2, 3, 3000),
-(3, 'SQLの冒険～RDBの深層', 'William Garcia', 3, 4, 3600);
+(1,  'Java SEディープダイブ', 'Michael Johnson', 1, 3, 3400),
+(9,  'SpringBoot in Cloud', 'Paul Martin', 2, 3, 3000),
+(17, 'SQLの冒険～RDBの深層', 'Brian Lee', 3, 2, 2200);
 ```
 
 ### 8.5 テストデータ (STOCK)
 
-```
+```sql
 INSERT INTO STOCK (BOOK_ID, QUANTITY, VERSION) VALUES
-(1, 10, 0),
-(2, 5, 0),
-(3, 0, 0);  -- 在庫切れ
+(1, 3, 0),   -- Java SEディープダイブ
+(9, 2, 0),   -- SpringBoot in Cloud
+(17, 3, 0);  -- SQLの冒険～RDBの深層
 ```
 
 ---
@@ -786,9 +768,4 @@ eclipselink.cache.shared.default=false  # 学習用に2次キャッシュを無�
 - 複数の同時ユーザー
 - 現実的なアクセスパターン
 
----
-
-**ドキュメント終了**
-
-*このデータモデル仕様は、データベーススキーマ、エンティティリレーションシップ、データ整合性制約を定義しています。spec.md（何を）とplan.md（どのように）を補完し、システム設計の全体像を提供します。*
 
