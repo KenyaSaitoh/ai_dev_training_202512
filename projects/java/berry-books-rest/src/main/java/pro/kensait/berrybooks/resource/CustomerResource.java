@@ -7,14 +7,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pro.kensait.berrybooks.dto.CustomerStatsTO;
-import pro.kensait.berrybooks.dto.CustomerTO;
-import pro.kensait.berrybooks.dto.OrderHistoryTO;
-import pro.kensait.berrybooks.dto.OrderItemTO;
-import pro.kensait.berrybooks.entity.Customer;
-import pro.kensait.berrybooks.entity.OrderDetail;
-import pro.kensait.berrybooks.entity.OrderTran;
-import pro.kensait.berrybooks.service.CustomerService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -27,6 +19,14 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import pro.kensait.berrybooks.dto.CustomerStatsTO;
+import pro.kensait.berrybooks.dto.CustomerTO;
+import pro.kensait.berrybooks.dto.OrderHistoryTO;
+import pro.kensait.berrybooks.dto.OrderItemTO;
+import pro.kensait.berrybooks.entity.Customer;
+import pro.kensait.berrybooks.entity.OrderDetail;
+import pro.kensait.berrybooks.entity.OrderTran;
+import pro.kensait.berrybooks.service.CustomerService;
 
 // 顧客情報を提供するREST APIリソースクラス
 @Path("/customers")
@@ -197,6 +197,7 @@ public class CustomerResource {
     private CustomerTO toCustomerTO(Customer customer) {
         return new CustomerTO(customer.getCustomerId(),
                 customer.getCustomerName(),
+                customer.getPassword(),
                 customer.getEmail(),
                 customer.getBirthday(),
                 customer.getAddress());
@@ -204,9 +205,8 @@ public class CustomerResource {
 
     // 詰め替え処理（CustomerTO→Customer）
     private Customer toCustomer(CustomerTO customerTO) {
-        // パスワードは空文字列として扱う（新規登録時は別途設定が必要）
         return new Customer(customerTO.customerName(),
-                "",  // パスワードは別途設定
+                customerTO.password() != null ? customerTO.password() : "",
                 customerTO.email(),
                 customerTO.birthday(),
                 customerTO.address());

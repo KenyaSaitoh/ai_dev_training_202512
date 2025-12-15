@@ -1,7 +1,11 @@
-package pro.kensait.berrybooks.dto;
+package pro.kensait.berrybooks.client.dto;
 
 import java.time.LocalDate;
 
+/**
+ * REST API用の顧客データ転送オブジェクト
+ * berry-books-rest APIのレスポンス/リクエストに使用
+ */
 public record CustomerTO (
         // 顧客ID
         Integer customerId,
@@ -16,4 +20,3 @@ public record CustomerTO (
         // 住所
         String address) {
 }
-
