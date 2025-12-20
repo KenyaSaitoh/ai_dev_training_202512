@@ -13,7 +13,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -36,10 +36,10 @@ public class OrderTran implements Serializable {
     private Integer orderTranId;
     
     /**
-     * 注文日
+     * 注文日時
      */
     @Column(name = "ORDER_DATE", nullable = false)
-    private LocalDate orderDate;
+    private LocalDateTime orderDate;
     
     /**
      * 顧客ID
@@ -109,20 +109,20 @@ public class OrderTran implements Serializable {
     }
     
     /**
-     * 注文日を取得します
+     * 注文日時を取得します
      * 
-     * @return 注文日
+     * @return 注文日時
      */
-    public LocalDate getOrderDate() {
+    public LocalDateTime getOrderDate() {
         return orderDate;
     }
     
     /**
-     * 注文日を設定します
+     * 注文日時を設定します
      * 
-     * @param orderDate 注文日
+     * @param orderDate 注文日時
      */
-    public void setOrderDate(LocalDate orderDate) {
+    public void setOrderDate(LocalDateTime orderDate) {
         this.orderDate = orderDate;
     }
     

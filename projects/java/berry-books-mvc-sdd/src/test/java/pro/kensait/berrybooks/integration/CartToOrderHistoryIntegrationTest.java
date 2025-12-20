@@ -13,7 +13,7 @@ import pro.kensait.berrybooks.web.cart.CartItem;
 import pro.kensait.berrybooks.web.cart.CartSession;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,27 +119,27 @@ public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
     public void testDeliveryFeeCalculation() {
         // Given: 異なる購入金額でテスト
         
-        // Case 1: 4999円（送料あり: 800円）
+        // Case 1: 4999円、東京都（送料: 800円）
         BigDecimal amount1 = BigDecimal.valueOf(4999);
-        BigDecimal fee1 = calculateDeliveryFee(amount1, "東京都");
+        BigDecimal fee1 = calculateDeliveryFee("東京都", amount1);
         assertEquals(BigDecimal.valueOf(800), fee1, 
                 "4999円の場合、送料は800円です");
         
-        // Case 2: 5000円（送料無料）
+        // Case 2: 5000円、東京都（送料無料）
         BigDecimal amount2 = BigDecimal.valueOf(5000);
-        BigDecimal fee2 = calculateDeliveryFee(amount2, "東京都");
+        BigDecimal fee2 = calculateDeliveryFee("東京都", amount2);
         assertEquals(BigDecimal.ZERO, fee2, 
                 "5000円以上の場合、送料無料です");
         
         // Case 3: 3000円、沖縄県（送料: 1700円）
         BigDecimal amount3 = BigDecimal.valueOf(3000);
-        BigDecimal fee3 = calculateDeliveryFee(amount3, "沖縄県");
+        BigDecimal fee3 = calculateDeliveryFee("沖縄県", amount3);
         assertEquals(BigDecimal.valueOf(1700), fee3, 
                 "沖縄県の場合、送料は1700円です");
         
         // Case 4: 5000円、沖縄県（送料無料優先）
         BigDecimal amount4 = BigDecimal.valueOf(5000);
-        BigDecimal fee4 = calculateDeliveryFee(amount4, "沖縄県");
+        BigDecimal fee4 = calculateDeliveryFee("沖縄県", amount4);
         assertEquals(BigDecimal.ZERO, fee4, 
                 "5000円以上の場合、沖縄県でも送料無料です");
     }
@@ -148,14 +148,14 @@ public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
      * 配送料金を計算するヘルパーメソッド
      * BR-020の実装
      */
-    private BigDecimal calculateDeliveryFee(BigDecimal totalAmount, String address) {
+    private BigDecimal calculateDeliveryFee(String address, BigDecimal totalAmount) {
         // 5000円以上は送料無料
         if (totalAmount.compareTo(BigDecimal.valueOf(5000)) >= 0) {
             return BigDecimal.ZERO;
         }
         
         // 沖縄県は1700円
-        if (address.startsWith("沖縄県")) {
+        if (address != null && address.startsWith("沖縄県")) {
             return BigDecimal.valueOf(1700);
         }
         
@@ -172,17 +172,17 @@ public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
         
         OrderHistoryTO order1 = new OrderHistoryTO();
         order1.setOrderTranId(1);
-        order1.setOrderDate(LocalDate.of(2025, 12, 1));
+        order1.setOrderDate(LocalDateTime.of(2025, 12, 1, 10, 0));
         order1.setTotalPrice(BigDecimal.valueOf(3000));
         
         OrderHistoryTO order2 = new OrderHistoryTO();
         order2.setOrderTranId(2);
-        order2.setOrderDate(LocalDate.of(2025, 12, 15));
+        order2.setOrderDate(LocalDateTime.of(2025, 12, 15, 14, 30));
         order2.setTotalPrice(BigDecimal.valueOf(5000));
         
         OrderHistoryTO order3 = new OrderHistoryTO();
         order3.setOrderTranId(3);
-        order3.setOrderDate(LocalDate.of(2025, 12, 10));
+        order3.setOrderDate(LocalDateTime.of(2025, 12, 10, 9, 15));
         order3.setTotalPrice(BigDecimal.valueOf(4000));
         
         orderHistoryList.add(order1);

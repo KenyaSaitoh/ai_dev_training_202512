@@ -1,0 +1,36 @@
+2025-12-21 01:19:58.405 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=福岡県福岡市博多区博多駅1-1, totalPrice=10000
+2025-12-21 01:19:58.444 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 通常配送料金: 800
+2025-12-21 01:19:58.463 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=沖縄県那覇市おもろまち1-1-1, totalPrice=3000
+2025-12-21 01:19:58.464 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 沖縄県への配送料金: 1700
+2025-12-21 01:19:58.471 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=東京都渋谷区神南1-1-1, totalPrice=5000
+2025-12-21 01:19:58.472 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 通常配送料金: 800
+2025-12-21 01:19:58.486 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=大阪府大阪市北区梅田1-1-1, totalPrice=10000
+2025-12-21 01:19:58.487 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 通常配送料金: 800
+2025-12-21 01:19:58.497 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=東京都渋谷区神南1-1-1, totalPrice=1000
+2025-12-21 01:19:58.498 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 通常配送料金: 800
+2025-12-21 01:19:58.503 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=北海道札幌市中央区北1条西1丁目, totalPrice=100
+2025-12-21 01:19:58.504 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 通常配送料金: 800
+2025-12-21 01:19:58.524 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=沖縄県石垣市登野城1-1, totalPrice=4999
+2025-12-21 01:19:58.530 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 沖縄県への配送料金: 1700
+2025-12-21 01:19:58.538 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=沖縄県那覇市おもろまち1-1-1, totalPrice=5000
+2025-12-21 01:19:58.540 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 沖縄県への配送料金: 1700
+2025-12-21 01:19:58.567 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=神奈川県横浜市西区みなとみらい1-1-1, totalPrice=1000
+2025-12-21 01:19:58.568 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 通常配送料金: 800
+2025-12-21 01:25:33.327 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=東京都渋谷区神南1-1-1, totalPrice=5000
+2025-12-21 01:25:33.351 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 送料無料（購入金額5000円 >= 5000円）
+2025-12-21 01:25:33.389 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=福岡県福岡市博多区博多駅1-1, totalPrice=10000
+2025-12-21 01:25:33.390 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 送料無料（購入金額10000円 >= 5000円）
+2025-12-21 01:25:33.395 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=大阪府大阪市北区梅田1-1-1, totalPrice=5001
+2025-12-21 01:25:33.397 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 送料無料（購入金額5001円 >= 5000円）
+2025-12-21 01:25:33.415 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=沖縄県那覇市おもろまち1-1-1, totalPrice=3000
+2025-12-21 01:25:33.416 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 沖縄県への配送料金: 1700
+2025-12-21 01:25:33.431 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=沖縄県那覇市おもろまち1-1-1, totalPrice=5000
+2025-12-21 01:25:33.432 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 送料無料（購入金額5000円 >= 5000円）
+2025-12-21 01:25:33.437 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=東京都渋谷区神南1-1-1, totalPrice=4999
+2025-12-21 01:25:33.438 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 通常配送料金: 800
+2025-12-21 01:25:33.443 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=北海道札幌市中央区北1条西1丁目, totalPrice=100
+2025-12-21 01:25:33.444 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 通常配送料金: 800
+2025-12-21 01:25:33.448 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=沖縄県石垣市登野城1-1, totalPrice=4999
+2025-12-21 01:25:33.450 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 沖縄県への配送料金: 1700
+2025-12-21 01:25:33.457 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService#calculateDeliveryFee ] address=神奈川県横浜市西区みなとみらい1-1-1, totalPrice=1000
+2025-12-21 01:25:33.458 INFO  [ DeliveryFeeService#calculateDeliveryFee ] [ DeliveryFeeService ] 通常配送料金: 800

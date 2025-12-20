@@ -48,7 +48,7 @@
                         <td style="width: 150px; border: none; padding: 8px 0; font-weight: bold;">注文日:</td>
                         <td style="border: none; padding: 8px 0;">
                             <h:outputText value="#{orderHistoryBean.orderSummary.orderTran.orderDate}">
-                                <f:convertDateTime pattern="yyyy-MM-dd" type="localDate" />
+                                <f:convertDateTime pattern="yyyy-MM-dd HH:mm" type="localDateTime" />
                             </h:outputText>
                         </td>
                     </tr>

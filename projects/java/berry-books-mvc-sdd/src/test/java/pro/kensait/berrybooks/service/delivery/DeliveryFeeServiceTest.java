@@ -26,11 +26,11 @@ class DeliveryFeeServiceTest {
     @Test
     void testCalculateDeliveryFee_Standard_Tokyo() {
         // Arrange
-        BigDecimal totalPrice = new BigDecimal("4999");
         String deliveryAddress = "東京都渋谷区神南1-1-1";
+        BigDecimal totalPrice = new BigDecimal("4999");
         
         // Act
-        BigDecimal result = deliveryFeeService.calculateDeliveryFee(totalPrice, deliveryAddress);
+        BigDecimal result = deliveryFeeService.calculateDeliveryFee(deliveryAddress, totalPrice);
         
         // Assert
         assertEquals(new BigDecimal("800"), result, 
@@ -43,11 +43,11 @@ class DeliveryFeeServiceTest {
     @Test
     void testCalculateDeliveryFee_Free_Exactly5000() {
         // Arrange
-        BigDecimal totalPrice = new BigDecimal("5000");
         String deliveryAddress = "東京都渋谷区神南1-1-1";
+        BigDecimal totalPrice = new BigDecimal("5000");
         
         // Act
-        BigDecimal result = deliveryFeeService.calculateDeliveryFee(totalPrice, deliveryAddress);
+        BigDecimal result = deliveryFeeService.calculateDeliveryFee(deliveryAddress, totalPrice);
         
         // Assert
         assertEquals(BigDecimal.ZERO, result, 
@@ -60,11 +60,11 @@ class DeliveryFeeServiceTest {
     @Test
     void testCalculateDeliveryFee_Okinawa_3000Yen() {
         // Arrange
-        BigDecimal totalPrice = new BigDecimal("3000");
         String deliveryAddress = "沖縄県那覇市おもろまち1-1-1";
+        BigDecimal totalPrice = new BigDecimal("3000");
         
         // Act
-        BigDecimal result = deliveryFeeService.calculateDeliveryFee(totalPrice, deliveryAddress);
+        BigDecimal result = deliveryFeeService.calculateDeliveryFee(deliveryAddress, totalPrice);
         
         // Assert
         assertEquals(new BigDecimal("1700"), result, 
@@ -77,11 +77,11 @@ class DeliveryFeeServiceTest {
     @Test
     void testCalculateDeliveryFee_Okinawa_Free() {
         // Arrange
-        BigDecimal totalPrice = new BigDecimal("5000");
         String deliveryAddress = "沖縄県那覇市おもろまち1-1-1";
+        BigDecimal totalPrice = new BigDecimal("5000");
         
         // Act
-        BigDecimal result = deliveryFeeService.calculateDeliveryFee(totalPrice, deliveryAddress);
+        BigDecimal result = deliveryFeeService.calculateDeliveryFee(deliveryAddress, totalPrice);
         
         // Assert
         assertEquals(BigDecimal.ZERO, result, 
@@ -94,11 +94,11 @@ class DeliveryFeeServiceTest {
     @Test
     void testCalculateDeliveryFee_Free_Over5000() {
         // Arrange
-        BigDecimal totalPrice = new BigDecimal("5001");
         String deliveryAddress = "大阪府大阪市北区梅田1-1-1";
+        BigDecimal totalPrice = new BigDecimal("5001");
         
         // Act
-        BigDecimal result = deliveryFeeService.calculateDeliveryFee(totalPrice, deliveryAddress);
+        BigDecimal result = deliveryFeeService.calculateDeliveryFee(deliveryAddress, totalPrice);
         
         // Assert
         assertEquals(BigDecimal.ZERO, result, 
@@ -111,11 +111,11 @@ class DeliveryFeeServiceTest {
     @Test
     void testCalculateDeliveryFee_Standard_Kanagawa() {
         // Arrange
-        BigDecimal totalPrice = new BigDecimal("1000");
         String deliveryAddress = "神奈川県横浜市西区みなとみらい1-1-1";
+        BigDecimal totalPrice = new BigDecimal("1000");
         
         // Act
-        BigDecimal result = deliveryFeeService.calculateDeliveryFee(totalPrice, deliveryAddress);
+        BigDecimal result = deliveryFeeService.calculateDeliveryFee(deliveryAddress, totalPrice);
         
         // Assert
         assertEquals(new BigDecimal("800"), result, 
@@ -128,11 +128,11 @@ class DeliveryFeeServiceTest {
     @Test
     void testCalculateDeliveryFee_Standard_Hokkaido() {
         // Arrange
-        BigDecimal totalPrice = new BigDecimal("100");
         String deliveryAddress = "北海道札幌市中央区北1条西1丁目";
+        BigDecimal totalPrice = new BigDecimal("100");
         
         // Act
-        BigDecimal result = deliveryFeeService.calculateDeliveryFee(totalPrice, deliveryAddress);
+        BigDecimal result = deliveryFeeService.calculateDeliveryFee(deliveryAddress, totalPrice);
         
         // Assert
         assertEquals(new BigDecimal("800"), result, 
@@ -145,11 +145,11 @@ class DeliveryFeeServiceTest {
     @Test
     void testCalculateDeliveryFee_Okinawa_4999Yen() {
         // Arrange
-        BigDecimal totalPrice = new BigDecimal("4999");
         String deliveryAddress = "沖縄県石垣市登野城1-1";
+        BigDecimal totalPrice = new BigDecimal("4999");
         
         // Act
-        BigDecimal result = deliveryFeeService.calculateDeliveryFee(totalPrice, deliveryAddress);
+        BigDecimal result = deliveryFeeService.calculateDeliveryFee(deliveryAddress, totalPrice);
         
         // Assert
         assertEquals(new BigDecimal("1700"), result, 
@@ -162,15 +162,89 @@ class DeliveryFeeServiceTest {
     @Test
     void testCalculateDeliveryFee_Free_10000Yen() {
         // Arrange
-        BigDecimal totalPrice = new BigDecimal("10000");
         String deliveryAddress = "福岡県福岡市博多区博多駅1-1";
+        BigDecimal totalPrice = new BigDecimal("10000");
         
         // Act
-        BigDecimal result = deliveryFeeService.calculateDeliveryFee(totalPrice, deliveryAddress);
+        BigDecimal result = deliveryFeeService.calculateDeliveryFee(deliveryAddress, totalPrice);
         
         // Assert
         assertEquals(BigDecimal.ZERO, result, 
                     "購入金額10000円の配送料金は0円（送料無料）であるべき");
     }
+    
+    /**
+     * isOkinawa メソッドのテスト: 沖縄県住所
+     */
+    @Test
+    void testIsOkinawa_OkinawaPrefecture() {
+        // Arrange
+        String deliveryAddress = "沖縄県那覇市おもろまち1-1-1";
+        
+        // Act
+        boolean result = deliveryFeeService.isOkinawa(deliveryAddress);
+        
+        // Assert
+        assertTrue(result, "沖縄県で始まる住所はtrueであるべき");
+    }
+    
+    /**
+     * isOkinawa メソッドのテスト: 東京都住所
+     */
+    @Test
+    void testIsOkinawa_TokyoPrefecture() {
+        // Arrange
+        String deliveryAddress = "東京都渋谷区神南1-1-1";
+        
+        // Act
+        boolean result = deliveryFeeService.isOkinawa(deliveryAddress);
+        
+        // Assert
+        assertFalse(result, "東京都で始まる住所はfalseであるべき");
+    }
+    
+    /**
+     * isOkinawa メソッドのテスト: null住所
+     */
+    @Test
+    void testIsOkinawa_NullAddress() {
+        // Arrange
+        String deliveryAddress = null;
+        
+        // Act
+        boolean result = deliveryFeeService.isOkinawa(deliveryAddress);
+        
+        // Assert
+        assertFalse(result, "nullの住所はfalseであるべき");
+    }
+    
+    /**
+     * isFreeDelivery メソッドのテスト: 送料無料対象
+     */
+    @Test
+    void testIsFreeDelivery_Eligible() {
+        // Arrange
+        BigDecimal totalPrice = new BigDecimal("5000");
+        
+        // Act
+        boolean result = deliveryFeeService.isFreeDelivery(totalPrice);
+        
+        // Assert
+        assertTrue(result, "5000円以上はtrueであるべき");
+    }
+    
+    /**
+     * isFreeDelivery メソッドのテスト: 送料無料対象外
+     */
+    @Test
+    void testIsFreeDelivery_NotEligible() {
+        // Arrange
+        BigDecimal totalPrice = new BigDecimal("4999");
+        
+        // Act
+        boolean result = deliveryFeeService.isFreeDelivery(totalPrice);
+        
+        // Assert
+        assertFalse(result, "4999円はfalseであるべき");
+    }
 }
-

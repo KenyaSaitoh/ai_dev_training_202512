@@ -186,7 +186,9 @@ sequenceDiagram
 - **責務**: 配送料金計算のビジネスロジック
 - **タイプ**: @ApplicationScoped
 - **主要メソッド**: 
-  - `calculateDeliveryFee(BigDecimal totalPrice, String address)` - 配送料金を計算
+  - `calculateDeliveryFee(String address, BigDecimal totalPrice)` - 配送料金を計算（注：第1引数は住所、第2引数は総額）
+  - `isOkinawa(String address)` - 沖縄県判定
+  - `isFreeDelivery(BigDecimal totalPrice)` - 送料無料対象判定
 
 ### 8.3 転送オブジェクト
 

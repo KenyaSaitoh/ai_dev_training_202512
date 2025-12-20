@@ -317,7 +317,7 @@ stateDiagram-v2
 | カラム | 型 | 制約 | 説明 |
 |--------|------|-------------|-------------|
 | ORDER_TRAN_ID | INTEGER | PRIMARY KEY, IDENTITY | 注文取引ID（自動採番） |
-| ORDER_DATE | DATE | NOT NULL | 注文日 |
+| ORDER_DATE | TIMESTAMP | NOT NULL | 注文日時 |
 | CUSTOMER_ID | INTEGER | NOT NULL, FK | 顧客ID |
 | TOTAL_PRICE | INTEGER | NOT NULL | 注文金額合計（円） |
 | DELIVERY_PRICE | INTEGER | NOT NULL | 配送料金（円） |
@@ -330,12 +330,12 @@ stateDiagram-v2
 **インデックス:**
 - `ORDER_TRAN_ID` にPRIMARY KEY
 - `CUSTOMER_ID` にINDEX（注文履歴クエリ用）
-- `ORDER_DATE` にINDEX（日付範囲クエリ用）
+- `ORDER_DATE` にINDEX（日付時刻範囲クエリ用）
 
 **ビジネスルール:**
-- 注文日は注文確定時の日付
+- 注文日時は注文確定時のタイムスタンプ
 - 注文金額合計は書籍価格の合計
-- 配送料金は配送料金計算ロジックの結果
+- 配送料金は配送料金計算ロジックの結果（BR-020）
 - 決済方法: 1=銀行振込, 2=クレジットカード, 3=着払い
 
 **決済方法参照:**

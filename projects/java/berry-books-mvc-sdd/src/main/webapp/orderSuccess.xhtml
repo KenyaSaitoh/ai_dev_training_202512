@@ -52,7 +52,7 @@
                             <th style="padding: 8px;">注文日時:</th>
                             <td style="padding: 8px;">
                                 <h:outputText value="#{orderBean.orderTran.orderDate}">
-                                    <f:convertDateTime pattern="yyyy年MM月dd日" type="localDate" />
+                                    <f:convertDateTime pattern="yyyy年MM月dd日 HH:mm" type="localDateTime" />
                                 </h:outputText>
                             </td>
                         </tr>
@@ -74,7 +74,7 @@
                 
                 <div style="margin-top: 24px;">
                     <h:link outcome="orderHistory" value="注文履歴を見る" styleClass="button" />
-                    <h:link outcome="bookSearch" value="買い物を続ける" 
+                    <h:link outcome="bookSelect" value="買い物を続ける" 
                            styleClass="button button-secondary" 
                            style="margin-left: 16px;" />
                 </div>

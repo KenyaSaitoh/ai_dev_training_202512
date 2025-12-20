@@ -2,7 +2,7 @@ package pro.kensait.berrybooks.service.order;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 注文履歴情報をレイヤー間で転送するTOクラス
@@ -19,9 +19,9 @@ public class OrderHistoryTO implements Serializable {
     private Integer orderTranId;
     
     /**
-     * 注文日
+     * 注文日時
      */
-    private LocalDate orderDate;
+    private LocalDateTime orderDate;
     
     /**
      * 合計金額
@@ -63,20 +63,20 @@ public class OrderHistoryTO implements Serializable {
     }
     
     /**
-     * 注文日を取得します
+     * 注文日時を取得します
      * 
-     * @return 注文日
+     * @return 注文日時
      */
-    public LocalDate getOrderDate() {
+    public LocalDateTime getOrderDate() {
         return orderDate;
     }
     
     /**
-     * 注文日を設定します
+     * 注文日時を設定します
      * 
-     * @param orderDate 注文日
+     * @param orderDate 注文日時
      */
-    public void setOrderDate(LocalDate orderDate) {
+    public void setOrderDate(LocalDateTime orderDate) {
         this.orderDate = orderDate;
     }
     

@@ -19,7 +19,7 @@ import pro.kensait.berrybooks.entity.OrderTran;
 import pro.kensait.berrybooks.entity.Stock;
 import pro.kensait.berrybooks.web.cart.CartItem;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,7 +101,7 @@ public class OrderService {
         
         // 5. OrderTranエンティティを作成・登録
         OrderTran orderTran = new OrderTran();
-        orderTran.setOrderDate(LocalDate.now());
+        orderTran.setOrderDate(LocalDateTime.now());
         orderTran.setDeliveryAddress(orderTO.getDeliveryAddress());
         orderTran.setDeliveryPrice(orderTO.getDeliveryPrice());
         orderTran.setSettlementType(orderTO.getSettlementCode());

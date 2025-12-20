@@ -38,7 +38,7 @@ public class OrderTranDao {
      */
     public List<OrderTran> findByCustomerId(Integer customerId) {
         TypedQuery<OrderTran> query = em.createQuery(
-            "SELECT o FROM OrderTran o WHERE o.customerId = :customerId ORDER BY o.orderDate DESC",
+            "SELECT o FROM OrderTran o WHERE o.customerId = :customerId ORDER BY o.orderDate DESC, o.orderTranId DESC",
             OrderTran.class
         );
         query.setParameter("customerId", customerId);

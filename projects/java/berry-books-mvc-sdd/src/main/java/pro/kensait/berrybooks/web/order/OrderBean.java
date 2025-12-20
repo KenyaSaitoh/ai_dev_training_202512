@@ -94,8 +94,8 @@ public class OrderBean implements Serializable {
             // 配送料金を初期計算
             if (this.deliveryAddress != null && !this.deliveryAddress.trim().isEmpty()) {
                 BigDecimal deliveryFee = deliveryFeeService.calculateDeliveryFee(
-                    cartSession.getTotalPrice(), 
-                    this.deliveryAddress
+                    this.deliveryAddress,
+                    cartSession.getTotalPrice()
                 );
                 cartSession.setDeliveryPrice(deliveryFee);
                 logger.info("[ OrderBean#init ] Initial deliveryFee calculated: {}", deliveryFee);
@@ -127,8 +127,8 @@ public class OrderBean implements Serializable {
         
         // 配送料金を計算
         BigDecimal deliveryFee = deliveryFeeService.calculateDeliveryFee(
-            cartSession.getTotalPrice(), 
-            deliveryAddress
+            deliveryAddress,
+            cartSession.getTotalPrice()
         );
         
         // CartSessionに配送料金と配送先住所を設定
@@ -177,8 +177,8 @@ public class OrderBean implements Serializable {
         
         // 配送料金を再計算する（配送先住所が変更されている可能性があるため）
         BigDecimal deliveryFee = deliveryFeeService.calculateDeliveryFee(
-            cartSession.getTotalPrice(), 
-            deliveryAddress
+            deliveryAddress,
+            cartSession.getTotalPrice()
         );
         cartSession.setDeliveryPrice(deliveryFee);
         logger.info("[ OrderBean#placeOrder ] Calculated deliveryFee={}", deliveryFee);
