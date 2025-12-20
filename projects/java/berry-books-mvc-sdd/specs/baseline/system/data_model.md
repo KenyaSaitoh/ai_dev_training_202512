@@ -213,11 +213,11 @@ classDiagram
 - カテゴリと出版社は必須（外部キー参照）
 
 **カバー画像の取り扱い:**
-- カバー画像ファイルは `webapp/resources/covers/` 配下に配置
-- 画像ファイル名は書籍名（BOOK_NAME）をそのまま使用し、拡張子 `.jpg` を付加
-- 例: 書籍名 `Java SEディープダイブ` → 画像ファイル名 `Java SEディープダイブ.jpg`
-- 画像ファイルが存在しない場合は `no-image.jpg` を表示
-- 画像ファイル名の生成はアプリケーション層（Bookエンティティ）で実装
+- カバー画像ファイルは `webapp/resources/images/covers/` 配下に配置
+- 画像ファイル名は書籍名（BOOK_NAME）のスペースをアンダースコアに置換し、拡張子 `.jpg` を付加
+- 例: 書籍名 `Java SEディープダイブ` → 画像ファイル名 `Java_SEディープダイブ.jpg`
+- 画像ファイルが存在しない場合は、JavaScriptの`onError`イベントで`no-image.jpg`にフォールバック
+- 画像ファイル名の生成はビュー層で実装（`#{book.bookName.replace(' ', '_')}.jpg`）
 
 **サンプルデータ:**
 ```

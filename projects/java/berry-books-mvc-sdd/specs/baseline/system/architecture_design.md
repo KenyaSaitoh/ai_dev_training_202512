@@ -172,11 +172,20 @@ classDiagram
 | **MVC** | JSF + Managed Bean + Service | 関心事の分離 |
 | **サービスレイヤー** | @ApplicationScoped Service クラス | ビジネスロジックの集約 |
 | **リポジトリ (DAO)** | EntityManager を使用した DAO クラス | データアクセスの抽象化 |
-| **DTO/転送オブジェクト** | OrderTO, OrderHistoryTO | レイヤー間の疎結合 |
+| **DTO/転送オブジェクト** | OrderTO (POJO), OrderHistoryTO (Record) | レイヤー間の疎結合 |
+| **値オブジェクト** | Java Record クラス (Java 17+) | 不変性、簡潔性、型安全性 |
 | **セッションファサード** | @SessionScoped beans | セッション状態管理 |
 | **依存性注入** | @Inject (CDI) | 疎結合化 |
 | **楽観的ロック** | @Version (JPA) | 並行制御 |
 | **トランザクションスクリプト** | @Transactional メソッド | トランザクション管理 |
+
+### 3.2 DTO設計方針
+
+| DTO | 実装方式 | 設計根拠 |
+|-----|---------|---------|
+| `OrderHistoryTO` | Record | 注文履歴一覧画面用。ORDER_TRANとORDER_DETAILを非正規化。1注文明細=1インスタンス。JOIN FETCHでN+1問題回避 |
+| `OrderTO` | POJO | 注文入力からサービス層への複雑なデータ転送 |
+| `CartItem` | POJO | カートセッションでの段階的な状態変更が必要 |
 
 ---
 
@@ -202,7 +211,8 @@ pro.kensait.berrybooks/
 │   │   ├── CartItem            # カートアイテムDTO
 │   │   └── CartSession         # カートセッションファサード
 │   ├── order/
-│   │   └── OrderBean           # 注文処理コントローラー
+│   │   ├── OrderBean           # 注文処理コントローラー
+│   │   └── OrderHistoryBean    # 注文履歴参照コントローラー
 │   ├── customer/
 │   │   └── CustomerBean        # 顧客管理コントローラー
 │   ├── login/
@@ -248,6 +258,32 @@ pro.kensait.berrybooks/
     ├── OrderTran               # 注文トランザクションエンティティ
     ├── OrderDetail             # 注文明細エンティティ
     └── OrderDetailPK           # 注文明細複合キー
+```
+
+**Webリソース構造（webapp/）:**
+```
+webapp/
+├── resources/                  # 静的リソース
+│   ├── css/
+│   │   └── style.css          # メインスタイルシート（CSS変数、book-thumbnailなど）
+│   └── images/
+│       └── covers/            # 書籍カバー画像（.jpg形式）
+│           ├── Java_SEディープダイブ.jpg
+│           ├── SpringBoot_in_Cloud.jpg
+│           ├── no-image.jpg   # フォールバック画像
+│           └── ...
+├── WEB-INF/
+│   ├── web.xml                # デプロイメント記述子
+│   └── faces-config.xml       # JSF設定ファイル
+├── index.xhtml                # ログイン画面
+├── bookSearch.xhtml           # 書籍検索画面
+├── bookSelect.xhtml           # 検索結果画面
+├── cartView.xhtml             # カート画面
+├── bookOrder.xhtml            # 注文入力画面
+├── orderSuccess.xhtml         # 注文完了画面
+├── orderHistory.xhtml         # 注文履歴画面
+├── orderDetail.xhtml          # 注文詳細画面
+└── ...
 ```
 
 ### 4.2 命名規則
@@ -579,15 +615,15 @@ sequenceDiagram
 **重要な実装ポイント:**
 
 1. **AuthenticationFilter の定義**:
-   - `@WebFilter`アノテーションは使用しない（二重定義を防ぐため）
-   - `web.xml`で`<filter>`と`<filter-mapping>`を使用して定義
+   - `@WebFilter(filterName = "AuthenticationFilter", urlPatterns = {"*.xhtml"})`アノテーションを使用
    - `urlPatterns="*.xhtml"`でXHTMLページのみをフィルタリング
+   - CDIで`LoginBean`をインジェクトして認証状態をチェック
 
-2. **セッション管理の明示的な処理**:
-   - CDI管理下の`@SessionScoped` Beanは`session.getAttribute()`で取得できないため
-   - ログイン成功時に`FacesContext.getExternalContext().getSessionMap().put()`で明示的に保存
-   - ログアウト時に`sessionMap.remove()`で明示的に削除
-   - これにより、`AuthenticationFilter`がServlet APIの`HttpSession.getAttribute()`で取得可能
+2. **ログイン状態の管理**:
+   - `LoginBean`は`@SessionScoped`で定義
+   - `loggedIn`フラグでログイン状態を管理
+   - `AuthenticationFilter`は`LoginBean.isLoggedIn()`でログイン状態を確認
+   - これにより、CDI Beanを直接利用した認証チェックが可能
 
 ### 9.2 セキュリティ対策
 

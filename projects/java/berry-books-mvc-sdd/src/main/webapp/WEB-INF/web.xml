@@ -71,18 +71,8 @@
          認証フィルター設定
          ============================================================================ -->
     
-    <filter>
-        <filter-name>AuthenticationFilter</filter-name>
-        <filter-class>pro.kensait.berrybooks.web.filter.AuthenticationFilter</filter-class>
-    </filter>
+    <!-- 認証フィルターは @WebFilter アノテーションで定義されています -->
     
-    <filter-mapping>
-        <filter-name>AuthenticationFilter</filter-name>
-        <url-pattern>*.xhtml</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-
     <!-- ============================================================================
          セッション設定
          ============================================================================ -->
@@ -177,5 +167,3 @@
     </mime-mapping>
 
 </web-app>
-
-

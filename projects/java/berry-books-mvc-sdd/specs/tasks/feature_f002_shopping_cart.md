@@ -73,16 +73,18 @@
   - **対象**: web/cart/CartBean.java
   - **参照SPEC**: functional_design.md#51-プレゼンテーション層
   - **注意事項**: 
-    - @Named, @ViewScoped, implements Serializable
-    - @Inject CartSession, BookService
+    - @Named, @SessionScoped, implements Serializable（リダイレクト後も状態を保持するため）
+    - @Inject BookService, StockDao, CartSession, CustomerBean, DeliveryFeeService
+    - フィールド:
+      - globalErrorMessage (String) - グローバルエラーメッセージ
     - 主要メソッド:
-      - addToCart(Integer bookId, Integer quantity) - カートに追加
-      - removeFromCart(Integer bookId) - カートから削除
-      - clearCart() - カート全体をクリア
-      - navigateToOrder() - 注文画面に遷移
-      - navigateToSearch() - 検索画面に戻る
+      - addBook(Integer bookId, Integer count) - 書籍をカートに追加し、cartView画面へリダイレクト。在庫バージョン番号を保存（BR-012）
+      - removeSelectedBooks() - 選択した書籍（remove=true）をカートから削除し、合計金額を再計算
+      - clearCart() - カート全体をクリアし、cartClear画面へリダイレクト
+      - proceedToOrder() - 配送先住所を設定し、配送料金を計算して注文画面に進む。カートが空の場合はnullを返す（BIZ-005）
+      - viewCart() - カート画面を表示。カートが空の場合はglobalErrorMessageを設定
     - カート追加時に在庫バージョン番号を保存（BR-012）
-    - カートが空の場合、注文画面への遷移をブロック（BIZ-005）
+    - 既存のCartItemと同じ書籍を追加する場合、数量を加算（BR-011）
 
 ---
 
@@ -93,12 +95,13 @@
   - **対象**: webapp/cartView.xhtml
   - **参照SPEC**: screen_design.md#1-カート確認画面
   - **注意事項**: 
-    - カート内容テーブル（h:dataTable）
-    - 表示項目: カバー画像, 書籍名, 著者, 価格, 数量, 小計
-    - カバー画像表示（h:graphicImage value="resources/covers/#{book.imageFileName}"）
-      - BookエンティティのgetImageFileName()メソッドで書籍名 + ".jpg" を返す
-    - 画像ファイルが存在しない場合、no-image.jpgを表示
-    - 画像サイズ: 最大幅60px、高さ自動調整
+    - カート内容テーブル（ui:repeat）
+    - 表示項目: カバー画像, 書籍名, 注文数, 価格, 削除チェックボックス
+    - カバー画像表示:
+      - `h:graphicImage library="images" name="covers/#{cartItem.bookName.replace(' ', '_')}.jpg"`
+      - CSSクラス: `styleClass="book-thumbnail"`（高さ5cm、幅自動）
+      - セルクラス: `.book-image-cell`（中央配置）
+    - 画像ファイルが存在しない場合、onErrorでno-image.jpgを表示
     - 「削除」ボタン（h:commandButton action="#{cartBean.removeFromCart}"）
     - 「全クリア」ボタン（h:commandButton action="#{cartBean.clearCart}"）
     - 合計金額表示（#{cartSession.totalPrice}）

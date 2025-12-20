@@ -1,18 +1,20 @@
 package pro.kensait.berrybooks.web.filter;
 
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import pro.kensait.berrybooks.web.login.LoginBean;
+import jakarta.inject.Inject;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pro.kensait.berrybooks.web.customer.CustomerBean;
-import java.io.IOException;
 
 /**
  * 認証フィルター
@@ -25,104 +27,49 @@ import java.io.IOException;
  *   <li>customerInput.xhtml - 新規登録画面</li>
  *   <li>customerOutput.xhtml - 登録完了画面</li>
  * </ul>
- * 
- * <p>注意: このフィルターはweb.xmlで定義されているため、
- * @WebFilterアノテーションは使用しません（二重定義を防ぐため）。</p>
  */
+@WebFilter(filterName = "AuthenticationFilter", urlPatterns = {"*.xhtml"})
 public class AuthenticationFilter implements Filter {
     
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
-    
-    /**
-     * 公開ページ（認証不要）のパス
-     */
-    private static final String[] PUBLIC_PAGES = {
-        "/index.xhtml",
-        "/customerInput.xhtml",
-        "/customerOutput.xhtml"
-    };
-    
-    /**
-     * 静的リソースのパス
-     */
-    private static final String RESOURCES_PATH = "/resources/";
-    
-    /**
-     * Faces Servletのパス
-     */
-    private static final String FACES_SERVLET_PATH = "/jakarta.faces.resource/";
-    
+
+    @Inject
+    private LoginBean loginBean;
+
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        logger.info("AuthenticationFilter initialized");
-    }
-    
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, 
+                         FilterChain chain) throws IOException, ServletException {
         
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         
+        // リクエストされたページのパスを取得
         String requestURI = httpRequest.getRequestURI();
         String contextPath = httpRequest.getContextPath();
-        String path = requestURI.substring(contextPath.length());
         
-        logger.debug("AuthenticationFilter: path={}", path);
+        logger.debug("AuthenticationFilter - RequestURI: {}", requestURI);
         
-        // 静的リソースはスキップ
-        if (path.startsWith(RESOURCES_PATH) || path.startsWith(FACES_SERVLET_PATH)) {
-            chain.doFilter(request, response);
-            return;
-        }
+        // 認証不要なページ（公開ページ）のリスト
+        boolean isPublicPage = requestURI.endsWith("/index.xhtml") 
+                || requestURI.endsWith("/customerInput.xhtml")
+                || requestURI.endsWith("/customerOutput.xhtml")
+                || requestURI.contains("/jakarta.faces.resource/");  // JSF リソース（CSS、画像など）
         
-        // 公開ページはスキップ
-        if (isPublicPage(path)) {
-            chain.doFilter(request, response);
-            return;
-        }
+        // LoginBeanから直接ログイン状態をチェック（CDIインジェクション経由）
+        boolean isLoggedIn = (loginBean != null && loginBean.isLoggedIn());
         
-        // セッションからCustomerBeanを取得
-        HttpSession session = httpRequest.getSession(false);
-        CustomerBean customerBean = null;
+        logger.debug("isPublicPage: {}, isLoggedIn: {}, loginBean: {}", 
+                isPublicPage, isLoggedIn, loginBean);
         
-        if (session != null) {
-            customerBean = (CustomerBean) session.getAttribute("customerBean");
-            logger.info("[ AuthenticationFilter#doFilter ] Session exists: sessionId={}, customerBean={}", session.getId(), customerBean);
-        } else {
-            logger.info("[ AuthenticationFilter#doFilter ] No session exists");
-        }
-        
-        // ログイン済みかチェック
-        if (customerBean != null && customerBean.getCustomer() != null) {
-            // ログイン済み: アクセスを許可
-            logger.info("[ AuthenticationFilter#doFilter ] Access granted to protected page: {}, customerId={}", path, customerBean.getCustomer().getCustomerId());
-            chain.doFilter(request, response);
-        } else {
-            // 未ログイン: ログイン画面にリダイレクト
-            logger.info("[ AuthenticationFilter#doFilter ] Unauthorized access to protected page: {}", path);
+        // ログインが必要なページで未ログインの場合、index.xhtml にリダイレクト
+        if (!isPublicPage && !isLoggedIn) {
+            logger.info("未ログインユーザーをリダイレクト: {} -> {}/index.xhtml", 
+                    requestURI, contextPath);
             httpResponse.sendRedirect(contextPath + "/index.xhtml");
+        } else {
+            // 認証OK、または認証不要なページ → 処理を続行
+            chain.doFilter(request, response);
         }
-    }
-    
-    @Override
-    public void destroy() {
-        logger.info("AuthenticationFilter destroyed");
-    }
-    
-    /**
-     * 指定されたパスが公開ページかどうかを判定します
-     * 
-     * @param path リクエストパス
-     * @return 公開ページの場合はtrue、それ以外はfalse
-     */
-    private boolean isPublicPage(String path) {
-        for (String publicPage : PUBLIC_PAGES) {
-            if (path.equals(publicPage)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
 

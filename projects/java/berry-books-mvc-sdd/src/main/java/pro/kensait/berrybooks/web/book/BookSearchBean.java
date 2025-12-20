@@ -103,6 +103,27 @@ public class BookSearchBean implements Serializable {
     }
     
     /**
+     * 書籍リストを最新の状態に更新します
+     * 
+     * <p>bookSelect.xhtmlのpreRenderViewイベントから呼び出されます。
+     * 既存の検索条件を使用して書籍リストを再取得し、在庫数を最新化します。</p>
+     */
+    public void refreshBookList() {
+        logger.info("[ BookSearchBean#refreshBookList ]");
+        
+        // 既存の検索条件を使用して書籍リストを再取得
+        if (bookList == null || bookList.isEmpty()) {
+            // 初回表示時は全書籍を取得
+            bookList = bookService.searchBook(searchParam);
+            logger.info("[ BookSearchBean#refreshBookList ] Initial load, size={}", bookList.size());
+        } else {
+            // 既に検索が実行されている場合は、同じ条件で再検索（在庫数を最新化）
+            bookList = bookService.searchBook(searchParam);
+            logger.info("[ BookSearchBean#refreshBookList ] Refreshed, size={}", bookList.size());
+        }
+    }
+    
+    /**
      * カートに書籍を追加します
      * 
      * <p>在庫情報を取得し、在庫バージョン番号を保存してカートに追加します（BR-012）。</p>

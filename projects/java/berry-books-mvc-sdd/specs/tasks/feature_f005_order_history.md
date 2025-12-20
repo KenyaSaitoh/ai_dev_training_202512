@@ -36,19 +36,10 @@
 - [ ] **T-F005-001**: OrderHistoryTOクラスの作成
   - **目的**: 注文履歴表示用DTOを実装する
   - **対象**: service/order/OrderHistoryTO.java
-  - **参照SPEC**: functional_design.md#52-ビジネスロジック層
-  - **注意事項**: 
-    - POJO
-    - フィールド:
-      - orderTranId (Integer) - 注文ID
-      - orderDate (LocalDate) - 注文日
-      - totalPrice (BigDecimal) - 合計金額
-      - deliveryPrice (BigDecimal) - 配送料金
-      - deliveryAddress (String) - 配送先住所
-      - settlementType (Integer) - 決済方法
-      - settlementTypeName (String) - 決済方法名（表示用）
-      - orderDetails (List<OrderDetailTO>) - 注文明細
-    - getter/setter
+  - **参照SPEC**: functional_design.md#53-転送オブジェクト
+  - **実装方式**: Java Record
+  - **構造**: ORDER_TRANとORDER_DETAILを非正規化。1注文明細=1インスタンス
+  - **フィールド**: orderDate, tranId, detailId, bookName, publisherName, price, count
 
 - [ ] **T-F005-002**: OrderDetailTOクラスの作成
   - **目的**: 注文明細表示用DTOを実装する
@@ -83,26 +74,28 @@
 
 ### セクション2: サービス層
 
-- [ ] **T-F005-004**: OrderHistoryServiceの作成
+- [ ] **T-F005-004**: OrderServiceの注文履歴メソッド追加
   - **目的**: 注文履歴参照のビジネスロジックを実装する
-  - **対象**: service/order/OrderHistoryService.java
+  - **対象**: service/order/OrderService.java
   - **参照SPEC**: functional_design.md#52-ビジネスロジック層
   - **注意事項**: 
-    - @ApplicationScoped
-    - @Inject OrderTranDao, OrderDetailDao, BookDao
+    - 既存のOrderServiceに注文履歴関連メソッドを追加
+    - @Inject OrderTranDao
     - 主要メソッド:
-      - getOrderHistory(Integer customerId) - 注文履歴一覧を取得
+      - `getOrderHistory(Integer customerId)` - 注文履歴一覧を取得
+        - **実装**: 注文トランザクションと注文明細を結合し、各明細ごとに1つのOrderHistoryTOを生成
+        - OrderTranDao.findByCustomerIdWithDetails()を使用（JOIN FETCHで明細、書籍、出版社を同時取得）
         - 顧客IDでフィルタリング（BR-040）
         - 注文日降順でソート（BR-041）
-        - OrderSummaryTOのリストを返却
-      - getOrderDetail(Integer orderTranId) - 注文詳細を取得
+        - List<OrderHistoryTO>を返却（各注文明細ごとに1レコード）
+      - `getOrderDetail(Integer orderTranId)` - 注文詳細を取得
         - 注文IDで取得（BR-042）
         - JOIN FETCHで注文明細を即時読み込み
-        - OrderHistoryTOを返却
+        - OrderSummaryTOを返却
     - データマッピング:
-      - OrderTran → OrderHistoryTO
-      - OrderDetail → OrderDetailTO
-      - SettlementType列挙型を使用して決済方法名を取得
+      - OrderTran + OrderDetail → OrderHistoryTO (Record)
+      - LocalDateTimeをLocalDateに変換（orderTran.getOrderDate().toLocalDate()）
+      - 複合キーから注文明細IDを取得（detail.getId().getOrderDetailId()）
 
 ---
 
@@ -114,15 +107,19 @@
   - **参照SPEC**: functional_design.md#51-プレゼンテーション層
   - **注意事項**: 
     - @Named, @ViewScoped, implements Serializable
-    - @Inject OrderHistoryService, CustomerBean
+    - @Inject OrderService, CustomerBean
     - フィールド:
-      - orderSummaries (List<OrderSummaryTO>) - 注文一覧
+      - orderHistoryList (List<OrderHistoryTO>) - 注文履歴リスト
+      - orderSummary (OrderSummaryTO) - 注文サマリー（注文詳細表示用）
+      - orderTranId (Integer) - 注文ID（注文詳細画面用パラメータ）
+      - selectedDetailId (Integer) - 注文明細ID（注文詳細画面用パラメータ）
     - 主要メソッド:
-      - init() - @PostConstruct: 注文履歴一覧を取得
-        - CustomerBeanから顧客IDを取得
-        - OrderHistoryServiceのgetOrderHistoryメソッドを呼び出し
-      - navigateToDetail(Integer orderTranId) - 注文詳細画面に遷移
-      - navigateToSearch() - 書籍検索画面に戻る
+      - init() - @PostConstruct: viewActionから明示的にメソッド呼び出しされるため、実処理なし
+      - loadOrderHistory() - 注文履歴を読み込む
+        - **重要**: customerBean及びcustomerのnullチェックを実施
+        - ログインしていない場合は空のリストを初期化（NullPointerException防止）
+      - loadOrderDetail() - 注文詳細を読み込む
+    - **エラーハンドリング**: customerBeanまたはcustomerがnullの場合、空のリストを初期化してNullPointerExceptionを防止
 
 - [ ] **T-F005-006**: OrderDetailBeanの作成
   - **目的**: 注文詳細画面のコントローラーを実装する
@@ -162,12 +159,13 @@
   - **注意事項**: 
     - 注文情報表示:
       - 注文ID, 注文日, 配送先住所, 決済方法
-    - 注文明細テーブル（h:dataTable）
-      - 表示項目: カバー画像, 書籍名, 著者, 価格, 数量, 小計
-      - カバー画像表示（h:graphicImage value="resources/covers/#{book.imageFileName}"）
-        - BookエンティティのgetImageFileName()メソッドで書籍名 + ".jpg" を返す
-      - 画像ファイルが存在しない場合、no-image.jpgを表示
-      - 画像サイズ: 最大幅60px、高さ自動調整
+    - 注文詳細テーブル（.order-detail-table）
+      - 表示項目: カバー画像（セル幅35%）, 書籍情報（書籍名、出版社、カテゴリ、価格）
+      - カバー画像表示:
+        - `h:graphicImage library="images" name="covers/#{orderHistoryBean.orderSummary.orderDetails[0].book.bookName.replace(' ', '_')}.jpg"`
+        - CSSクラス: `styleClass="book-thumbnail"`（高さ5cm、幅自動）
+        - セルクラス: `.book-image-cell`（中央配置、幅35%）
+      - 画像ファイルが存在しない場合、onErrorでno-image.jpgを表示
     - 合計金額表示（配送料金、総計）
     - 「注文履歴に戻る」リンク
 

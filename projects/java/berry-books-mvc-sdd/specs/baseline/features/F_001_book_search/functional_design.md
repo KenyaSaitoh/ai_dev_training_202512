@@ -37,7 +37,7 @@ So that 目的の書籍を効率的に見つけることができる
 | BR-002 | キーワード未入力の場合、書籍名と著者の両方を検索 |
 | BR-003 | 検索結果は書籍ID昇順でソート |
 | BR-004 | 在庫0の書籍も表示（購入不可） |
-| BR-005 | カバー画像ファイル名は書籍名 + ".jpg" で生成 |
+| BR-005 | カバー画像ファイル名は書籍名の空白をアンダースコアに置換して生成 |
 | BR-006 | カバー画像のパスは`resources/covers/{書籍名}.jpg` |
 | BR-007 | 画像ファイルが存在しない場合は`no-image.jpg`を表示 |
 
@@ -58,7 +58,7 @@ So that 目的の書籍を効率的に見つけることができる
 - 在庫0の書籍は「在庫なし」と表示
 - 各書籍について、カバー画像、書籍名、著者、出版社、価格、在庫状況を表示
 - カバー画像は `resources/covers/` 配下のファイルを参照
-- 画像ファイル名は書籍名 + ".jpg" で生成（BookエンティティのgetImageFileName()メソッド）
+- 画像ファイル名は書籍名のスペースをアンダースコアに置換して生成（`#{book.bookName.replace(' ', '_')}.jpg`）
 - 画像ファイルが存在しない場合は `no-image.jpg` を表示
 
 ---
@@ -101,14 +101,16 @@ sequenceDiagram
 
 **BookSearchBean**
 - **責務**: 書籍検索画面のコントローラー
-- **タイプ**: @ViewScoped Bean
+- **タイプ**: @SessionScoped Bean（検索結果をリダイレクト後も保持するため）
 - **フィールド**: 
-  - `searchParam` - 検索パラメータ
-  - `bookList` - 検索結果のリスト
-  - `categoryList` - カテゴリリスト
+  - `searchParam` - 検索パラメータ（SearchParam型）
+  - `bookList` - 検索結果のリスト（List<Book>）
+  - `categoryList` - カテゴリリスト（List<Category>）
 - **主要メソッド**: 
-  - `search()` - 書籍検索を実行
-  - `addToCart(Book)` - カートに追加
+  - `init()` - @PostConstruct初期化メソッド。カテゴリリストと初期書籍リストを取得
+  - `search()` - 書籍検索を実行し、bookSelect画面へリダイレクト
+  - `refreshBookList()` - 書籍リストを最新の状態に更新（在庫数を含む）。bookSelect画面のpreRenderViewイベントから呼び出される
+  - `addToCart(Book)` - カートに追加（在庫バージョン番号を含む）
 
 ### 6.2 ビジネスロジック層
 

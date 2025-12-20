@@ -96,7 +96,7 @@ Given データベースに以下の顧客レコードが存在する
 When ユーザーがログイン画面（index.xhtml）でメールアドレス「alice@gmail.com」を入力する
 And パスワードフィールドに「password123」を入力する
 And 「ログイン」ボタンをクリックする
-Then LoginBean.login()が呼び出される
+Then LoginBean.processLogin()が呼び出される
 And CustomerService.authenticate("alice@gmail.com", "password123")が呼び出される
 And CustomerRestClient.getCustomerByEmail()でREST API経由でCustomerTOを取得
 And パスワードが一致することを確認（平文比較、BR-031）
@@ -120,7 +120,7 @@ Given データベースに顧客「alice@gmail.com」（password: "password123"
 When ユーザーがログイン画面（index.xhtml）でメールアドレス「alice@gmail.com」を入力する
 And パスワードフィールドに誤ったパスワード「wrongpassword」を入力する
 And 「ログイン」ボタンをクリックする
-Then LoginBean.login()が呼び出される
+Then LoginBean.processLogin()が呼び出される
 And CustomerService.authenticate()でパスワードが一致しない
 And nullが返される
 And FacesMessageが追加される: 「BIZ-002: メールアドレスまたはパスワードが正しくありません」

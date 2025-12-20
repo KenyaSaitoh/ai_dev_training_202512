@@ -24,25 +24,20 @@
 
 ```plantuml
 @startsalt
-{+
-  {/ <b>berry-books</b> | <&person> Aliceさん | <&account-logout> ログアウト | <&magnifying-glass> 書籍検索 }
-  ..
-  {
-    <b>注文履歴</b>
-    ==
-    {#
-      . 注文ID | 注文日      | 配送先           | 決済方法         | 合計金額   | 詳細
-      --
-      . 1004  | 2023-06-01 | 東京都中央区...   | 銀行振り込み     | 5,300円   | [詳細]
-      . 1003  | 2023-05-01 | 東京都中央区...   | 着払い          | 12,000円  | [詳細]
-      . 1002  | 2023-04-01 | 東京都中央区...   | クレジットカード  | 6,200円   | [詳細]
-      . 1001  | 2023-03-01 | 東京都中央区...   | 銀行振り込み     | 6,100円   | [詳細]
-    }
-    ==
-    <&arrow-left> 書籍検索に戻る
+{
+  <b>注文履歴</b>
+  --
+  {#
+    . 注文日        | 注文ID | 書籍名                    | 出版社名      | 価格   | 個数 | 
+    --
+    . 2023-06-01  | 1004  | Java SEディープダイブ      | ネット...     | 3,400 | 1   | [書籍情報]
+    . 2023-05-01  | 1003  | SpringBoot in Cloud      | ネット...     | 3,000 | 2   | [書籍情報]
+    . 2023-04-01  | 1002  | SQLの冒険～RDBの深層       | コード...     | 2,200 | 1   | [書籍情報]
+    . 2023-03-01  | 1001  | Javaアーキテクト...       | クラウド...    | 3,000 | 1   | [書籍情報]
   }
-  ..
-  {/ © 2025 berry-books. All rights reserved. }
+  書籍の選択ページへ
+  書籍の検索ページへ
+  現在の買い物カゴの内容を表示する
 }
 @endsalt
 ```
@@ -51,16 +46,20 @@
 
 | カラム | 説明 |
 |--------|------|
-| 注文ID | 注文取引ID |
-| 注文日 | 注文確定日 |
-| 配送先 | 配送先住所（省略表示） |
-| 決済方法 | 銀行振込/クレジット/着払い |
-| 合計金額 | 商品合計 + 配送料 |
-| 詳細 | 注文詳細ボタン → orderDetail.xhtml |
+| 注文日 | 注文確定日（`orderHistory.orderDate()`） |
+| 注文ID | 注文取引ID（`orderHistory.tranId()`） |
+| 書籍名 | 購入した書籍名（`orderHistory.bookName()`） |
+| 出版社名 | 出版社名（`orderHistory.publisherName()`） |
+| 価格 | 書籍価格（`orderHistory.price()`） |
+| 個数 | 購入数量（`orderHistory.count()`） |
+| 書籍情報 | orderDetail.xhtmlへのリンク（tranIdとdetailIdを渡す） |
 
 ### 動作
 
-- **詳細ボタン**: orderDetail.xhtml?orderId=XXX へ遷移
+- **書籍情報リンク**: orderDetail.xhtmlへ遷移
+  - URLパラメータ: `tranId`（注文取引ID）、`detailId`（注文明細ID）
+  - 例: `orderDetail.xhtml?tranId=1001&detailId=1`
+- **初期表示**: `OrderHistoryBean.loadOrderHistory()` をビューアクション（`<f:viewAction>`）で実行
 - ソート順: 注文日降順（新しい順）
 
 ---
@@ -70,52 +69,42 @@
 **ファイル名:** `orderDetail.xhtml`  
 **目的:** 注文の詳細情報表示
 
-### 画像表示ルール
+### 画像表示ルール（注文詳細画面のみ）
 
-- **画像ファイル名**: 書籍名（BOOK_NAME）+ ".jpg"
-  - 例: `Java SEディープダイブ` → `Java SEディープダイブ.jpg`
-- **画像パス**: `resources/covers/#{book.imageFileName}`
-  - BookエンティティのgetImageFileName()メソッドで生成
-- **サイズ**: サムネイル表示（最大幅60px、高さ自動調整）
-- **画像なし**: ファイルが存在しない場合、`no-image.jpg`を表示
+- **画像リソース配置**: `webapp/resources/images/covers/`ディレクトリ
+- **画像ファイル名**: 書籍名（BOOK_NAME）のスペースをアンダースコアに置換し、拡張子 `.jpg` を付加
+  - 例: `Java SEディープダイブ` → `Java_SEディープダイブ.jpg`
+- **画像パス**: `library="images" name="covers/#{orderHistoryBean.orderSummary.orderDetails[0].book.bookName.replace(' ', '_')}.jpg"`
+- **サイズ**: 
+  - CSSクラス: `.book-thumbnail`（`styleClass="book-thumbnail"`で指定）
+  - 高さ: `5cm`（幅は自動調整、アスペクト比維持）
+  - 最大幅: `100%`（セル幅を超えない）
+- **画像セル**: 
+  - CSSクラス: `.book-image-cell`（注文詳細テーブルでは`.order-detail-table .book-image-cell`）
+  - 中央配置、垂直方向も中央
+  - 幅: 35%（注文詳細テーブル）
+- **画像なし**: ファイルが存在しない場合、JavaScriptのonErrorで`no-image.jpg`を表示
+  - `onError="this.onerror=null; this.src='#{request.contextPath}/jakarta.faces.resource/no-image.jpg?ln=images/covers'"`
 - **Alt属性**: 書籍名を設定
+- **スタイル**: 角丸（4px）、シャドウ付き、ホバー時に拡大・シャドウ強調
 
 ### PlantUML
 
 ```plantuml
 @startsalt
-{+
-  {/ <b>berry-books</b> | <&person> Aliceさん | <&account-logout> ログアウト }
-  ..
-  {
-    <b>注文詳細 - 注文番号 #1001</b>
-    ==
-    <b>▼ 注文情報</b>
-    {
-      注文日:     2023-03-01
-      配送先:     東京都中央区1-1-1
-      決済方法:   銀行振り込み
-    }
-    ..
-    <b>▼ 注文明細</b>
-    {#
-      . 画像   | 書籍名                    | 単価      | 数量 | 小計
-      --
-      . [img] | Java SEディープダイブ      | 3,400円   | 1   | 3,400円
-      . [img] | SQLの冒険～RDBの深層       | 2,200円   | 1   | 2,200円
-    }
-    ..
-    <b>▼ 料金</b>
-    {
-      . | 商品合計   | 5,600円
-      . | 配送料     | 500円
-      . | <b>総合計</b> | <b>6,100円</b>
-    }
-    ==
-    <&arrow-left> 注文履歴に戻る
+{
+  <b>注文した書籍の詳細情報</b>
+  --
+  {#
+    . 注文日   | 2023-03-01      | [img]
+    . 書籍名   | Java SEディープダイブ |
+    . 出版社   | ネットワークノード出版 |
+    . カテゴリ  | Java           |
+    . 価格    | 3,400          |
   }
-  ..
-  {/ © 2025 berry-books. All rights reserved. }
+  --
+  書籍の選択ページへ
+  書籍の検索ページへ
 }
 @endsalt
 ```

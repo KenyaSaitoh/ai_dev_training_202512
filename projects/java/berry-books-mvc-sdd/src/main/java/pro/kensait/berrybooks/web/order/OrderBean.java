@@ -48,11 +48,6 @@ public class OrderBean implements Serializable {
     private CustomerBean customerBean;
     
     /**
-     * 配送先住所
-     */
-    private String deliveryAddress;
-    
-    /**
      * 注文トランザクション（注文完了後にセット）
      */
     private OrderTran orderTran;
@@ -65,42 +60,15 @@ public class OrderBean implements Serializable {
     /**
      * 初期化処理
      * 
-     * <p>カートが空の場合はエラーメッセージを表示します（BIZ-005）。</p>
-     * <p>ログインユーザーの住所を配送先住所のデフォルト値として設定します。</p>
+     * <p>注文成功画面でのみ使用されます。</p>
+     * <p>注文入力画面（bookOrder.xhtml）では、カートチェックは不要です（通常フローではcartView.xhtmlから遷移するため）。</p>
+     * <p>配送先住所と決済方法は、CartSessionで管理し、bookOrder.xhtmlで直接バインドします。</p>
      */
     @PostConstruct
     public void init() {
-        logger.info("[ OrderBean#init ]");
-        
-        if (cartSession.isEmpty()) {
-            FacesContext context = FacesContext.getCurrentInstance();
-            FacesMessage message = new FacesMessage(
-                FacesMessage.SEVERITY_ERROR,
-                MessageUtil.getMessage("BIZ-005"),
-                ""
-            );
-            context.addMessage(null, message);
-        }
-        
-        // デフォルトの決済方法はクレジットカード（2）
-        cartSession.setSettlementType(2);
-        
-        // ログインユーザーの住所を配送先住所のデフォルト値として設定
-        if (customerBean != null && customerBean.getCustomer() != null) {
-            this.deliveryAddress = customerBean.getCustomer().getAddress();
-            logger.info("[ OrderBean#init ] Set default delivery address from logged-in customer: {}", 
-                       this.deliveryAddress);
-            
-            // 配送料金を初期計算
-            if (this.deliveryAddress != null && !this.deliveryAddress.trim().isEmpty()) {
-                BigDecimal deliveryFee = deliveryFeeService.calculateDeliveryFee(
-                    this.deliveryAddress,
-                    cartSession.getTotalPrice()
-                );
-                cartSession.setDeliveryPrice(deliveryFee);
-                logger.info("[ OrderBean#init ] Initial deliveryFee calculated: {}", deliveryFee);
-            }
-        }
+        logger.info("[ OrderBean#init ] - This bean is ViewScoped, initialization is minimal");
+        // 注文入力画面では特別な初期化処理は不要
+        // 注文成功画面では、viewActionのloadOrderSuccess()が呼ばれる
     }
     
     /**
@@ -112,6 +80,7 @@ public class OrderBean implements Serializable {
      * @return 同じページ（null）
      */
     public String calculateDeliveryFee() {
+        String deliveryAddress = cartSession.getDeliveryAddress();
         logger.info("[ OrderBean#calculateDeliveryFee ] deliveryAddress={}", deliveryAddress);
         
         if (deliveryAddress == null || deliveryAddress.trim().isEmpty()) {
@@ -131,9 +100,8 @@ public class OrderBean implements Serializable {
             cartSession.getTotalPrice()
         );
         
-        // CartSessionに配送料金と配送先住所を設定
+        // CartSessionに配送料金を設定
         cartSession.setDeliveryPrice(deliveryFee);
-        cartSession.setDeliveryAddress(deliveryAddress);
         
         logger.info("[ OrderBean#calculateDeliveryFee ] deliveryPrice={}", deliveryFee);
         
@@ -164,7 +132,8 @@ public class OrderBean implements Serializable {
             return "orderError";
         }
         
-        // 配送先住所チェック
+        // 配送先住所チェック（cartSessionから取得）
+        String deliveryAddress = cartSession.getDeliveryAddress();
         if (deliveryAddress == null || deliveryAddress.trim().isEmpty()) {
             FacesMessage message = new FacesMessage(
                 FacesMessage.SEVERITY_ERROR,
@@ -252,24 +221,6 @@ public class OrderBean implements Serializable {
             
             return "orderError?faces-redirect=true";
         }
-    }
-    
-    /**
-     * 配送先住所を取得します
-     * 
-     * @return 配送先住所
-     */
-    public String getDeliveryAddress() {
-        return deliveryAddress;
-    }
-    
-    /**
-     * 配送先住所を設定します
-     * 
-     * @param deliveryAddress 配送先住所
-     */
-    public void setDeliveryAddress(String deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
     }
     
     /**

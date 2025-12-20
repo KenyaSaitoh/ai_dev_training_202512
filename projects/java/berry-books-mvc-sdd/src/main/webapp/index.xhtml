@@ -1,80 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core"
-      xmlns:ui="jakarta.faces.facelets">
+      xmlns:f="jakarta.faces.core">
 <h:head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>ログイン - berry-books</title>
+    <title>TopPage</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <h:outputStylesheet library="css" name="style.css"/>
 </h:head>
 <h:body>
-    <!-- ヘッダー -->
-    <div class="header">
-        <div class="header-content">
-            <div class="header-title">berry-books</div>
-        </div>
-    </div>
-    
-    <!-- メインコンテンツ -->
-    <div class="container-narrow">
-        <div class="card">
-            <h2 class="text-center mb-lg">ログイン</h2>
-            
-            <!-- メッセージ表示 -->
-            <h:messages styleClass="message message-error" showSummary="true" showDetail="true"/>
-            
-            <!-- ログインフォーム -->
-            <h:form>
-                <!-- メールアドレス -->
-                <div class="form-group">
-                    <h:outputLabel for="email" value="メールアドレス" styleClass="form-label"/>
-                    <h:inputText id="email" 
-                                 value="#{loginBean.email}" 
-                                 required="true" 
-                                 requiredMessage="メールアドレスを入力してください"
-                                 styleClass="form-input">
-                        <f:validateLength maximum="30"/>
-                    </h:inputText>
-                    <h:message for="email" styleClass="form-error"/>
-                </div>
-                
-                <!-- パスワード -->
-                <div class="form-group">
-                    <h:outputLabel for="password" value="パスワード" styleClass="form-label"/>
-                    <h:inputSecret id="password" 
-                                   value="#{loginBean.password}" 
-                                   required="true" 
-                                   requiredMessage="パスワードを入力してください"
-                                   styleClass="form-input">
-                        <f:validateLength maximum="60"/>
-                    </h:inputSecret>
-                    <h:message for="password" styleClass="form-error"/>
-                </div>
-                
-                <!-- ログインボタン -->
-                <div class="form-group text-center">
-                    <h:commandButton value="ログイン" 
-                                     action="#{loginBean.login}" 
-                                     styleClass="button button-lg"/>
-                </div>
-                
-                <!-- 新規登録リンク -->
-                <div class="text-center mt-lg">
-                    <p class="text-secondary">アカウントをお持ちでない方</p>
-                    <h:commandLink value="新規会員登録はこちら" 
-                                   action="#{loginBean.navigateToRegister}" 
-                                   styleClass="text-primary"/>
-                </div>
-            </h:form>
-        </div>
-    </div>
-    
-    <!-- フッター -->
-    <div class="footer">
-        <p>© 2025 berry-books. All rights reserved.</p>
-    </div>
+    <h2 class="welcome-title">Welcome to Berry Books</h2>
+    <hr />
+    <div>登録済みのお客様</div>
+    <h:form styleClass="login">
+        <table>
+            <tr>
+                <td>メールアドレス</td>
+                <td><h:inputText id="email" value="#{loginBean.email}" 
+                                 validatorMessage="メールアドレスの検証に失敗しました">
+                    <f:validateBean />
+                </h:inputText></td>
+                <td>
+                    <h:message for="email" styleClass="error" />
+                </td>
+            </tr>
+            <tr>
+                <td>パスワード</td>
+                <td><h:inputSecret id="password" value="#{loginBean.password}" 
+                                   validatorMessage="パスワードの検証に失敗しました">
+                    <f:validateBean />
+                </h:inputSecret></td>
+                <td>
+                    <h:message for="password" styleClass="error" />
+                </td>
+            </tr>
+        </table>
+        <h:commandButton id="loginButton" value="ログイン" action="#{loginBean.processLogin}" />
+        <h:messages globalOnly="true" styleClass="error" />
+    </h:form>
+    <hr />
+    <div>新規のお客様</div>
+    <h:link id="newCustomerLink" value="お客様のご登録" outcome="customerInput" />
 </h:body>
 </html>
 

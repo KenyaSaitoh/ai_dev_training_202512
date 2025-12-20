@@ -1,118 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core"
-      xmlns:ui="jakarta.faces.facelets">
+      xmlns:f="jakarta.faces.core">
 <h:head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>新規会員登録 - berry-books</title>
+    <title>CustomerInputPage</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <h:outputStylesheet library="css" name="style.css"/>
 </h:head>
 <h:body>
-    <!-- ヘッダー -->
-    <div class="header">
-        <div class="header-content">
-            <div class="header-title">berry-books</div>
-            <div class="header-nav">
-                <h:link value="ログインへ戻る" outcome="index"/>
-            </div>
-        </div>
-    </div>
-    
-    <!-- メインコンテンツ -->
-    <div class="container-narrow">
-        <div class="card">
-            <h2 class="text-center mb-lg">新規会員登録</h2>
-            
-            <!-- メッセージ表示 -->
-            <h:messages styleClass="message message-error" showSummary="true" showDetail="true"/>
-            
-            <!-- 登録フォーム -->
-            <h:form>
-                <!-- 顧客名 -->
-                <div class="form-group">
-                    <h:outputLabel for="customerName" value="顧客名" styleClass="form-label"/>
-                    <h:inputText id="customerName" 
-                                 value="#{customerRegisterBean.customer.customerName}" 
-                                 required="true" 
-                                 requiredMessage="顧客名を入力してください"
-                                 styleClass="form-input">
-                        <f:validateLength maximum="30"/>
-                    </h:inputText>
-                    <h:message for="customerName" styleClass="form-error"/>
-                </div>
-                
-                <!-- メールアドレス -->
-                <div class="form-group">
-                    <h:outputLabel for="email" value="メールアドレス" styleClass="form-label"/>
-                    <h:inputText id="email" 
-                                 value="#{customerRegisterBean.customer.email}" 
-                                 required="true" 
-                                 requiredMessage="メールアドレスを入力してください"
-                                 styleClass="form-input">
-                        <f:validateLength maximum="30"/>
-                        <f:validateRegex pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
-                                         for="email"/>
-                    </h:inputText>
-                    <h:message for="email" styleClass="form-error"/>
-                </div>
-                
-                <!-- パスワード -->
-                <div class="form-group">
-                    <h:outputLabel for="password" value="パスワード" styleClass="form-label"/>
-                    <h:inputSecret id="password" 
-                                   value="#{customerRegisterBean.customer.password}" 
-                                   required="true" 
-                                   requiredMessage="パスワードを入力してください"
-                                   styleClass="form-input">
-                        <f:validateLength maximum="60"/>
-                    </h:inputSecret>
-                    <h:message for="password" styleClass="form-error"/>
-                </div>
-                
-                <!-- 生年月日 -->
-                <div class="form-group">
-                    <h:outputLabel for="birthday" value="生年月日" styleClass="form-label"/>
-                    <h:inputText id="birthday" 
-                                 value="#{customerRegisterBean.customer.birthday}" 
-                                 styleClass="form-input">
-                        <f:convertDateTime pattern="yyyy-MM-dd" type="localDate"/>
-                    </h:inputText>
-                    <h:message for="birthday" styleClass="form-error"/>
-                    <small class="form-error">形式: YYYY-MM-DD（例: 1990-01-01）</small>
-                </div>
-                
-                <!-- 住所 -->
-                <div class="form-group">
-                    <h:outputLabel for="address" value="住所" styleClass="form-label"/>
-                    <h:inputTextarea id="address" 
-                                     value="#{customerRegisterBean.customer.address}" 
-                                     rows="3"
-                                     styleClass="form-input">
-                        <f:validateLength maximum="120"/>
-                    </h:inputTextarea>
-                    <h:message for="address" styleClass="form-error"/>
-                </div>
-                
-                <!-- ボタングループ -->
-                <div class="form-group text-center">
-                    <h:commandButton value="登録する" 
-                                     action="#{customerRegisterBean.register}" 
-                                     styleClass="button button-lg"/>
-                    <h:commandButton value="キャンセル" 
-                                     action="#{customerRegisterBean.navigateToLogin}" 
-                                     immediate="true"
-                                     styleClass="button button-secondary ml-sm"/>
-                </div>
-            </h:form>
-        </div>
-    </div>
-    
-    <!-- フッター -->
-    <div class="footer">
-        <p>© 2025 berry-books. All rights reserved.</p>
-    </div>
+    <h2>お客様の情報を登録します</h2>
+    <hr />
+    <h:form styleClass="customer">
+        <table>
+            <tr>
+                <td>顧客名（必須）</td>
+                <td><h:inputText id="customerName" value="#{customerBean.customerName}" 
+                                 maxlength="50" validatorMessage="顧客名の検証に失敗しました">
+                    <f:validateBean />
+                </h:inputText></td>
+                <td>
+                    <h:message for="customerName" styleClass="error" />
+                </td>
+            </tr>
+            <tr>
+                <td>メールアドレス（必須）</td>
+                <td><h:inputText id="email" value="#{customerBean.email}" 
+                                 maxlength="100" validatorMessage="メールアドレスの検証に失敗しました">
+                    <f:validateBean />
+                </h:inputText></td>
+                <td>
+                    <h:message for="email" styleClass="error" />
+                </td>
+            </tr>
+            <tr>
+                <td>パスワード（必須）</td>
+                <td><h:inputSecret id="password" value="#{customerBean.password}" 
+                                   maxlength="20" validatorMessage="パスワードの検証に失敗しました">
+                    <f:validateBean />
+                </h:inputSecret></td>
+                <td>
+                    <h:message for="password" styleClass="error" />
+                </td>
+            </tr>
+            <tr>
+                <td>生年月日（任意）</td>
+                <td><h:inputText id="birthday" value="#{customerBean.birthday}" 
+                                 placeholder="yyyy-MM-dd" validatorMessage="生年月日の検証に失敗しました">
+                    <f:validateBean />
+                </h:inputText></td>
+                <td>
+                    <h:message for="birthday" styleClass="error" />
+                </td>
+            </tr>
+            <tr>
+                <td>住所（任意）</td>
+                <td><h:inputText id="address" value="#{customerBean.address}" 
+                                 maxlength="200" validatorMessage="住所の検証に失敗しました">
+                    <f:validateBean />
+                </h:inputText></td>
+                <td>
+                    <h:message for="address" styleClass="error" />
+                </td>
+            </tr>
+        </table>
+        <h:commandButton id="registerButton" value="お客様の情報を登録する" action="#{customerBean.register}" />
+        <h:messages globalOnly="true" styleClass="error" />
+        <br/>
+        <h:link id="toTopLink" value="トップページへ戻る" outcome="index" />
+    </h:form>
 </h:body>
 </html>
 

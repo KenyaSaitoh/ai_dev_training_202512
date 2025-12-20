@@ -2,7 +2,6 @@ package pro.kensait.berrybooks.integration;
 
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import pro.kensait.berrybooks.entity.Book;
 import pro.kensait.berrybooks.service.book.BookService;
@@ -13,7 +12,7 @@ import pro.kensait.berrybooks.web.cart.CartItem;
 import pro.kensait.berrybooks.web.cart.CartSession;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,22 +167,39 @@ public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
     @DisplayName("注文履歴の表示順序確認")
     public void testOrderHistorySort() {
         // Given: 複数の注文履歴が存在する想定
+        // OrderHistoryTO(LocalDate orderDate, Integer tranId, Integer detailId, 
+        //                String bookName, String publisherName, BigDecimal price, Integer count)
         List<OrderHistoryTO> orderHistoryList = new ArrayList<>();
         
-        OrderHistoryTO order1 = new OrderHistoryTO();
-        order1.setOrderTranId(1);
-        order1.setOrderDate(LocalDateTime.of(2025, 12, 1, 10, 0));
-        order1.setTotalPrice(BigDecimal.valueOf(3000));
+        OrderHistoryTO order1 = new OrderHistoryTO(
+            LocalDate.of(2025, 12, 1),      // orderDate
+            1,                                // tranId
+            1,                                // detailId
+            "Test Book 1",                    // bookName
+            "Test Publisher",                 // publisherName
+            BigDecimal.valueOf(3000),         // price
+            1                                 // count
+        );
         
-        OrderHistoryTO order2 = new OrderHistoryTO();
-        order2.setOrderTranId(2);
-        order2.setOrderDate(LocalDateTime.of(2025, 12, 15, 14, 30));
-        order2.setTotalPrice(BigDecimal.valueOf(5000));
+        OrderHistoryTO order2 = new OrderHistoryTO(
+            LocalDate.of(2025, 12, 15),     // orderDate
+            2,                                // tranId
+            2,                                // detailId
+            "Test Book 2",                    // bookName
+            "Test Publisher",                 // publisherName
+            BigDecimal.valueOf(5000),         // price
+            1                                 // count
+        );
         
-        OrderHistoryTO order3 = new OrderHistoryTO();
-        order3.setOrderTranId(3);
-        order3.setOrderDate(LocalDateTime.of(2025, 12, 10, 9, 15));
-        order3.setTotalPrice(BigDecimal.valueOf(4000));
+        OrderHistoryTO order3 = new OrderHistoryTO(
+            LocalDate.of(2025, 12, 10),     // orderDate
+            3,                                // tranId
+            3,                                // detailId
+            "Test Book 3",                    // bookName
+            "Test Publisher",                 // publisherName
+            BigDecimal.valueOf(4000),         // price
+            1                                 // count
+        );
         
         orderHistoryList.add(order1);
         orderHistoryList.add(order2);
@@ -191,14 +207,14 @@ public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
         
         // When: 注文日降順でソート
         orderHistoryList.sort((o1, o2) -> 
-                o2.getOrderDate().compareTo(o1.getOrderDate()));
+                o2.orderDate().compareTo(o1.orderDate()));
         
         // Then: 最新の注文が最初に表示される
-        assertEquals(2, orderHistoryList.get(0).getOrderTranId(), 
+        assertEquals(2, orderHistoryList.get(0).tranId(), 
                 "最新の注文（12/15）が最初に表示されるはずです");
-        assertEquals(3, orderHistoryList.get(1).getOrderTranId(), 
+        assertEquals(3, orderHistoryList.get(1).tranId(), 
                 "2番目に新しい注文（12/10）が2番目に表示されるはずです");
-        assertEquals(1, orderHistoryList.get(2).getOrderTranId(), 
+        assertEquals(1, orderHistoryList.get(2).tranId(), 
                 "最も古い注文（12/01）が最後に表示されるはずです");
     }
 }

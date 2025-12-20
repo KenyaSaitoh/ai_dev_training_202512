@@ -1,158 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
 <h:head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>注文入力 - berry-books</title>
-    <h:outputStylesheet library="css" name="style.css" />
+    <title>BookOrderPage</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <h:outputStylesheet library="css" name="style.css"/>
+    <script type="text/javascript">
+        function confirmOrder(event) {
+            if (!confirm('注文します。よろしいですか？')) {
+                event.preventDefault();
+                return false;
+            }
+            return true;
+        }
+    </script>
 </h:head>
-
 <h:body>
-    <!-- ヘッダー -->
-    <div class="header">
-        <div class="header-content">
-            <div class="header-title">berry-books</div>
-            <div class="header-nav">
-                <span>#{customerBean.customer.customerName}さん</span>
-                <h:link outcome="bookSearch" value="書籍検索" />
-                <h:link outcome="cartView" value="カート" />
-                <h:link outcome="orderHistory" value="注文履歴" />
-                <h:link outcome="index" value="ログアウト" />
-            </div>
-        </div>
-    </div>
-    
-    <!-- メインコンテンツ -->
-    <div class="container">
-        <div class="card">
-            <h2>注文内容確認</h2>
-            
-            <!-- メッセージ表示 -->
-            <h:messages globalOnly="true" styleClass="message" />
-            
-            <h:form>
-                <!-- 注文書籍 -->
-                <h3>▼ 注文書籍</h3>
-                <table>
-                    <thead>
+    <h2>以下の内容で注文します</h2>
+    <hr />
+    <h:form>
+        <table>
+            <tr>
+                <td>顧客名</td>
+                <td>#{customerBean.customer.customerName} 様</td>
+            </tr>
+            <tr>
+                <td>注文内容</td>
+                <td>
+                    <table class="order-items-table">
                         <tr>
-                            <th>書籍名</th>
-                            <th>出版社</th>
-                            <th>単価</th>
-                            <th>数量</th>
-                            <th>小計</th>
+                            <td>書籍名</td>
+                            <td>金額</td>
+                            <td>注文数</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <ui:repeat value="#{cartSession.cartItems}" var="item">
+                        <ui:repeat value="#{cartSession.cartItems}" var="cartItem">
                             <tr>
-                                <td>#{item.bookName}</td>
-                                <td>#{item.publisherName}</td>
+                                <td>#{cartItem.bookName}</td>
                                 <td>
-                                    <h:outputText value="#{item.price}">
-                                        <f:convertNumber type="currency" currencySymbol="¥" 
-                                                       groupingUsed="true" minFractionDigits="0" />
+                                    <h:outputText value="#{cartItem.price}">
+                                        <f:convertNumber pattern="#,###" />
                                     </h:outputText>
                                 </td>
-                                <td style="text-align: right;">#{item.count}</td>
-                                <td>
-                                    <h:outputText value="#{item.subTotal}">
-                                        <f:convertNumber type="currency" currencySymbol="¥" 
-                                                       groupingUsed="true" minFractionDigits="0" />
-                                    </h:outputText>
-                                </td>
+                                <td>#{cartItem.count}</td>
                             </tr>
                         </ui:repeat>
-                    </tbody>
-                </table>
-                
-                <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border-color);" />
-                
-                <!-- 配送先情報 -->
-                <h3>▼ 配送先情報</h3>
-                <div class="form-group">
-                    <h:outputLabel for="deliveryAddress" value="配送先住所:" styleClass="form-label" />
-                    <h:inputText id="deliveryAddress" 
-                                value="#{orderBean.deliveryAddress}" 
-                                styleClass="form-input"
-                                required="true"
-                                requiredMessage="配送先住所を入力してください">
-                        <f:validateLength maximum="100" />
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>注文金額合計</td>
+                <td>
+                    <h:outputText value="#{cartSession.totalPrice}">
+                        <f:convertNumber pattern="#,###" />
+                    </h:outputText>
+                </td>
+            </tr>
+            <tr>
+                <td>配送料金</td>
+                <td>
+                    <h:outputText value="#{cartSession.deliveryPrice}">
+                        <f:convertNumber pattern="#,###" />
+                    </h:outputText>
+                </td>
+            </tr>
+            <tr>
+                <td>配送先住所</td>
+                <td>
+                    <h:inputText id="deliveryAddress" value="#{cartSession.deliveryAddress}" 
+                               required="true"
+                               requiredMessage="配送先住所を入力してください"
+                               maxlength="200" validatorMessage="配送先住所の検証に失敗しました">
+                        <f:validateBean />
                     </h:inputText>
-                    <h:message for="deliveryAddress" styleClass="message-error" />
-                </div>
-                
-                <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border-color);" />
-                
-                <!-- 決済方法 -->
-                <h3>▼ 決済方法</h3>
-                <div class="form-group">
-                    <h:selectOneRadio id="settlementCode" 
-                                     value="#{orderBean.settlementCode}"
-                                     layout="pageDirection"
-                                     styleClass="form-radio">
+                    <h:message for="deliveryAddress" styleClass="error" />
+                </td>
+            </tr>
+            <tr>
+                <td>決済方法</td>
+                <td>
+                    <h:selectOneRadio id="settlementType" value="#{cartSession.settlementType}" 
+                                      required="true" 
+                                      requiredMessage="決済方法を選択してください"
+                                      styleClass="custom-radio" validatorMessage="決済方法の検証に失敗しました">
                         <f:selectItem itemValue="1" itemLabel="銀行振り込み" />
                         <f:selectItem itemValue="2" itemLabel="クレジットカード" />
                         <f:selectItem itemValue="3" itemLabel="着払い" />
+                        <f:validateBean />
                     </h:selectOneRadio>
-                </div>
-                
-                <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border-color);" />
-                
-                <!-- 料金 -->
-                <h3>▼ 料金</h3>
-                <table class="summary-table" style="width: 50%; margin: 0 auto;">
-                    <tr>
-                        <th style="text-align: right; padding: 8px;">商品合計:</th>
-                        <td style="text-align: right; padding: 8px;">
-                            <h:outputText value="#{cartSession.totalPrice}">
-                                <f:convertNumber type="currency" currencySymbol="¥" 
-                                               groupingUsed="true" minFractionDigits="0" />
-                            </h:outputText>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th style="text-align: right; padding: 8px;">配送料:</th>
-                        <td style="text-align: right; padding: 8px;">
-                            <h:outputText value="#{cartSession.deliveryPrice}">
-                                <f:convertNumber type="currency" currencySymbol="¥" 
-                                               groupingUsed="true" minFractionDigits="0" />
-                            </h:outputText>
-                        </td>
-                    </tr>
-                    <tr style="border-top: 2px solid var(--border-color); font-weight: bold;">
-                        <th style="text-align: right; padding: 8px; font-size: 1.2em;">総合計:</th>
-                        <td style="text-align: right; padding: 8px; font-size: 1.2em;" class="text-primary">
-                            <h:outputText value="#{orderBean.grandTotal}">
-                                <f:convertNumber type="currency" currencySymbol="¥" 
-                                               groupingUsed="true" minFractionDigits="0" />
-                            </h:outputText>
-                        </td>
-                    </tr>
-                </table>
-                
-                <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border-color);" />
-                
-                <!-- ボタン -->
-                <div style="margin-top: 24px; text-align: center;">
-                    <h:link outcome="cartView" value="カートに戻る" styleClass="button button-secondary" />
-                    <h:commandButton value="注文を確定する" 
-                                    action="#{orderBean.placeOrder}"
-                                    styleClass="button" 
-                                    style="margin-left: 16px;" />
-                </div>
-            </h:form>
-        </div>
-    </div>
-    
-    <!-- フッター -->
-    <div class="footer">
-        © 2025 berry-books. All rights reserved.
-    </div>
+                    <h:message for="settlementType" styleClass="error" />
+                </td>
+            </tr>
+        </table>
+        <br />
+        <h:commandButton id="orderButton" value="注文する" 
+                       action="#{orderBean.placeOrder}" 
+                       onclick="return confirmOrder(event);" />
+        <br />
+        <h:link id="continueLink" value="買い物を続ける" outcome="bookSelect" />
+    </h:form>
 </h:body>
 </html>
 

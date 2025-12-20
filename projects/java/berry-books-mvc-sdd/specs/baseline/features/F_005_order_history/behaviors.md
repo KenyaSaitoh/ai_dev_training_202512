@@ -40,7 +40,7 @@ And データベースに以下の注文が存在する
   | 1003 | 1 | 2025-12-10 | 4200 | 800 | 3 |
 When ユーザーが書籍検索画面のナビゲーションメニューで「注文履歴」リンクをクリックする
 Then 注文履歴画面（orderHistory.xhtml）に遷移する
-And OrderBean.loadOrderHistory()が呼び出される
+And OrderHistoryBean.loadOrderHistory()が呼び出される
 And OrderService.getOrderHistory(customerId=1)が呼び出される
 And OrderTranDao.findByCustomerId(1)で注文を取得（BR-040）
 And 注文日降順（BR-041）でソートされる
@@ -79,7 +79,7 @@ And 注文明細が以下の通り存在する
   | 2 | SQLの冒険～RDBの深層 | 2200 | 1 | 2200 |
 When ユーザーが注文ID 1001の行をクリックする
 Then 注文詳細画面（orderDetail.xhtml）に遷移する
-And OrderBean.getOrderDetail(orderTranId=1001)が呼び出される
+And OrderHistoryBean.loadOrderDetail()が呼び出される
 And OrderService.getOrderDetail(1001)が呼び出される（BR-042）
 And OrderTranDao.findByIdWithDetails(1001)でJOIN FETCHを使用して注文と明細を取得
 And 注文ヘッダー情報が表示される
@@ -103,7 +103,7 @@ Given ユーザー（customerId=99）がログイン済み
 And データベースにcustomerId=99の注文レコードが存在しない
 When ユーザーが「注文履歴」メニューをクリックする
 Then 注文履歴画面（orderHistory.xhtml）に遷移する
-And OrderBean.loadOrderHistory()が呼び出される
+And OrderHistoryBean.loadOrderHistory()が呼び出される
 And OrderService.getOrderHistory(customerId=99)が空のリストを返す
 And 画面に「注文履歴はありません」というメッセージが表示される
 And 注文テーブルは表示されない

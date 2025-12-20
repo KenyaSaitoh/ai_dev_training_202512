@@ -25,21 +25,18 @@
 
 ```plantuml
 @startsalt
-{+
-  {/ <b>berry-books</b> }
-  ..
-  {
-    <b>ログイン</b>
-    .
-    メールアドレス | "                              "
-    パスワード     | "                              "
-    .
-    [  ログイン  ]
-    .
-    <&link-intact> 新規会員登録はこちら
+{
+  <b>Welcome to Berry Books</b>
+  --
+  登録済みのお客様
+  {#
+    . メールアドレス | "                    "
+    . パスワード     | "                    "
   }
-  ..
-  {/ © 2025 berry-books. All rights reserved. }
+  [  ログイン  ]
+  --
+  新規のお客様
+  お客様のご登録
 }
 @endsalt
 ```
@@ -62,27 +59,19 @@
 
 ```plantuml
 @startsalt
-{+
-  {/ <b>berry-books</b> | <&account-login> ログインへ戻る }
-  ..
-  {
-    <b>新規会員登録</b>
-    ==
-    顧客名          | "                              " 
-    .
-    メールアドレス   | "                              "
-    .
-    パスワード      | "                              "
-    .
-    生年月日        | "YYYY-MM-DD                    " ^カレンダー^
-    .
-    住所            | "                              "
-                    | "                              "
-    ==
-    [    登録する    ]  [  キャンセル  ]
+{
+  <b>お客様の情報を登録します</b>
+  --
+  {#
+    . 顧客名（必須）       | "                         "
+    . メールアドレス（必須） | "                         "
+    . パスワード（必須）    | "                         "
+    . 生年月日（任意）     | "yyyy-MM-dd               "
+    . 住所（任意）        | "                         "
   }
-  ..
-  {/ © 2025 berry-books. All rights reserved. }
+  [  お客様の情報を登録する  ]
+  --
+  トップページへ戻る
 }
 @endsalt
 ```
@@ -99,8 +88,11 @@
 
 ### 動作
 
-- **登録ボタン**: CustomerBean.register() → customerOutput.xhtml
-- **キャンセルボタン**: index.xhtmlへ戻る
+- **お客様の情報を登録するボタン**: `CustomerBean.register()` → customerOutput.xhtmlへ遷移
+  - Bean Validationによる入力チェック
+  - メールアドレスの重複チェック
+  - パスワードのハッシュ化
+- **トップページへ戻るリンク**: index.xhtmlへ遷移
 
 ---
 
@@ -113,25 +105,17 @@
 
 ```plantuml
 @startsalt
-{+
-  {/ <b>berry-books</b> }
-  ..
-  {
-    .
-    <&circle-check><size:24> <b>会員登録が完了しました</b>
-    .
-    ご登録ありがとうございます。
-    .
-    {
-      顧客名: Alice
-      メールアドレス: alice@gmail.com
-    }
-    .
-    ==
-    [  ログイン画面へ  ]
+{
+  <b>以下の内容で登録が完了しました</b>
+  --
+  {#
+    . 顧客名         | Alice
+    . メールアドレス  | alice@gmail.com
+    . 生年月日       | 1990年1月1日
+    . 住所          | 東京都渋谷区1-1-1
   }
-  ..
-  {/ © 2025 berry-books. All rights reserved. }
+  --
+  書籍の選択ページへ
 }
 @endsalt
 ```

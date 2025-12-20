@@ -246,15 +246,20 @@ classDiagram
         +SearchParam searchParam
         +List~Book~ bookList
         +List~Category~ categoryList
+        +init() void
         +search() String
+        +refreshBookList() void
         +addToCart(Book) String
     }
     
     class LoginBean {
-        <<ViewScoped>>
+        <<SessionScoped>>
         +String email
         +String password
-        +login()
+        +boolean loggedIn
+        +processLogin() String
+        +processLogout() String
+        +isLoggedIn() boolean
     }
     
     CustomerBean --> CartSession: uses
@@ -266,6 +271,12 @@ classDiagram
 - 理由: `search()`メソッドが`faces-redirect=true`でリダイレクトするため
 - `@ViewScoped`ではリダイレクト後に`bookList`が失われる
 - `@SessionScoped`により、リダイレクト後も検索結果が保持される
+
+**BookSearchBeanのメソッド詳細:**
+- `init()` - @PostConstructメソッド。カテゴリリストと初期書籍リスト（全書籍）を取得
+- `search()` - 検索条件に基づいて書籍を検索し、bookSelect画面へリダイレクト
+- `refreshBookList()` - 書籍リストを最新の状態に更新。bookSelect.xhtmlのpreRenderViewイベントから呼び出され、在庫数を最新化
+- `addToCart(Book)` - 在庫バージョン番号を含めてカートに書籍を追加
 
 ---
 

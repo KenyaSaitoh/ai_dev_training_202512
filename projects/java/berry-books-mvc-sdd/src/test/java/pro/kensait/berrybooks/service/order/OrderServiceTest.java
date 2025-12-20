@@ -26,9 +26,15 @@ import jakarta.persistence.OptimisticLockException;
 import pro.kensait.berrybooks.dao.OrderDetailDao;
 import pro.kensait.berrybooks.dao.OrderTranDao;
 import pro.kensait.berrybooks.dao.StockDao;
+import pro.kensait.berrybooks.entity.Book;
+import pro.kensait.berrybooks.entity.OrderDetail;
+import pro.kensait.berrybooks.entity.OrderDetailPK;
 import pro.kensait.berrybooks.entity.OrderTran;
+import pro.kensait.berrybooks.entity.Publisher;
 import pro.kensait.berrybooks.entity.Stock;
 import pro.kensait.berrybooks.web.cart.CartItem;
+
+import java.time.LocalDateTime;
 
 /**
  * OrderServiceのユニットテストクラス
@@ -220,27 +226,58 @@ class OrderServiceTest {
         Integer customerId = 1;
         List<OrderTran> orderTrans = new ArrayList<>();
         
+        // OrderTranを作成
         OrderTran orderTran1 = new OrderTran();
         orderTran1.setOrderTranId(1);
         orderTran1.setCustomerId(customerId);
+        orderTran1.setOrderDate(LocalDateTime.of(2025, 12, 1, 10, 0));
         orderTran1.setTotalPrice(new BigDecimal("9800"));
         orderTran1.setDeliveryPrice(new BigDecimal("800"));
         orderTran1.setSettlementType(2);
+        
+        // Publisher, Book, OrderDetailを作成
+        Publisher publisher = new Publisher();
+        publisher.setPublisherId(1);
+        publisher.setPublisherName("Test Publisher");
+        
+        Book book = new Book();
+        book.setBookId(1);
+        book.setBookName("Test Book");
+        book.setPublisher(publisher);
+        book.setPrice(new BigDecimal("3000"));
+        
+        OrderDetailPK detailPK = new OrderDetailPK();
+        detailPK.setOrderTranId(1);
+        detailPK.setOrderDetailId(1);
+        
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setId(detailPK);
+        orderDetail.setBook(book);
+        orderDetail.setPrice(new BigDecimal("3000"));
+        orderDetail.setCount(2);
+        
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        orderDetails.add(orderDetail);
+        orderTran1.setOrderDetails(orderDetails);
+        
         orderTrans.add(orderTran1);
         
-        when(orderTranDao.findByCustomerId(customerId)).thenReturn(orderTrans);
+        when(orderTranDao.findByCustomerIdWithDetails(customerId)).thenReturn(orderTrans);
         
         // Act
         List<OrderHistoryTO> result = orderService.getOrderHistory(customerId);
         
         // Assert
         assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(1, result.get(0).getOrderTranId());
-        assertEquals(new BigDecimal("9800"), result.get(0).getTotalPrice());
-        assertEquals("クレジットカード", result.get(0).getSettlementName());
+        assertEquals(1, result.size(), "注文明細が1件あるはず");
+        assertEquals(1, result.get(0).tranId(), "注文IDは1");
+        assertEquals(1, result.get(0).detailId(), "注文明細IDは1");
+        assertEquals("Test Book", result.get(0).bookName(), "書籍名はTest Book");
+        assertEquals("Test Publisher", result.get(0).publisherName(), "出版社名はTest Publisher");
+        assertEquals(new BigDecimal("3000"), result.get(0).price(), "価格は3000");
+        assertEquals(2, result.get(0).count(), "数量は2");
         
-        verify(orderTranDao, times(1)).findByCustomerId(customerId);
+        verify(orderTranDao, times(1)).findByCustomerIdWithDetails(customerId);
     }
     
     /**
@@ -250,7 +287,7 @@ class OrderServiceTest {
     void testGetOrderHistory_NoHistory() {
         // Arrange
         Integer customerId = 999;
-        when(orderTranDao.findByCustomerId(customerId)).thenReturn(new ArrayList<>());
+        when(orderTranDao.findByCustomerIdWithDetails(customerId)).thenReturn(new ArrayList<>());
         
         // Act
         List<OrderHistoryTO> result = orderService.getOrderHistory(customerId);
@@ -259,7 +296,7 @@ class OrderServiceTest {
         assertNotNull(result);
         assertEquals(0, result.size());
         
-        verify(orderTranDao, times(1)).findByCustomerId(customerId);
+        verify(orderTranDao, times(1)).findByCustomerIdWithDetails(customerId);
     }
     
     /**

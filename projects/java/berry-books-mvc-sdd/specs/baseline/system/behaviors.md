@@ -143,10 +143,11 @@
 | メールアドレス未入力でログイン | クライアント検証エラー | VAL-001 | F-004 |
 
 **セッション管理の実装詳細:**
-- ログイン成功時: `CustomerBean`をCDI管理下に設定し、さらに`sessionMap.put("customerBean", customerBean)`で明示的に保存
-- ログアウト時: `customer = null`に加えて、`sessionMap.remove("customerBean")`で明示的に削除
-- `AuthenticationFilter`は`HttpSession.getAttribute("customerBean")`でBeanを取得
-- これにより、CDI管理BeanをServlet APIから参照可能にする
+- `LoginBean`は`@SessionScoped`で定義され、ログイン状態を管理
+- ログイン成功時: `loginBean.loggedIn = true`を設定し、`CustomerBean`に顧客情報を設定
+- ログアウト時: `FacesContext.getExternalContext().invalidateSession()`でセッション全体を無効化
+- `AuthenticationFilter`は`@Inject LoginBean`経由で`loginBean.isLoggedIn()`をチェック
+- これにより、CDI BeanをServlet Filterから直接利用可能
 
 ### カート操作
 
@@ -380,7 +381,8 @@
 
 **設計のポイント:**
 - ログイン成功時の遷移先はbookSelect（検索画面ではない）
-- BookSearchBeanの初期化時に全書籍を取得
+- BookSearchBeanの初期化時（@PostConstruct init()メソッド）に全書籍を取得
+- bookSelect.xhtmlのpreRenderViewイベントでrefreshBookList()を呼び出し、在庫数を最新化
 - ユーザーが迷わずショッピングを開始できるUX設計
 
 ### シナリオ: カートから買い物を続ける

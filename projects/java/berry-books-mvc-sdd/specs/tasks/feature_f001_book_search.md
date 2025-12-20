@@ -27,8 +27,8 @@
 | BR-002 | キーワード未入力の場合、書籍名と著者の両方を検索 |
 | BR-003 | 検索結果は書籍ID昇順でソート |
 | BR-004 | 在庫0の書籍も表示（購入不可） |
-| BR-005 | カバー画像ファイル名は書籍名 + ".jpg" で生成 |
-| BR-006 | カバー画像のパスは`resources/covers/{書籍名}.jpg` |
+| BR-005 | カバー画像ファイル名は書籍名の空白をアンダースコアに置換して生成 |
+| BR-006 | カバー画像のパスは`webapp/resources/images/covers/`、JSFリソースは`library="images" name="covers/..."` |
 | BR-007 | 画像ファイルが存在しない場合は`no-image.jpg`を表示 |
 
 ---
@@ -69,17 +69,18 @@
   - **対象**: web/book/BookSearchBean.java
   - **参照SPEC**: functional_design.md#51-プレゼンテーション層
   - **注意事項**: 
-    - @Named, @ViewScoped, implements Serializable
-    - @Inject BookService, CategoryService
+    - @Named, @SessionScoped, implements Serializable（リダイレクト後も検索結果を保持するため）
+    - @Inject BookService, CategoryService, CartSession, StockDao
     - フィールド:
       - searchParam (SearchParam)
-      - books (List<Book>)
-      - categories (List<Category>)
+      - bookList (List<Book>)
+      - categoryList (List<Category>)
     - 主要メソッド:
-      - init() - @PostConstruct: カテゴリ一覧を取得
-      - search() - 検索実行
-      - navigateToCart() - カート画面に遷移
-    - ビジネスルール（BR-001, BR-002）を考慮
+      - init() - @PostConstruct: カテゴリ一覧と初期書籍リスト（全書籍）を取得
+      - search() - 検索実行し、bookSelect画面へリダイレクト
+      - refreshBookList() - 書籍リストを最新の状態に更新（在庫数を含む）。bookSelect.xhtmlのpreRenderViewイベントから呼び出される
+      - addToCart(Book) - 在庫バージョン番号を含めてカートに書籍を追加
+    - ビジネスルール（BR-001, BR-002, BR-003, BR-004, BR-005, BR-006, BR-007）を考慮
 
 ---
 
@@ -90,26 +91,34 @@
   - **対象**: webapp/bookSearch.xhtml
   - **参照SPEC**: screen_design.md#1-書籍検索画面
   - **注意事項**: 
-    - カテゴリドロップダウン（h:selectOneMenu）
-    - キーワード入力欄（h:inputText）
-    - 検索ボタン（h:commandButton action="#{bookSearchBean.search}"）
-    - ナビゲーションリンク（注文履歴、カート、ログアウト）
-    - 検索条件の初期値設定
+    - カテゴリドロップダウン（h:selectOneMenu value="#{bookSearchBean.searchParam.categoryId}"）
+      - f:selectItemで「すべて」オプションを追加（itemValue="#{null}"）
+      - f:selectItemsで`#{bookSearchBean.categoryList}`を使用（var="cat" itemLabel="#{cat.categoryName}" itemValue="#{cat.categoryId}"）
+    - キーワード入力欄（h:inputText value="#{bookSearchBean.searchParam.keyword}"）
+    - 検索ボタン（h:commandButton action="#{bookSearchBean.search}"）- 単一ボタン
+    - ナビゲーションリンク（注文履歴を表示する）
 
 - [ ] **T-F001-005**: bookSelect.xhtmlの作成（検索結果画面）
   - **目的**: 検索結果一覧画面を実装する
   - **対象**: webapp/bookSelect.xhtml
   - **参照SPEC**: screen_design.md#2-検索結果画面
   - **注意事項**: 
-    - 検索結果テーブル（h:dataTable）
-    - 表示項目: カバー画像, 書籍ID, 書籍名, 著者, 価格, 在庫数
-    - カバー画像表示（h:graphicImage value="resources/covers/#{book.imageFileName}"）
-      - BookエンティティのgetImageFileName()メソッドで書籍名 + ".jpg" を返す（BR-005）
-    - 画像ファイルが存在しない場合、no-image.jpgを表示（BR-007）
-    - 画像サイズ: 最大幅80px、高さ自動調整
-    - 在庫0の場合、「カートへ」ボタンを無効化（BR-004）
-    - 「カートへ」ボタン（h:commandButton action="#{cartBean.addToCart}"）
-    - 「検索に戻る」リンク
+    - **preRenderViewイベント**: `<f:metadata><f:event type="preRenderView" listener="#{bookSearchBean.refreshBookList}" /></f:metadata>`を追加
+      - ページレンダリング前に書籍リストを最新の状態に更新（在庫数を最新化）
+    - 検索結果テーブル（ui:repeat）
+    - 表示項目: カバー画像, 書籍名, 著者, カテゴリ, 出版社, 価格, 在庫数
+    - カバー画像表示:
+      - `h:graphicImage library="images" name="covers/#{book.bookName.replace(' ', '_')}.jpg"`
+      - 書籍名の空白をアンダースコアに置換（BR-005）
+      - CSSクラス: `styleClass="book-thumbnail"`（高さ5cm、幅自動）
+      - セルクラス: `.book-image-cell`（中央配置）
+    - 画像ファイルが存在しない場合、onErrorでno-image.jpgを表示（BR-007）
+    - 在庫0の場合、「入荷待ち」テキストを表示（BR-004）
+    - 「買い物カゴへ」ボタン（h:commandButton action="#{cartBean.addBook(book.bookId, 1)}"）
+    - 「現在の買い物カゴの内容を表示する」リンク（cartView.xhtml）
+    - 「書籍の検索ページへ」リンク（bookSearch.xhtml）
+    - 注文履歴表示リンク（方式1、2、3）
+    - ログアウトボタン
 
 ---
 

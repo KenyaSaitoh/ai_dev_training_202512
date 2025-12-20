@@ -1,71 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core"
-      xmlns:ui="jakarta.faces.facelets">
+      xmlns:f="jakarta.faces.core">
 <h:head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>会員登録完了 - berry-books</title>
+    <title>CustomerOutputPage</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <h:outputStylesheet library="css" name="style.css"/>
 </h:head>
 <h:body>
-    <!-- ヘッダー -->
-    <div class="header">
-        <div class="header-content">
-            <div class="header-title">berry-books</div>
-        </div>
-    </div>
-    
-    <!-- メインコンテンツ -->
-    <div class="container-narrow">
-        <div class="card">
-            <!-- 成功メッセージ -->
-            <div class="text-center mb-lg">
-                <h2 class="text-success mb-md">✓ 会員登録が完了しました</h2>
-                <p class="text-secondary">ご登録ありがとうございます。</p>
-            </div>
-            
-            <!-- 登録情報表示 -->
-            <div class="card" style="background-color: var(--background-secondary);">
-                <h3 class="mb-md">ご登録内容</h3>
-                <table style="background-color: transparent; box-shadow: none;">
-                    <tr>
-                        <th style="width: 150px;">顧客名</th>
-                        <td><h:outputText value="#{customerRegisterBean.customer.customerName}"/></td>
-                    </tr>
-                    <tr>
-                        <th>メールアドレス</th>
-                        <td><h:outputText value="#{customerRegisterBean.customer.email}"/></td>
-                    </tr>
-                    <tr>
-                        <th>生年月日</th>
-                        <td>
-                            <h:outputText value="#{customerRegisterBean.customer.birthday}">
-                                <f:convertDateTime pattern="yyyy-MM-dd" type="localDate"/>
-                            </h:outputText>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>住所</th>
-                        <td><h:outputText value="#{customerRegisterBean.customer.address}"/></td>
-                    </tr>
-                </table>
-            </div>
-            
-            <!-- ログイン画面へのリンク -->
-            <div class="text-center mt-xl">
-                <h:link value="ログイン画面へ" 
-                        outcome="index" 
-                        styleClass="button button-lg"/>
-            </div>
-        </div>
-    </div>
-    
-    <!-- フッター -->
-    <div class="footer">
-        <p>© 2025 berry-books. All rights reserved.</p>
-    </div>
+    <h2>以下の内容で登録が完了しました</h2>
+    <hr />
+    <table>
+        <tr>
+            <td>顧客名</td>
+            <td>#{customerBean.customer.customerName}</td>
+        </tr>
+        <tr>
+            <td>メールアドレス</td>
+            <td>#{customerBean.customer.email}</td>
+        </tr>
+        <tr>
+            <td>生年月日</td>
+            <td>
+                <h:outputText value="#{customerBean.customer.birthday}">
+                    <f:convertDateTime pattern="yyyy年M月d日" />
+                </h:outputText>
+            </td>
+        </tr>
+        <tr>
+            <td>住所</td>
+            <td>#{customerBean.customer.address}</td>
+        </tr>
+    </table>
+    <br />
+    <h:link id="toSelectLink" value="書籍の選択ページへ" outcome="bookSelect" />
 </h:body>
 </html>
 

@@ -1,6 +1,7 @@
 package pro.kensait.berrybooks.web.order;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -50,20 +51,20 @@ public class OrderHistoryBean implements Serializable {
     private Integer orderTranId;
     
     /**
+     * 注文明細ID（注文詳細画面用のパラメータ）
+     */
+    private Integer selectedDetailId;
+    
+    /**
      * 初期化処理
      * 
-     * <p>注文履歴一覧画面の初期化を行います。</p>
-     * <p>注文詳細画面の場合は、viewActionから明示的にloadOrderDetail()が呼ばれます。</p>
+     * <p>viewActionから明示的にloadOrderHistoryやloadOrderDetailが呼ばれるため、
+     * このメソッドでは何もしません。</p>
      */
     @PostConstruct
     public void init() {
         logger.info("[ OrderHistoryBean#init ] orderTranId={}", orderTranId);
-        
-        // 注文履歴一覧画面の場合のみ、ここで注文履歴を読み込む
-        // 注文詳細画面の場合は、viewActionからloadOrderDetail()が呼ばれる
-        if (orderTranId == null) {
-            loadOrderHistory();
-        }
+        // viewActionから明示的にloadOrderHistory()またはloadOrderDetail()が呼ばれる
     }
     
     /**
@@ -98,14 +99,16 @@ public class OrderHistoryBean implements Serializable {
     public void loadOrderHistory() {
         logger.info("[ OrderHistoryBean#loadOrderHistory ]");
         
-        if (customerBean.getCustomer() != null) {
+        if (customerBean != null && customerBean.getCustomer() != null) {
             Integer customerId = customerBean.getCustomer().getCustomerId();
             orderHistoryList = orderService.getOrderHistory(customerId);
             
             logger.debug("Order history loaded: count={}", 
                         orderHistoryList != null ? orderHistoryList.size() : 0);
         } else {
-            logger.warn("Customer not logged in");
+            logger.warn("Customer not logged in - initializing empty list");
+            // ログインしていない場合でも空のリストを初期化してNullPointerExceptionを防ぐ
+            orderHistoryList = new ArrayList<>();
         }
     }
     
@@ -176,6 +179,24 @@ public class OrderHistoryBean implements Serializable {
      */
     public void setOrderTranId(Integer orderTranId) {
         this.orderTranId = orderTranId;
+    }
+    
+    /**
+     * 注文明細IDを取得します
+     * 
+     * @return 注文明細ID
+     */
+    public Integer getSelectedDetailId() {
+        return selectedDetailId;
+    }
+    
+    /**
+     * 注文明細IDを設定します
+     * 
+     * @param selectedDetailId 注文明細ID
+     */
+    public void setSelectedDetailId(Integer selectedDetailId) {
+        this.selectedDetailId = selectedDetailId;
     }
 }
 

@@ -1,75 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
 <h:head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>書籍検索 - berry-books</title>
-    <h:outputStylesheet library="css" name="style.css" />
+    <title>BookSearchPage</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <h:outputStylesheet library="css" name="style.css"/>
 </h:head>
-
 <h:body>
-    <!-- ヘッダー -->
-    <div class="header">
-        <div class="header-content">
-            <div class="header-title">berry-books</div>
-            <div class="header-nav">
-                <span>#{customerBean.customer.customerName}さん</span>
-                <h:link outcome="orderHistory" value="注文履歴" />
-                <h:link outcome="index" value="ログアウト" />
-            </div>
-        </div>
-    </div>
-    
-    <!-- メインコンテンツ -->
-    <div class="container">
-        <div class="card">
-            <h2>書籍を検索</h2>
-            
-            <h:form>
-                <div class="form-group">
-                    <h:outputLabel for="category" value="カテゴリ" styleClass="form-label" />
-                    <h:selectOneMenu id="category" 
-                                     value="#{bookSearchBean.searchParam.categoryId}"
-                                     styleClass="form-input">
-                        <f:selectItem itemLabel="選択してください" itemValue="#{null}" />
+    <h2>条件を入力して書籍を検索してください</h2>
+    <hr />
+    <h:form styleClass="search">
+        <table>
+            <tr>
+                <td>カテゴリ</td>
+                <td>
+                    <h:selectOneMenu id="category" value="#{bookSearchBean.searchParam.categoryId}">
+                        <f:selectItem itemLabel="すべて" itemValue="#{null}" />
                         <f:selectItems value="#{bookSearchBean.categoryList}" 
-                                      var="cat" 
-                                      itemValue="#{cat.categoryId}" 
-                                      itemLabel="#{cat.categoryName}" />
+                                     var="cat" 
+                                     itemLabel="#{cat.categoryName}" 
+                                     itemValue="#{cat.categoryId}" />
                     </h:selectOneMenu>
-                </div>
-                
-                <div class="form-group">
-                    <h:outputLabel for="keyword" value="キーワード" styleClass="form-label" />
-                    <h:inputText id="keyword" 
-                                value="#{bookSearchBean.searchParam.keyword}"
-                                styleClass="form-input"
-                                placeholder="書籍名または著者名を入力してください" />
-                </div>
-                
-                <div class="form-group">
-                    <h:commandButton value="検索" 
-                                    action="#{bookSearchBean.search}"
-                                    styleClass="button" />
-                </div>
-            </h:form>
-            
-            <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border-color);" />
-            
-            <div class="text-center">
-                <h:link outcome="bookSelect" value="全ての書籍を表示" styleClass="text-primary" />
-            </div>
-        </div>
-    </div>
-    
-    <!-- フッター -->
-    <div class="footer">
-        © 2025 berry-books. All rights reserved.
-    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>検索キーワード</td>
+                <td><h:inputText id="keyword" value="#{bookSearchBean.searchParam.keyword}" /></td>
+            </tr>
+        </table>
+        <h:commandButton id="searchButton" 
+                       value="検索実行" 
+                       action="#{bookSearchBean.search}"
+                       styleClass="search-button" />
+    </h:form>
+    <br />
+    <hr />
+    <h:link value="注文履歴を表示する" outcome="orderHistory" />
 </h:body>
 </html>
 

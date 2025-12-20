@@ -46,6 +46,28 @@ public class OrderTranDao {
     }
     
     /**
+     * 顧客IDで注文履歴を取得します（注文明細を含む、JOIN FETCH使用）
+     * 
+     * <p>N+1問題を回避するため、注文明細を同時に取得します。</p>
+     * 
+     * @param customerId 顧客ID
+     * @return 注文履歴のリスト（注文明細を含む）
+     */
+    public List<OrderTran> findByCustomerIdWithDetails(Integer customerId) {
+        TypedQuery<OrderTran> query = em.createQuery(
+            "SELECT DISTINCT o FROM OrderTran o " +
+            "LEFT JOIN FETCH o.orderDetails d " +
+            "LEFT JOIN FETCH d.book b " +
+            "LEFT JOIN FETCH b.publisher " +
+            "WHERE o.customerId = :customerId " +
+            "ORDER BY o.orderDate DESC, o.orderTranId DESC",
+            OrderTran.class
+        );
+        query.setParameter("customerId", customerId);
+        return query.getResultList();
+    }
+    
+    /**
      * 注文IDで注文トランザクションを取得します
      * 
      * @param orderTranId 注文ID

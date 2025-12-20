@@ -50,9 +50,10 @@
     - @Entity, @Id, @GeneratedValue
     - @ManyToOne でCategory, Publisherと関連付け
     - フィールド: BOOK_ID, BOOK_NAME, AUTHOR, PRICE
-    - ヘルパーメソッド: getImageFileName()
-      - 書籍名 + ".jpg" を返す（例: "Java SEディープダイブ.jpg"）
-      - 画面表示で使用（h:graphicImage value="resources/covers/#{book.imageFileName}"）
+    - 画面表示では`#{book.bookName.replace(' ', '_')}.jpg`で画像ファイル名を動的生成
+      - 例: "Java SEディープダイブ" → "Java_SEディープダイブ.jpg"
+      - `h:graphicImage library="images" name="covers/#{book.bookName.replace(' ', '_')}.jpg"`で使用
+      - CSSクラス: `styleClass="book-thumbnail"`（高さ5cm）
 
 - [ ] [P] **T-COMMON-004**: Stockエンティティの作成（楽観的ロック対応）
   - **目的**: 在庫エンティティを実装する（楽観的ロック制御を含む）
@@ -144,8 +145,12 @@
     - data_model.md#36-order_tran注文取引
   - **注意事項**: 
     - @ApplicationScoped
-    - 主要メソッド: save(), findByCustomerId(), findById()
-    - JOIN FETCHでOrderDetailを即時読み込み
+    - 主要メソッド: 
+      - persist(OrderTran) - 注文トランザクションを永続化
+      - findByCustomerId(Integer) - 顧客IDで注文履歴を取得（注文日降順）
+      - findByCustomerIdWithDetails(Integer) - 顧客IDで注文履歴を取得（JOIN FETCHで明細、書籍、出版社を同時取得、N+1問題回避）
+      - findById(Integer) - 注文IDで検索
+      - findByIdWithDetails(Integer) - 注文と明細をJOIN FETCHで取得
 
 - [ ] [P] **T-COMMON-013**: OrderDetailDaoの作成
   - **目的**: 注文明細データアクセスクラスを実装する
@@ -256,10 +261,11 @@
     - functional_design.md (F-004 顧客認証)
     - behaviors.md#認証セッション
   - **注意事項**: 
-    - @WebFilter("/*")
+    - `@WebFilter(filterName = "AuthenticationFilter", urlPatterns = {"*.xhtml"})`
     - 公開ページ（BR-033）: index.xhtml, customerInput.xhtml, customerOutput.xhtml
+    - JSFリソース: /jakarta.faces.resource/ も除外
     - 未ログインの場合、index.xhtmlにリダイレクト（BR-034）
-    - セッションからCustomerBeanを取得してログイン状態を確認
+    - `@Inject LoginBean`でログイン状態を確認（`loginBean.isLoggedIn()`）
 
 ---
 

@@ -24,21 +24,16 @@
 
 ```plantuml
 @startsalt
-{+
-  {/ <b>berry-books</b> | <&person> Aliceさん | <&account-logout> ログアウト | <&list> 注文履歴 }
-  ..
-  {
-    <b>書籍を検索</b>
-    ==
-    カテゴリ | { ^選択してください^ | Java | Jakarta EE | SQL | ... }
-    .
-    キーワード | "                              " [  検索  ]
-    .
-    <&magnifying-glass> 全ての書籍を表示
-    ==
+{
+  <b>条件を入力して書籍を検索してください</b>
+  --
+  {#
+    . カテゴリ       | { ^すべて^ | Java | Jakarta EE | SQL | ... }
+    . 検索キーワード  | "                    "
   }
-  ..
-  {/ © 2025 berry-books. All rights reserved. }
+  [  検索実行  ]
+  --
+  注文履歴を表示する
 }
 @endsalt
 ```
@@ -47,24 +42,29 @@
 
 | エリア | コンポーネント | 説明 |
 |--------|--------------|------|
-| ヘッダー | サイト名 | "berry-books" |
-| | ユーザー名 | ログイン中の顧客名 |
-| | ログアウトリンク | セッション破棄 |
-| | 注文履歴リンク | orderHistory.xhtmlへ |
-| 検索フォーム | カテゴリドロップダウン | 全カテゴリ + 未選択 |
-| | キーワード入力 | 書籍名・著者名検索 |
-| | 検索ボタン | bookSelect.xhtmlへ |
-| | 全書籍表示リンク | 検索条件なしで全表示 |
+| タイトル | h2 | "条件を入力して書籍を検索してください" |
+| 検索フォーム | カテゴリドロップダウン | `bookSearchBean.searchParam.categoryId`にバインド。`bookSearchBean.categoryList`から生成 |
+| | キーワード入力 | `bookSearchBean.searchParam.keyword`にバインド |
+| | 検索実行ボタン | `bookSearchBean.search()` を呼び出し |
+| ナビゲーション | 注文履歴を表示する | orderHistory.xhtmlへ |
 
 ### 検索ロジック
 
+**検索実行ボタン**: `BookSearchBean.search()`
+- `SearchParam`オブジェクトから検索条件を取得
+- `BookService.searchBook(SearchParam)`を使用
+- カテゴリIDとキーワードの組み合わせで検索
+- 結果は`bookList`プロパティに格納
+- bookSelect画面へリダイレクト（`faces-redirect=true`）
+
+検索条件:
 ```
 IF カテゴリ選択 AND キーワード入力
-  → カテゴリ + キーワード複合検索
+  → カテゴリ + キーワード複合検索（LIKEで部分一致）
 ELSE IF カテゴリ選択のみ
   → カテゴリ検索
 ELSE IF キーワード入力のみ
-  → キーワード検索
+  → キーワード検索（書籍名のLIKE検索）
 ELSE
   → 全書籍取得
 ```
@@ -80,69 +80,76 @@ ELSE
 
 ```plantuml
 @startsalt
-{+
-  {/ <b>berry-books</b> | <&person> Aliceさん | <&account-logout> ログアウト | <&list> 注文履歴 | <&magnifying-glass> 検索に戻る }
-  ..
-  {
-    <b>検索結果 (50件)</b>
-    ==
-    {#
-      . 画像 | ID  | 書籍名                        | 著者            | カテゴリ | 出版社          | 価格    | 在庫 | 数量 | 操作
-      --
-      . [img] | 001 | Java SEディープダイブ          | Michael Johnson | Java    | ネットワーク...  | 3,400円 | 10  | [1^] | [カートへ]
-      . [img] | 002 | JVMとバイトコードの探求         | James Lopez     | Java    | デジタル...     | 4,200円 | 5   | [1^] | [カートへ]
-      . [img] | 003 | Javaアーキテクトのための設計原理 | David Jones     | Java    | クラウドキャ...  | 3,000円 | 1   | [1^] | [カートへ]
-      . ...   | ... | ...                          | ...             | ...     | ...            | ...    | ... | ...  | ...
-    }
-    ==
-    <&cart> カートを見る (3点)
+{
+  注文履歴を表示する | 書籍の検索ページへ
+  --
+  <b>書籍を買い物カゴに入れてください</b>
+  --
+  {#
+    . 画像   | 書籍名                        | 著者            | カテゴリ | 出版社          | 価格   | 在庫数 | 
+    --
+    . [img] | Java SEディープダイブ          | Michael Johnson | Java    | ネットワーク...  | 3,400 | 10    | [買い物カゴへ]
+    . [img] | JVMとバイトコードの探求         | James Lopez     | Java    | デジタル...     | 4,200 | 5     | [買い物カゴへ]
+    . [img] | Javaアーキテクトのための設計原理 | David Jones     | Java    | クラウドキャ...  | 3,000 | 0     | 入荷待ち
+    . ...   | ...                          | ...             | ...     | ...            | ...   | ...   | ...
   }
-  ..
-  {/ © 2025 berry-books. All rights reserved. }
+  現在の買い物カゴの内容を表示する
+  [  ログアウト  ]
 }
 @endsalt
 ```
 
 ### レイアウト説明
 
-| カラム | 説明 | 幅 |
-|--------|------|-----|
-| 画像 | 書籍カバー画像（サムネイル） | 固定80px |
-| ID | 書籍ID | 固定50px |
-| 書籍名 | 書籍タイトル | 可変 |
-| 著者 | 著者名 | 150px |
-| カテゴリ | カテゴリ名 | 100px |
-| 出版社 | 出版社名（省略表示） | 150px |
-| 価格 | カンマ区切り | 80px |
-| 在庫 | 在庫数 | 50px |
-| 数量 | スピナー入力 | 60px |
-| 操作 | カート追加ボタン | 100px |
+| カラム | 説明 |
+|--------|------|
+| 画像 | 書籍カバー画像（サムネイル） |
+| 書籍名 | 書籍タイトル |
+| 著者 | 著者名 |
+| カテゴリ | カテゴリ名 |
+| 出版社 | 出版社名 |
+| 価格 | カンマ区切りで表示 |
+| 在庫数 | 在庫数 |
+| 操作 | 「買い物カゴへ」ボタンまたは「入荷待ち」テキスト |
 
 ### 画像表示ルール
 
-- **画像ファイル名**: 書籍名（BOOK_NAME）をそのまま使用し、拡張子 `.jpg` を付加
-  - 例: `Java SEディープダイブ` → `Java SEディープダイブ.jpg`
-- **画像パス**: `resources/covers/#{book.imageFileName}`
-  - BookエンティティのgetImageFileName()メソッドで書籍名 + ".jpg" を返す
-- **サイズ**: サムネイル表示（最大幅80px、高さ自動調整）
-- **画像なし**: ファイルが存在しない場合、`no-image.jpg`を表示
+- **画像リソース配置**: `webapp/resources/images/covers/`ディレクトリ
+- **画像ファイル名**: 書籍名（BOOK_NAME）のスペースをアンダースコアに置換し、拡張子 `.jpg` を付加
+  - 例: `Java SEディープダイブ` → `Java_SEディープダイブ.jpg`
+- **画像パス**: `library="images" name="covers/#{book.bookName.replace(' ', '_')}.jpg"`
+- **サイズ**: 
+  - CSSクラス: `.book-thumbnail`（`styleClass="book-thumbnail"`で指定）
+  - 高さ: `5cm`（幅は自動調整、アスペクト比維持）
+  - 最大幅: `100%`（セル幅を超えない）
+- **画像セル**: 
+  - CSSクラス: `.book-image-cell`
+  - 中央配置、垂直方向も中央
+  - パディング: 8px
+- **画像なし**: ファイルが存在しない場合、JavaScriptのonErrorで`no-image.jpg`を表示
+  - `onError="this.onerror=null; this.src='#{request.contextPath}/jakarta.faces.resource/no-image.jpg?ln=images/covers'"`
 - **Alt属性**: 書籍名を設定
+- **スタイル**: 角丸（4px）、シャドウ付き、ホバー時に拡大・シャドウ強調
 
 ### 動作
 
-- **カートへボタン**: CartBean.addBook(bookId, count) → cartView.xhtml
-- **在庫なし**: ボタン無効化、グレー表示
-- **カートを見るリンク**: cartView.xhtmlへ遷移
+- **画面初期化（preRenderViewイベント）**: `BookSearchBean.refreshBookList()` 
+  - ページレンダリング前に書籍リストを最新の状態に更新
+  - 在庫数を最新化（他のユーザーの購入により在庫が減っている可能性があるため）
+  - `<f:metadata><f:event type="preRenderView" listener="#{bookSearchBean.refreshBookList}" /></f:metadata>`で実装
+- **買い物カゴへボタン**: `CartBean.addBook(book.bookId, 1)` → cartView.xhtmlへリダイレクト
+  - 在庫バージョン番号を保存してカートに追加（BR-012）
+  - 既存の書籍を追加する場合、数量を加算（BR-011）
+- **在庫なし**: ボタンの代わりに「入荷待ち」テキストを表示（`rendered="#{book.quantity == 0}"`）
+- **現在の買い物カゴの内容を表示する**: cartView.xhtmlへ遷移（h:link）
+- **ログアウトボタン**: `LoginBean.processLogout()` → index.xhtmlへ遷移
 
 ---
 
-## 3. カラースキーム
+## 3. 実装のポイント
 
-| 要素 | カラーコード | 用途 |
-|------|------------|------|
-| プライマリー | #CF3F4E | ボタン、リンク、ヘッダー |
-| セカンダリー | #E8E8E8 | 背景、ボーダー |
-| テキスト | #333333 | 本文 |
-| エラー | #D32F2F | エラーメッセージ |
-| 成功 | #388E3C | 成功メッセージ |
+- **書籍一覧の表示**: `<ui:repeat>`を使用してテーブル形式で表示
+- **在庫管理**: 在庫が0の場合、ボタンの代わりに「入荷待ち」テキストを表示
+- **画像の動的生成**: 書籍名から画像ファイル名を生成し、存在しない場合はフォールバック画像を表示
+- **複数の履歴表示方式**: 注文履歴は3つの異なる実装方式（方式1、2、3）をサポート
 

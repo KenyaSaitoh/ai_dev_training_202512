@@ -112,12 +112,20 @@ So that 購入前に内容を確認・調整できる
 
 **CartBean**
 - **責務**: カート画面のコントローラー
-- **タイプ**: @ViewScoped Bean
+- **タイプ**: @SessionScoped Bean（リダイレクト後も状態を保持するため）
 - **フィールド**: 
+  - `bookService` - 書籍サービス
+  - `stockDao` - 在庫DAO
   - `cartSession` - カートセッション
+  - `customerBean` - 顧客Bean
+  - `deliveryFeeService` - 配送料金サービス
+  - `globalErrorMessage` - グローバルエラーメッセージ
 - **主要メソッド**: 
-  - `updateCart()` - カート内容を更新
-  - `proceedToOrder()` - 注文画面に進む
+  - `addBook(Integer bookId, Integer count)` - 書籍をカートに追加し、cartView画面へリダイレクト。在庫バージョン番号を保存（BR-012）
+  - `removeSelectedBooks()` - 選択した書籍（remove=true）をカートから削除し、合計金額を再計算
+  - `clearCart()` - カート全体をクリアし、cartClear画面へリダイレクト
+  - `proceedToOrder()` - 配送先住所を設定し、配送料金を計算して注文画面に進む
+  - `viewCart()` - カート画面を表示。カートが空の場合はglobalErrorMessageを設定
 
 ---
 

@@ -6,7 +6,6 @@ import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pro.kensait.berrybooks.common.SettlementType;
 import pro.kensait.berrybooks.dao.BookDao;
 import pro.kensait.berrybooks.dao.OrderDetailDao;
 import pro.kensait.berrybooks.dao.OrderTranDao;
@@ -162,24 +161,33 @@ public class OrderService {
     /**
      * 注文履歴を取得します
      * 
+     * <p>注文トランザクションと注文明細を結合した注文履歴を取得します。</p>
+     * <p>各注文明細ごとに1レコード生成されます。</p>
+     * 
      * @param customerId 顧客ID
-     * @return 注文履歴のリスト
+     * @return 注文履歴のリスト（注文明細単位）
      */
     public List<OrderHistoryTO> getOrderHistory(Integer customerId) {
         logger.info("[ OrderService#getOrderHistory ] customerId={}", customerId);
         
-        List<OrderTran> orderTrans = orderTranDao.findByCustomerId(customerId);
+        // 顧客IDで注文トランザクションを取得（JOIN FETCHで明細も同時取得）
+        List<OrderTran> orderTrans = orderTranDao.findByCustomerIdWithDetails(customerId);
         List<OrderHistoryTO> historyList = new ArrayList<>();
         
+        // 各注文トランザクションの各明細をOrderHistoryTOに変換
         for (OrderTran orderTran : orderTrans) {
-            OrderHistoryTO historyTO = new OrderHistoryTO();
-            historyTO.setOrderTranId(orderTran.getOrderTranId());
-            historyTO.setOrderDate(orderTran.getOrderDate());
-            historyTO.setTotalPrice(orderTran.getTotalPrice());
-            historyTO.setDeliveryPrice(orderTran.getDeliveryPrice());
-            historyTO.setSettlementName(SettlementType.getNameByCode(orderTran.getSettlementType()));
-            
-            historyList.add(historyTO);
+            for (pro.kensait.berrybooks.entity.OrderDetail detail : orderTran.getOrderDetails()) {
+                OrderHistoryTO historyTO = new OrderHistoryTO(
+                    orderTran.getOrderDate().toLocalDate(),  // LocalDateTimeをLocalDateに変換
+                    orderTran.getOrderTranId(),
+                    detail.getId().getOrderDetailId(),  // 複合キーからorderDetailIdを取得
+                    detail.getBook().getBookName(),
+                    detail.getBook().getPublisher().getPublisherName(),
+                    detail.getPrice(),
+                    detail.getCount()
+                );
+                historyList.add(historyTO);
+            }
         }
         
         logger.debug("Order history found: count={}", historyList.size());

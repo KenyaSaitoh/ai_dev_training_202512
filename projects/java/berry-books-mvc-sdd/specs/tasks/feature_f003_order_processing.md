@@ -101,25 +101,26 @@
 ### セクション3: プレゼンテーション層（Managed Bean）
 
 - [ ] **T-F003-005**: OrderBeanの作成
-  - **目的**: 注文入力画面のコントローラーを実装する
+  - **目的**: 注文入力画面と注文成功画面のコントローラーを実装する
   - **対象**: web/order/OrderBean.java
   - **参照SPEC**: functional_design.md#51-プレゼンテーション層
   - **注意事項**: 
     - @Named, @ViewScoped, implements Serializable
     - @Inject OrderService, DeliveryFeeService, CartSession, CustomerBean
     - フィールド:
-      - deliveryAddress (String) - 配送先住所
-      - settlementType (Integer) - 決済方法
-      - deliveryPrice (BigDecimal) - 配送料金
-      - errorMessage (String) - エラーメッセージ
+      - orderTran (OrderTran) - 注文トランザクション（注文完了後にセット）
+      - orderTranId (Integer) - 注文ID（注文成功画面用のパラメータ）
     - 主要メソッド:
-      - init() - @PostConstruct: 配送料金を計算
-      - calculateDeliveryFee() - 配送料金を再計算（住所変更時）
-      - confirmOrder() - 注文確定
-      - navigateToCart() - カート画面に戻る
+      - calculateDeliveryFee() - 配送料金を再計算（`cartSession.getDeliveryAddress()`を使用）
+      - placeOrder() - 注文確定（`cartSession.getDeliveryAddress()`から配送先住所を取得）
+      - loadOrderSuccess() - 注文成功画面用にデータをロード（viewActionから呼ばれる）
     - 例外処理:
       - OutOfStockException → orderError.xhtmlに遷移
       - OptimisticLockException → orderError.xhtmlに遷移
+    - **重要**: 
+      - 配送先住所は`CartSession`のフィールドとして管理され、`OrderBean`には独自フィールドを持たない
+      - `calculateDeliveryFee()`および`placeOrder()`は`cartSession.getDeliveryAddress()`で配送先住所を取得
+      - `init()`メソッドは削除され、カート関連の初期化は`CartBean.proceedToOrder()`で実施
 
 ---
 
@@ -131,19 +132,21 @@
   - **参照SPEC**: screen_design.md#1-注文入力画面
   - **注意事項**: 
     - 注文内容確認（カート内容、合計金額）
-    - カバー画像表示（h:graphicImage value="resources/covers/#{book.imageFileName}"）
-      - BookエンティティのgetImageFileName()メソッドで書籍名 + ".jpg" を返す
-    - 画像ファイルが存在しない場合、no-image.jpgを表示
-    - 画像サイズ: 最大幅60px、高さ自動調整
-    - 配送先住所入力（h:inputText）
-    - 決済方法選択（h:selectOneRadio）
-      - 銀行振込、クレジットカード、着払い（BR-021）
-    - 配送料金表示（#{orderBean.deliveryPrice}）
+    - カバー画像表示は注文入力画面では不要（テーブルのみ）
+    - 書籍情報は書籍名、価格、数量のみを表示
+    - 配送先住所入力（h:inputText value="#{cartSession.deliveryAddress}"）
+      - **重要**: `cartSession.deliveryAddress`に直接バインド
+      - `required="true"` および `requiredMessage` を設定
+    - 決済方法選択（h:selectOneRadio value="#{cartSession.settlementType}"）
+      - 銀行振込（1）、クレジットカード（2）、着払い（3）（BR-021）
+      - **重要**: `cartSession.settlementType`に直接バインド
+      - `required="true"` および `requiredMessage` を設定
+    - 配送料金表示（#{cartSession.deliveryPrice}）
       - 住所変更時に自動再計算（BR-020）
-    - 「注文確定」ボタン（h:commandButton action="#{orderBean.confirmOrder}"）
-    - 「カートに戻る」リンク
+    - 「注文する」ボタン（h:commandButton action="#{orderBean.placeOrder}"）
+    - 「買い物を続ける」リンク（h:link outcome="bookSelect"）
     - バリデーション:
-      - 配送先住所（必須）
+      - 配送先住所（必須、maxlength=200）
       - 決済方法（必須）
 
 - [ ] **T-F003-007**: orderSuccess.xhtmlの作成（注文完了画面）

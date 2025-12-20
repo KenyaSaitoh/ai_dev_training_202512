@@ -74,23 +74,25 @@ So that 書籍を購入し、注文履歴を管理できる
 ### 5.1 プレゼンテーション層
 
 **CustomerBean**
-- **責務**: 顧客情報とログイン状態を管理
+- **責務**: ログイン中の顧客情報を保持
 - **タイプ**: @SessionScoped Bean
 - **フィールド**: 
   - `customer` - 顧客エンティティ
 - **主要メソッド**: 
-  - `isLoggedIn()` - ログイン状態を確認
-  - `logout()` - ログアウト
+  - `getCustomer()` - 顧客情報を取得
+  - `setCustomer(Customer)` - 顧客情報を設定
 
 **LoginBean**
-- **責務**: ログイン処理のコントローラー
-- **タイプ**: @ViewScoped Bean
+- **責務**: ログイン処理のコントローラーとログイン状態の管理
+- **タイプ**: @SessionScoped Bean
 - **フィールド**: 
   - `email` - メールアドレス
   - `password` - パスワード
+  - `loggedIn` - ログイン済みフラグ
 - **主要メソッド**: 
-  - `login()` - ログイン処理
-  - `navigateToRegister()` - 新規登録画面に遷移
+  - `processLogin()` - ログイン処理
+  - `processLogout()` - ログアウト処理
+  - `isLoggedIn()` - ログイン状態確認
 
 ### 5.2 ビジネスロジック層
 
@@ -119,9 +121,10 @@ So that 書籍を購入し、注文履歴を管理できる
 
 **AuthenticationFilter**
 - **責務**: 未認証ユーザーのアクセス制限
-- **タイプ**: @WebFilter
+- **タイプ**: @WebFilter（アノテーションベース）
 - **動作**: 
   - 公開ページ（BR-033）以外へのアクセスをチェック
+  - LoginBeanをCDIでインジェクトし、`isLoggedIn()`でログイン状態を確認
   - 未ログインの場合、ログイン画面にリダイレクト（BR-034）
   - セッションタイムアウト（BR-032）を管理
 

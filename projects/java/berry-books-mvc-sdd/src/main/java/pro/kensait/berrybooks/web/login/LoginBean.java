@@ -2,9 +2,9 @@ package pro.kensait.berrybooks.web.login;
 
 import java.io.Serializable;
 
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ import pro.kensait.berrybooks.web.customer.CustomerBean;
  * <p>ログイン認証とナビゲーション制御を行います。</p>
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class LoginBean implements Serializable {
     
     private static final long serialVersionUID = 1L;
@@ -43,6 +43,11 @@ public class LoginBean implements Serializable {
     private String password;
     
     /**
+     * ログイン済みフラグ
+     */
+    private boolean loggedIn = false;
+    
+    /**
      * デフォルトコンストラクタ
      */
     public LoginBean() {
@@ -53,8 +58,8 @@ public class LoginBean implements Serializable {
      * 
      * @return 書籍検索画面へのナビゲーション（認証成功時）、nullで現在のページに留まる（認証失敗時）
      */
-    public String login() {
-        logger.info("[ LoginBean#login ] email={}", email);
+    public String processLogin() {
+        logger.info("[ LoginBean#processLogin ] email={}", email);
         
         // 認証処理
         Customer customer = customerService.authenticate(email, password);
@@ -62,17 +67,14 @@ public class LoginBean implements Serializable {
         if (customer != null) {
             // 認証成功: CustomerBeanに顧客情報を設定
             customerBean.setCustomer(customer);
+            loggedIn = true;
             
-            // セッションに明示的に保存（AuthenticationFilter用）
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            facesContext.getExternalContext().getSessionMap().put("customerBean", customerBean);
-            
-            logger.info("[ LoginBean#login ] Login successful: customerId={}", customer.getCustomerId());
+            logger.info("[ LoginBean#processLogin ] Login successful: customerId={}", customer.getCustomerId());
             // 書籍選択画面（検索結果）に遷移
-            return "/bookSelect.xhtml?faces-redirect=true";
+            return "bookSelect?faces-redirect=true";
         } else {
             // 認証失敗: エラーメッセージを表示
-            logger.info("[ LoginBean#login ] Login failed: email={}", email);
+            logger.info("[ LoginBean#processLogin ] Login failed: email={}", email);
             FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_ERROR, 
                     "BIZ-002", "メールアドレスまたはパスワードが正しくありません"));
@@ -81,14 +83,29 @@ public class LoginBean implements Serializable {
     }
     
     /**
-     * 新規登録画面に遷移します
+     * ログアウト処理を実行します
      * 
-     * @return 新規登録画面へのナビゲーション
+     * @return ログイン画面へのナビゲーション
      */
-    public String navigateToRegister() {
-        logger.info("[ LoginBean#navigateToRegister ] Navigate to registration page");
-        return "/customerInput.xhtml?faces-redirect=true";
+    public String processLogout() {
+        logger.info("[ LoginBean#processLogout ]");
+        
+        // セッションを無効化
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        
+        // トップページへ遷移
+        return "index?faces-redirect=true";
     }
+    
+    /**
+     * ログイン済みかどうかを確認します
+     * 
+     * @return ログイン済みの場合はtrue、それ以外はfalse
+     */
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+    
     
     // Getters and Setters
     

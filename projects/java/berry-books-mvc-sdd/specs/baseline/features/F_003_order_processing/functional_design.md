@@ -163,14 +163,24 @@ sequenceDiagram
 
 **OrderBean**
 - **責務**: 注文処理のコントローラー
-- **タイプ**: @ViewScoped Bean
-- **フィールド**: 
-  - `orderTO` - 注文転送オブジェクト
-  - `cartSession` - カートセッション
+- **スコープ**: @ViewScoped（画面単位のライフサイクル）
+- **依存コンポーネント（注入）**: 
+  - `cartSession` (CartSession) - カートセッション
+  - `customerBean` (CustomerBean) - 顧客情報管理
+  - `orderService` (OrderService) - 注文ビジネスロジック
+  - `deliveryFeeService` (DeliveryFeeService) - 配送料金計算
+- **状態管理フィールド**: 
+  - `orderTran` (OrderTran) - 注文トランザクション（注文完了後にセット）
+  - `orderTranId` (Integer) - 注文ID（注文成功画面用のパラメータ、`f:viewParam`で受け取る）
 - **主要メソッド**: 
-  - `calculateDeliveryFee()` - 配送料金を計算
-  - `confirmOrder()` - 注文を確認
+  - `calculateDeliveryFee()` - 配送料金を再計算
   - `placeOrder()` - 注文を確定
+  - `loadOrderSuccess()` - 注文成功画面用にデータをロード（`f:viewAction`から呼び出し）
+- **設計上の注意事項**:
+  - 配送先住所と決済方法は`CartSession`で管理（`OrderBean`には独自フィールドを持たない）
+  - 配送先住所の取得: `cartSession.getDeliveryAddress()`
+  - 決済方法の取得: `cartSession.getSettlementType()`
+  - カート関連の初期化は`CartBean.proceedToOrder()`で実施（`OrderBean.init()`は削除済み）
 
 ### 8.2 ビジネスロジック層
 
