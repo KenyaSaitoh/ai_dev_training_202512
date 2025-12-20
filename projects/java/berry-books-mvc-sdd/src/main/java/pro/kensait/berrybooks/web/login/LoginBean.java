@@ -1,0 +1,126 @@
+package pro.kensait.berrybooks.web.login;
+
+import java.io.Serializable;
+
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pro.kensait.berrybooks.entity.Customer;
+import pro.kensait.berrybooks.service.customer.CustomerService;
+import pro.kensait.berrybooks.web.customer.CustomerBean;
+
+/**
+ * ログイン処理のコントローラー
+ * 
+ * <p>ログイン認証とナビゲーション制御を行います。</p>
+ */
+@Named
+@ViewScoped
+public class LoginBean implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    
+    private static final Logger logger = LoggerFactory.getLogger(LoginBean.class);
+    
+    @Inject
+    private CustomerService customerService;
+    
+    @Inject
+    private CustomerBean customerBean;
+    
+    /**
+     * メールアドレス
+     */
+    private String email;
+    
+    /**
+     * パスワード
+     */
+    private String password;
+    
+    /**
+     * デフォルトコンストラクタ
+     */
+    public LoginBean() {
+    }
+    
+    /**
+     * ログイン処理を実行します
+     * 
+     * @return 書籍検索画面へのナビゲーション（認証成功時）、nullで現在のページに留まる（認証失敗時）
+     */
+    public String login() {
+        logger.info("[ LoginBean#login ] email={}", email);
+        
+        // 認証処理
+        Customer customer = customerService.authenticate(email, password);
+        
+        if (customer != null) {
+            // 認証成功: CustomerBeanに顧客情報を設定
+            customerBean.setCustomer(customer);
+            logger.info("[ LoginBean#login ] Login successful: customerId={}", customer.getCustomerId());
+            // 書籍検索画面に遷移
+            return "/bookSearch.xhtml?faces-redirect=true";
+        } else {
+            // 認証失敗: エラーメッセージを表示
+            logger.info("[ LoginBean#login ] Login failed: email={}", email);
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                    "BIZ-002", "メールアドレスまたはパスワードが正しくありません"));
+            return null;
+        }
+    }
+    
+    /**
+     * 新規登録画面に遷移します
+     * 
+     * @return 新規登録画面へのナビゲーション
+     */
+    public String navigateToRegister() {
+        logger.info("[ LoginBean#navigateToRegister ] Navigate to registration page");
+        return "/customerInput.xhtml?faces-redirect=true";
+    }
+    
+    // Getters and Setters
+    
+    /**
+     * メールアドレスを取得します
+     * 
+     * @return メールアドレス
+     */
+    public String getEmail() {
+        return email;
+    }
+    
+    /**
+     * メールアドレスを設定します
+     * 
+     * @param email メールアドレス
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    /**
+     * パスワードを取得します
+     * 
+     * @return パスワード
+     */
+    public String getPassword() {
+        return password;
+    }
+    
+    /**
+     * パスワードを設定します
+     * 
+     * @param password パスワード
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
+

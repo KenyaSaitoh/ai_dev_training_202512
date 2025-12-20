@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<h:head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>注文完了 - berry-books</title>
+    <h:outputStylesheet library="css" name="style.css" />
+</h:head>
+
+<h:body>
+    <!-- ヘッダー -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-title">berry-books</div>
+            <div class="header-nav">
+                <span>#{customerBean.customer.customerName}さん</span>
+                <h:link outcome="bookSearch" value="書籍検索" />
+                <h:link outcome="cartView" value="カート" />
+                <h:link outcome="orderHistory" value="注文履歴" />
+                <h:link outcome="index" value="ログアウト" />
+            </div>
+        </div>
+    </div>
+    
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <div class="card">
+            <div style="text-align: center; padding: 32px 0;">
+                <h2 style="color: var(--primary-color); margin-bottom: 16px;">
+                    ✓ ご注文ありがとうございます！
+                </h2>
+                
+                <p style="margin-bottom: 24px;">ご注文を承りました。</p>
+                
+                <div style="background-color: #f8f9fa; padding: 16px; border-radius: 8px; 
+                           display: inline-block; min-width: 300px; margin: 16px 0;">
+                    <table style="margin: 0 auto; text-align: left;">
+                        <tr>
+                            <th style="padding: 8px;">注文番号:</th>
+                            <td style="padding: 8px; font-weight: bold;">
+                                ##{orderBean.orderTran.orderTranId}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="padding: 8px;">注文日時:</th>
+                            <td style="padding: 8px;">
+                                <h:outputText value="#{orderBean.orderTran.orderDate}">
+                                    <f:convertDateTime pattern="yyyy年MM月dd日" />
+                                </h:outputText>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="padding: 8px;">総合計:</th>
+                            <td style="padding: 8px; font-weight: bold; color: var(--primary-color);">
+                                <h:outputText value="#{orderBean.orderTran.totalPrice.add(orderBean.orderTran.deliveryPrice)}">
+                                    <f:convertNumber type="currency" currencySymbol="¥" 
+                                                   groupingUsed="true" minFractionDigits="0" />
+                                </h:outputText>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <p style="margin-top: 24px;">配送先住所に商品をお届けします。</p>
+                
+                <hr style="margin: 32px 0; border: none; border-top: 1px solid var(--border-color);" />
+                
+                <div style="margin-top: 24px;">
+                    <h:link outcome="orderHistory" value="注文履歴を見る" styleClass="button" />
+                    <h:link outcome="bookSearch" value="買い物を続ける" 
+                           styleClass="button button-secondary" 
+                           style="margin-left: 16px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- フッター -->
+    <div class="footer">
+        © 2025 berry-books. All rights reserved.
+    </div>
+</h:body>
+</html>
+

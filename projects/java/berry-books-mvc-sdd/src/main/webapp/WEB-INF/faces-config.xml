@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="https://jakarta.ee/xml/ns/jakartaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                                  https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd"
+              version="4.0">
+
+    <!--
+        ============================================================================
+        berry-books JSF Configuration
+        ============================================================================
+        プロジェクトID: berry-books
+        バージョン: 1.0.0
+        最終更新日: 2025-12-20
+        Jakarta Faces: 4.0
+        ============================================================================
+    -->
+
+    <!-- ============================================================================
+         アプリケーション設定
+         ============================================================================ -->
+    
+    <application>
+        <!-- メッセージバンドルの設定 -->
+        <message-bundle>messages</message-bundle>
+        
+        <!-- ロケール設定 -->
+        <locale-config>
+            <default-locale>ja</default-locale>
+            <supported-locale>en</supported-locale>
+        </locale-config>
+        
+        <!-- リソースバンドルの登録 -->
+        <resource-bundle>
+            <base-name>messages</base-name>
+            <var>msg</var>
+        </resource-bundle>
+    </application>
+
+    <!-- ============================================================================
+         ナビゲーションルール
+         ============================================================================ -->
+    
+    <!--
+        明示的なナビゲーションルールは定義せず、暗黙的ナビゲーションを使用
+        例: return "bookSearch"; → bookSearch.xhtml に遷移
+        
+        将来的に複雑なナビゲーションルールが必要になった場合は、
+        以下の形式でナビゲーションルールを追加:
+        
+        <navigation-rule>
+            <from-view-id>/index.xhtml</from-view-id>
+            <navigation-case>
+                <from-outcome>success</from-outcome>
+                <to-view-id>/bookSearch.xhtml</to-view-id>
+                <redirect />
+            </navigation-case>
+        </navigation-rule>
+    -->
+
+    <!-- ============================================================================
+         ライフサイクル設定
+         ============================================================================ -->
+    
+    <lifecycle>
+        <!-- フェーズリスナーの登録（将来的な拡張用） -->
+        <!-- 
+        <phase-listener>pro.kensait.berrybooks.web.listener.CustomPhaseListener</phase-listener>
+        -->
+    </lifecycle>
+
+    <!-- ============================================================================
+         ファクトリー設定
+         ============================================================================ -->
+    
+    <!-- 
+        カスタムファクトリーの登録（将来的な拡張用）
+        例: カスタム例外ハンドラー、カスタムレンダラーなど
+    -->
+
+    <!-- ============================================================================
+         レンダーキット設定
+         ============================================================================ -->
+    
+    <!-- 
+        カスタムコンポーネントやレンダラーの登録（将来的な拡張用）
+    -->
+
+    <!-- ============================================================================
+         バリデーター設定
+         ============================================================================ -->
+    
+    <!-- 
+        カスタムバリデーターの登録（将来的な拡張用）
+        例: メールアドレス形式チェック、郵便番号チェックなど
+        
+        <validator>
+            <validator-id>emailValidator</validator-id>
+            <validator-class>pro.kensait.berrybooks.web.validator.EmailValidator</validator-class>
+        </validator>
+    -->
+
+    <!-- ============================================================================
+         コンバーター設定
+         ============================================================================ -->
+    
+    <!-- 
+        カスタムコンバーターの登録（将来的な拡張用）
+        例: 日付フォーマット、価格フォーマットなど
+        
+        <converter>
+            <converter-id>priceConverter</converter-id>
+            <converter-class>pro.kensait.berrybooks.web.converter.PriceConverter</converter-class>
+        </converter>
+    -->
+
+</faces-config>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    
+<h:head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>注文詳細 - berry-books</title>
+    <h:outputStylesheet library="css" name="style.css" />
+</h:head>
+
+<h:body>
+    <!-- ヘッダー -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-title">berry-books</div>
+            <div class="header-nav">
+                <span>#{customerBean.customer.customerName}さん</span>
+                <h:link outcome="bookSearch" value="書籍検索" />
+                <h:link outcome="cartView" value="カート" />
+                <h:link outcome="orderHistory" value="注文履歴" />
+                <h:link outcome="index" value="ログアウト" />
+            </div>
+        </div>
+    </div>
+    
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <div class="card">
+            <h2>注文詳細 - 注文番号 ##{orderHistoryBean.orderSummary.orderTran.orderTranId}</h2>
+            
+            <!-- メッセージ表示 -->
+            <h:messages globalOnly="true" styleClass="message" />
+            
+            <!-- 注文情報 -->
+            <div style="margin-bottom: 24px;">
+                <h3>▼ 注文情報</h3>
+                <table style="width: 100%; border: none;">
+                    <tr>
+                        <td style="width: 150px; border: none; padding: 8px 0; font-weight: bold;">注文日:</td>
+                        <td style="border: none; padding: 8px 0;">
+                            <h:outputText value="#{orderHistoryBean.orderSummary.orderTran.orderDate}">
+                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                            </h:outputText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border: none; padding: 8px 0; font-weight: bold;">配送先:</td>
+                        <td style="border: none; padding: 8px 0;">#{orderHistoryBean.orderSummary.orderTran.deliveryAddress}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: none; padding: 8px 0; font-weight: bold;">決済方法:</td>
+                        <td style="border: none; padding: 8px 0;">
+                            #{pro.kensait.berrybooks.common.SettlementType.getNameByCode(orderHistoryBean.orderSummary.orderTran.settlementType)}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border-color);" />
+            
+            <!-- 注文明細 -->
+            <div style="margin-bottom: 24px;">
+                <h3>▼ 注文明細</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>画像</th>
+                            <th>書籍名</th>
+                            <th>単価</th>
+                            <th>数量</th>
+                            <th>小計</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ui:repeat value="#{orderHistoryBean.orderSummary.orderDetails}" var="detail">
+                            <tr>
+                                <td style="text-align: center;">
+                                    <h:graphicImage value="resources/covers/#{detail.book.imageFileName}" 
+                                                   alt="#{detail.book.bookName}"
+                                                   style="max-width: 60px; height: auto;" />
+                                </td>
+                                <td>#{detail.book.bookName}</td>
+                                <td>
+                                    <h:outputText value="#{detail.price}">
+                                        <f:convertNumber type="currency" currencySymbol="¥" 
+                                                       groupingUsed="true" minFractionDigits="0" />
+                                    </h:outputText>
+                                </td>
+                                <td style="text-align: center;">#{detail.count}</td>
+                                <td>
+                                    <h:outputText value="#{detail.subTotal}">
+                                        <f:convertNumber type="currency" currencySymbol="¥" 
+                                                       groupingUsed="true" minFractionDigits="0" />
+                                    </h:outputText>
+                                </td>
+                            </tr>
+                        </ui:repeat>
+                    </tbody>
+                </table>
+            </div>
+            
+            <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border-color);" />
+            
+            <!-- 料金 -->
+            <div style="margin-bottom: 24px;">
+                <h3>▼ 料金</h3>
+                <table style="width: 100%; border: none;">
+                    <tr>
+                        <td style="width: 150px; border: none; padding: 8px 0; font-weight: bold;">商品合計:</td>
+                        <td style="border: none; padding: 8px 0;">
+                            <h:outputText value="#{orderHistoryBean.orderSummary.orderTran.totalPrice}">
+                                <f:convertNumber type="currency" currencySymbol="¥" 
+                                               groupingUsed="true" minFractionDigits="0" />
+                            </h:outputText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border: none; padding: 8px 0; font-weight: bold;">配送料:</td>
+                        <td style="border: none; padding: 8px 0;">
+                            <h:outputText value="#{orderHistoryBean.orderSummary.orderTran.deliveryPrice}">
+                                <f:convertNumber type="currency" currencySymbol="¥" 
+                                               groupingUsed="true" minFractionDigits="0" />
+                            </h:outputText>
+                        </td>
+                    </tr>
+                    <tr style="font-size: 1.2em; font-weight: bold;">
+                        <td style="border: none; padding: 8px 0;">総合計:</td>
+                        <td style="border: none; padding: 8px 0; color: var(--primary-color);">
+                            <h:outputText value="#{orderHistoryBean.orderSummary.orderTran.totalPrice + orderHistoryBean.orderSummary.orderTran.deliveryPrice}">
+                                <f:convertNumber type="currency" currencySymbol="¥" 
+                                               groupingUsed="true" minFractionDigits="0" />
+                            </h:outputText>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border-color);" />
+            
+            <div style="margin-top: 24px; text-align: center;">
+                <h:link outcome="orderHistory" value="注文履歴に戻る" styleClass="button button-secondary" />
+            </div>
+        </div>
+    </div>
+    
+    <!-- フッター -->
+    <div class="footer">
+        © 2025 berry-books. All rights reserved.
+    </div>
+</h:body>
+</html>
+

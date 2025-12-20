@@ -1,28 +1,24 @@
 package pro.kensait.berrybooks.entity;
 
-import java.io.Serializable;
-import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.io.Serializable;
 
 /**
- * 出版社エンティティ
+ * 出版社マスタのエンティティクラス
  * 
- * テーブル: PUBLISHER
- * 目的: 出版社の基本情報を管理
+ * <p>出版社の基本情報を表すエンティティです。</p>
  */
 @Entity
 @Table(name = "PUBLISHER")
 public class Publisher implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
-
+    
     /**
      * 出版社ID（主キー、自動採番）
      */
@@ -30,91 +26,78 @@ public class Publisher implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PUBLISHER_ID")
     private Integer publisherId;
-
+    
     /**
      * 出版社名
      */
     @Column(name = "PUBLISHER_NAME", length = 30, nullable = false)
     private String publisherName;
-
+    
     /**
-     * この出版社が出版した書籍リスト
+     * デフォルトコンストラクタ
      */
-    @OneToMany(mappedBy = "publisher")
-    private List<Book> books;
-
-    // ========================================
-    // Constructors
-    // ========================================
-
     public Publisher() {
     }
-
-    public Publisher(Integer publisherId, String publisherName) {
-        this.publisherId = publisherId;
-        this.publisherName = publisherName;
-    }
-
-    // ========================================
-    // Getters and Setters
-    // ========================================
-
+    
+    /**
+     * 出版社IDを取得します
+     * 
+     * @return 出版社ID
+     */
     public Integer getPublisherId() {
         return publisherId;
     }
-
+    
+    /**
+     * 出版社IDを設定します
+     * 
+     * @param publisherId 出版社ID
+     */
     public void setPublisherId(Integer publisherId) {
         this.publisherId = publisherId;
     }
-
+    
+    /**
+     * 出版社名を取得します
+     * 
+     * @return 出版社名
+     */
     public String getPublisherName() {
         return publisherName;
     }
-
+    
+    /**
+     * 出版社名を設定します
+     * 
+     * @param publisherName 出版社名
+     */
     public void setPublisherName(String publisherName) {
         this.publisherName = publisherName;
     }
-
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
-    }
-
-    // ========================================
-    // toString, equals, hashCode
-    // ========================================
-
-    @Override
-    public String toString() {
-        return "Publisher [publisherId=" + publisherId + ", publisherName=" + publisherName + "]";
-    }
-
+    
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((publisherId == null) ? 0 : publisherId.hashCode());
-        return result;
+        int hash = 0;
+        hash += (publisherId != null ? publisherId.hashCode() : 0);
+        return hash;
     }
-
+    
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
+    public boolean equals(Object object) {
+        if (!(object instanceof Publisher)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        Publisher other = (Publisher) object;
+        if ((this.publisherId == null && other.publisherId != null) 
+                || (this.publisherId != null && !this.publisherId.equals(other.publisherId))) {
             return false;
-        Publisher other = (Publisher) obj;
-        if (publisherId == null) {
-            if (other.publisherId != null)
-                return false;
-        } else if (!publisherId.equals(other.publisherId))
-            return false;
+        }
         return true;
+    }
+    
+    @Override
+    public String toString() {
+        return "Publisher[publisherId=" + publisherId + ", publisherName=" + publisherName + "]";
     }
 }
 

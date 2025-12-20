@@ -1,10 +1,8 @@
 package pro.kensait.berrybooks.entity;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,19 +10,20 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
- * 書籍エンティティ
+ * 書籍マスタのエンティティクラス
  * 
- * テーブル: BOOK
- * 目的: 書籍の基本情報を管理
+ * <p>書籍の基本情報を表すエンティティです。</p>
  */
 @Entity
 @Table(name = "BOOK")
 public class Book implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
-
+    
     /**
      * 書籍ID（主キー、自動採番）
      */
@@ -32,179 +31,259 @@ public class Book implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "BOOK_ID")
     private Integer bookId;
-
+    
     /**
      * 書籍名
      */
     @Column(name = "BOOK_NAME", length = 80, nullable = false)
     private String bookName;
-
+    
     /**
      * 著者名
      */
     @Column(name = "AUTHOR", length = 40, nullable = false)
     private String author;
-
+    
     /**
-     * 価格（円）
+     * カテゴリID
+     */
+    @Column(name = "CATEGORY_ID", nullable = false, insertable = false, updatable = false)
+    private Integer categoryId;
+    
+    /**
+     * 出版社ID
+     */
+    @Column(name = "PUBLISHER_ID", nullable = false, insertable = false, updatable = false)
+    private Integer publisherId;
+    
+    /**
+     * 価格
      */
     @Column(name = "PRICE", nullable = false)
-    private Integer price;
-
+    private BigDecimal price;
+    
     /**
-     * カテゴリ（多対1リレーションシップ）
+     * カテゴリ（多対一のリレーション）
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID", nullable = false)
     private Category category;
-
+    
     /**
-     * 出版社（多対1リレーションシップ）
+     * 出版社（多対一のリレーション）
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PUBLISHER_ID", nullable = false)
     private Publisher publisher;
-
+    
     /**
-     * 在庫（1対1リレーションシップ）
+     * 在庫情報（一対一のリレーション）
      */
-    @OneToOne(mappedBy = "book")
+    @OneToOne(mappedBy = "book", fetch = FetchType.LAZY)
     private Stock stock;
-
-    // ========================================
-    // Constructors
-    // ========================================
-
+    
+    /**
+     * デフォルトコンストラクタ
+     */
     public Book() {
     }
-
-    public Book(Integer bookId, String bookName, String author, Integer price) {
-        this.bookId = bookId;
-        this.bookName = bookName;
-        this.author = author;
-        this.price = price;
-    }
-
-    // ========================================
-    // Business Methods
-    // ========================================
-
+    
     /**
-     * カバー画像ファイル名を生成
+     * 書籍IDを取得します
      * 
-     * BR-005: カバー画像ファイル名は書籍名 + ".jpg" で生成
-     * BR-007: 画像ファイルが存在しない場合は no-image.jpg を表示
-     * 
-     * @return 画像ファイル名（書籍名.jpg）
+     * @return 書籍ID
      */
-    public String getImageFileName() {
-        if (bookName == null || bookName.isEmpty()) {
-            return "no-image.jpg";
-        }
-        return bookName + ".jpg";
-    }
-
-    /**
-     * 在庫数を取得（便利メソッド）
-     * 
-     * @return 在庫数（在庫情報がない場合は0）
-     */
-    public Integer getQuantity() {
-        return (stock != null) ? stock.getQuantity() : 0;
-    }
-
-    // ========================================
-    // Getters and Setters
-    // ========================================
-
     public Integer getBookId() {
         return bookId;
     }
-
+    
+    /**
+     * 書籍IDを設定します
+     * 
+     * @param bookId 書籍ID
+     */
     public void setBookId(Integer bookId) {
         this.bookId = bookId;
     }
-
+    
+    /**
+     * 書籍名を取得します
+     * 
+     * @return 書籍名
+     */
     public String getBookName() {
         return bookName;
     }
-
+    
+    /**
+     * 書籍名を設定します
+     * 
+     * @param bookName 書籍名
+     */
     public void setBookName(String bookName) {
         this.bookName = bookName;
     }
-
+    
+    /**
+     * 著者名を取得します
+     * 
+     * @return 著者名
+     */
     public String getAuthor() {
         return author;
     }
-
+    
+    /**
+     * 著者名を設定します
+     * 
+     * @param author 著者名
+     */
     public void setAuthor(String author) {
         this.author = author;
     }
-
-    public Integer getPrice() {
+    
+    /**
+     * カテゴリIDを取得します
+     * 
+     * @return カテゴリID
+     */
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+    
+    /**
+     * カテゴリIDを設定します
+     * 
+     * @param categoryId カテゴリID
+     */
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+    
+    /**
+     * 出版社IDを取得します
+     * 
+     * @return 出版社ID
+     */
+    public Integer getPublisherId() {
+        return publisherId;
+    }
+    
+    /**
+     * 出版社IDを設定します
+     * 
+     * @param publisherId 出版社ID
+     */
+    public void setPublisherId(Integer publisherId) {
+        this.publisherId = publisherId;
+    }
+    
+    /**
+     * 価格を取得します
+     * 
+     * @return 価格
+     */
+    public BigDecimal getPrice() {
         return price;
     }
-
-    public void setPrice(Integer price) {
+    
+    /**
+     * 価格を設定します
+     * 
+     * @param price 価格
+     */
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
-
+    
+    /**
+     * カテゴリを取得します
+     * 
+     * @return カテゴリ
+     */
     public Category getCategory() {
         return category;
     }
-
+    
+    /**
+     * カテゴリを設定します
+     * 
+     * @param category カテゴリ
+     */
     public void setCategory(Category category) {
         this.category = category;
     }
-
+    
+    /**
+     * 出版社を取得します
+     * 
+     * @return 出版社
+     */
     public Publisher getPublisher() {
         return publisher;
     }
-
+    
+    /**
+     * 出版社を設定します
+     * 
+     * @param publisher 出版社
+     */
     public void setPublisher(Publisher publisher) {
         this.publisher = publisher;
     }
-
+    
+    /**
+     * 在庫情報を取得します
+     * 
+     * @return 在庫情報
+     */
     public Stock getStock() {
         return stock;
     }
-
+    
+    /**
+     * 在庫情報を設定します
+     * 
+     * @param stock 在庫情報
+     */
     public void setStock(Stock stock) {
         this.stock = stock;
     }
-
-    // ========================================
-    // toString, equals, hashCode
-    // ========================================
-
-    @Override
-    public String toString() {
-        return "Book [bookId=" + bookId + ", bookName=" + bookName + ", author=" + author + ", price=" + price + "]";
+    
+    /**
+     * カバー画像のファイル名を取得します
+     * 
+     * <p>書籍名に「.jpg」を付加したファイル名を返します。</p>
+     * 
+     * @return カバー画像のファイル名（例: "Java SEディープダイブ.jpg"）
+     */
+    public String getImageFileName() {
+        return bookName + ".jpg";
     }
-
+    
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((bookId == null) ? 0 : bookId.hashCode());
-        return result;
+        int hash = 0;
+        hash += (bookId != null ? bookId.hashCode() : 0);
+        return hash;
     }
-
+    
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
+    public boolean equals(Object object) {
+        if (!(object instanceof Book)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        Book other = (Book) object;
+        if ((this.bookId == null && other.bookId != null) 
+                || (this.bookId != null && !this.bookId.equals(other.bookId))) {
             return false;
-        Book other = (Book) obj;
-        if (bookId == null) {
-            if (other.bookId != null)
-                return false;
-        } else if (!bookId.equals(other.bookId))
-            return false;
+        }
         return true;
+    }
+    
+    @Override
+    public String toString() {
+        return "Book[bookId=" + bookId + ", bookName=" + bookName + ", author=" + author + "]";
     }
 }
 

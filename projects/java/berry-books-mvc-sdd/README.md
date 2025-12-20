@@ -143,7 +143,7 @@ specs/
 │   ├── F_003_order_processing.md   # F_003: 注文処理
 │   ├── F_004_customer_auth.md      # F_004: 顧客管理・認証
 │   ├── F_005_order_history.md      # F_005: 注文履歴参照
-│   └── integration_tasks.md        # 結合・テストタスク
+│   └── integration_tasks.md        # 結合テストタスク
 ├── enhancements/               # 拡張SPEC（002以降）
 │   └── (拡張時に作成)
 └── templates/                  # SPECテンプレート
@@ -153,7 +153,12 @@ specs/
 
 #### タスク分解フェーズ
 
-SPECから実装タスクへ分解します。SPECを修正した場合や新規プロジェクトの場合に実行します。
+**注意:** このプロジェクトには既にタスクファイルが `tasks/` ディレクトリに存在します。**既存のタスクファイルをそのまま使用する場合は、このフェーズをスキップして「実装フェーズ」に進んでください。**
+
+以下の場合にのみ、タスク分解フェーズを実行してください：
+- SPECを修正した場合
+- タスクファイルを再生成したい場合
+- 新規プロジェクトの場合
 
 **生成AIへの指示:**
 ```
@@ -163,6 +168,10 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 から実装タスクリストを生成してください。
 
 タスクリストは projects/java/berry-books-mvc-sdd/tasks/ ディレクトリに複数ファイルとして保存してください。
+
+注意: タスクファイルの取り扱い
+- タスクファイルが存在しない場合: 新規作成してください。
+- タスクファイルが既に存在する場合: 既存の内容を確認し、SPECとの整合性をチェックして、必要な部分のみを更新してください。
 ```
 
 **生成されるタスクファイル（複数人での並行作業用に分割）:**
@@ -174,13 +183,16 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 - `tasks/F_003_order_processing.md` - F_003: 注文処理（担当者C）
 - `tasks/F_004_customer_auth.md` - F_004: 顧客管理・認証（担当者D）
 - `tasks/F_005_order_history.md` - F_005: 注文履歴参照（担当者E）
-- `tasks/integration_tasks.md` - 結合・テストタスク（全員参加）
+- `tasks/integration_tasks.md` - 結合テストタスク（全員参加）
 
 #### 実装フェーズ
 
-タスクリストに従って、生成AIに実装を依頼します。以下の順序で各タスクを**1つずつ**実行してください。
+**既存のタスクファイル（`tasks/`ディレクトリ）** を使って、生成AIに実装を依頼します。以下の順序で各タスクを**1つずつ**実行してください。
 
-**重要:** 各タスクは独立した作業単位です。1つのタスクが完了したら、次のタスクに進む前に内容を確認してください。
+**重要:** 
+- 各タスクは独立した作業単位です。1つのタスクが完了したら、次のタスクに進む前に内容を確認してください。
+- タスクファイルが既に存在する場合は、そのファイルをそのまま使用できます。
+- タスクファイルを更新したい場合は、前述の「タスク分解フェーズ」を実行してください。
 
 ##### タスク1: セットアップタスクの実行
 
@@ -324,7 +336,7 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 
 **注意:** タスク3～6と並行実行可能
 
-##### タスク8: 結合・テストタスクの実行
+##### タスク8: 結合テストタスクの実行
 
 **依存:** タスク3～7（全機能）完了後
 
@@ -339,7 +351,7 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 
 **内容:**
 - 機能間結合テスト
-- エンドツーエンドテスト
+- エンドツーエンドテスト（Playwright推奨）
 - パフォーマンステスト
 - 最終検証
 
@@ -361,7 +373,7 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 ```
 
 **重要なポイント:**
-- **依存関係の遵守**: セットアップ → 共通機能 → 機能別実装 → 結合・テストの順序を守る
+- **依存関係の遵守**: セットアップ → 共通機能 → 機能別実装 → 結合テストの順序を守る
 - **並行作業の判断**: タスク3～7は並行実行可能。人員配分は作業者が判断
 - **進捗の追跡**: 各タスクファイルのチェックボックスで進捗を管理
 - **SPEC参照**: 各タスク実行時、必要に応じて対応するSPEC（`specs/baseline/system/`、`specs/baseline/features/`）を参照
@@ -370,15 +382,15 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 
 ## 🚀 シナリオ2: 拡張の実行（機能追加・改善・修正）
 
-既存のberry-booksプロジェクトを拡張する場合のワークフローです。
+既存のberry-booksプロジェクトを拡張する場合の開発フローです。
 
-### ワークフロー
+### 開発フロー
 
 ```
-SPEC作成（手動） → タスク分解（AI） → 実装（AI）
+設計フェーズ（人間） → タスク分解フェーズ（AI） → 実装フェーズ（AI）
 ```
 
-**重要:** SPECの作成は手動で行います。`templates/` フォルダのテンプレートか、既存の `specs/` のSPECを参考にしてください。
+**重要:** SPECの作成は人間が行います。`templates/` フォルダのテンプレートか、既存の `specs/` のSPECを参考にしてください。
 
 ### 重要な違い
 
@@ -500,12 +512,20 @@ instructions/
 
 **目的:** 完成したSPECから具体的な実装タスクに分解します。複数人での並行作業を考慮して、複数のタスクファイルに分割されます。
 
+**注意:** このプロジェクトには既にタスクファイルが存在します。**既存のタスクファイルをそのまま使用する場合は、このインストラクションをスキップして「インストラクション2: Implement（実装）」に進んでください。** タスクファイルを更新・再生成したい場合、またはSPECを修正した場合のみ、このインストラクションを使用してください。
+
 **生成AIへの指示（ベースプロジェクト）:**
 ```
 @instructions/generate_tasks.md このインストラクションに従って、
-@specs/baseline/system/ のSPECから実装タスクリストを生成してください。
+プロジェクトルート: @projects/java/berry-books-mvc-sdd
+SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
+から実装タスクリストを生成してください。
 
-タスクリストは specs/tasks/ ディレクトリに複数ファイルとして保存してください。
+タスクリストは projects/java/berry-books-mvc-sdd/tasks/ ディレクトリに複数ファイルとして保存してください。
+
+タスクファイルの取り扱い:
+- タスクファイルが存在しない場合: 新規作成してください。
+- タスクファイルが既に存在する場合: 既存の内容を確認し、SPECとの整合性をチェックして、必要な部分のみを更新してください。
 ```
 
 **生成AIへの指示（拡張）:**
@@ -516,6 +536,10 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 から実装タスクリストを生成してください。
 
 タスクリストは projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_alert/tasks/ ディレクトリに保存してください。
+
+タスクファイルの取り扱い:
+- タスクファイルが存在しない場合: 新規作成してください。
+- タスクファイルが既に存在する場合: 既存の内容を確認し、SPECとの整合性をチェックして、必要な部分のみを更新してください。
 ```
 
 **生成されるファイル（ベースプロジェクト）:**
@@ -527,7 +551,7 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 - `tasks/F_003_order_processing.md` - F_003: 注文処理
 - `tasks/F_004_customer_auth.md` - F_004: 顧客管理・認証
 - `tasks/F_005_order_history.md` - F_005: 注文履歴参照
-- `tasks/integration_tasks.md` - 結合・テストタスク
+- `tasks/integration_tasks.md` - 結合テストタスク
 
 **生成されるファイル（拡張の例）:**
 - `specs/enhancements/202512_inventory_alert/tasks/tasks.md` - メインタスクリスト
@@ -576,6 +600,10 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 に基づいて実装を進めてください。
 
 セットアップタスクから順に実行してください。
+
+タスクファイルの取り扱い:
+- @tasks/tasks.md が存在する場合: そのファイルを参照して実装してください。
+- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
 ```
 
 **拡張:**
@@ -586,6 +614,11 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 に基づいて実装を進めてください。
 
 このタスクのみを実行し、完了したら停止してください。
+
+タスクファイルの取り扱い:
+- @specs/enhancements/202512_inventory_alert/tasks/tasks.md が存在する場合: そのファイルを参照して実装してください。
+- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
+
 注意: 既存コードの修正は慎重に行い、既存機能に影響を与えないようにしてください。
 ```
 
@@ -599,6 +632,10 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 プロジェクトルート: @projects/java/berry-books-mvc-sdd
 タスクリスト: @projects/java/berry-books-mvc-sdd/tasks/common_tasks.md
 に基づいて実装を進めてください。
+
+タスクファイルの取り扱い:
+- @tasks/common_tasks.md が存在する場合: そのファイルを参照して実装してください。
+- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
 ```
 
 **担当者A（F_001: 書籍検索・閲覧）:**
@@ -607,6 +644,10 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 プロジェクトルート: @projects/java/berry-books-mvc-sdd
 タスクリスト: @projects/java/berry-books-mvc-sdd/tasks/F_001_book_search.md
 に基づいて実装を進めてください。
+
+タスクファイルの取り扱い:
+- @tasks/F_001_book_search.md が存在する場合: そのファイルを参照して実装してください。
+- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
 
 注意: 共通機能タスク（common_tasks.md）の完了を待ってから開始してください。
 ```
@@ -617,6 +658,10 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 プロジェクトルート: @projects/java/berry-books-mvc-sdd
 タスクリスト: @projects/java/berry-books-mvc-sdd/tasks/F_002_shopping_cart.md
 に基づいて実装を進めてください。
+
+タスクファイルの取り扱い:
+- @tasks/F_002_shopping_cart.md が存在する場合: そのファイルを参照して実装してください。
+- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
 
 注意: 共通機能タスク（common_tasks.md）の完了を待ってから開始してください。
 ```
@@ -667,9 +712,9 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 - `instructions/generate_tasks.md` - SPECから実装タスクへの分解
 - `instructions/generate_code.md` - タスクリストに基づく実装
 
-**基本的な実行フロー:**
+**基本的な開発フロー:**
 ```
-SPEC作成（手動） → タスク分解（AI） → 実装（AI）
+設計フェーズ（人間） → タスク分解フェーズ（AI） → 実装フェーズ（AI）
 ```
 
 ### 生成AIへの指示の基本パターン
@@ -737,6 +782,8 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 
 #### ステップ2: タスク分解（生成AI）
 
+**注意:** 既に当該拡張のタスクファイルが存在する場合（例: `specs/enhancements/202512_inventory_alert/tasks/`）は、このステップをスキップして既存のタスクファイルを使用できます。タスクファイルを更新したい場合や新規作成する場合のみ、以下を実行してください。
+
 **生成AIへの指示:**
 ```
 @instructions/generate_tasks.md このインストラクションに従って、
@@ -745,6 +792,10 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 から実装タスクリストを生成してください。
 
 タスクリストは projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_alert/tasks/ ディレクトリに保存してください。
+
+タスクファイルの取り扱い:
+- タスクファイルが存在しない場合: 新規作成してください。
+- タスクファイルが既に存在する場合: 既存の内容を確認し、SPECとの整合性をチェックして、必要な部分のみを更新してください。
 
 注意: 既存ファイルの修正タスクと新規ファイル作成タスクを明確に区別してください。
 ```
@@ -755,6 +806,8 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 
 #### ステップ3: 実装（生成AI）
 
+**既存のタスクファイル** または **新規作成したタスクファイル** を使って実装を進めます。
+
 **生成AIへの指示:**
 ```
 @instructions/generate_code.md このインストラクションに従って、
@@ -763,6 +816,11 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 に基づいて実装を進めてください。
 
 このタスクのみを実行し、完了したら停止してください。
+
+タスクファイルの取り扱い:
+- @specs/enhancements/202512_inventory_alert/tasks/tasks.md が存在する場合: そのファイルを参照して実装してください。
+- 存在しない場合: ステップ2のタスク分解フェーズを先に実行して、タスクファイルを生成してください。
+
 注意: 既存コードの修正は慎重に行い、既存機能に影響を与えないようにしてください。
 ```
 
@@ -806,7 +864,7 @@ berry-books-mvc-sdd/
 │   │   ├── F_003_order_processing.md      # F_003: 注文処理
 │   │   ├── F_004_customer_auth.md         # F_004: 顧客管理・認証
 │   │   ├── F_005_order_history.md         # F_005: 注文履歴参照
-│   │   └── integration_tasks.md           # 結合・テストタスク
+│   │   └── integration_tasks.md           # 結合テストタスク
 │   ├── enhancements/         # 拡張SPEC（アンダースコア区切り命名）
 │   │   └── (拡張時に作成)
 │   │       └── 202512_inventory_alert/  # 例: 在庫アラート機能（新機能）
@@ -930,7 +988,7 @@ berry-books-mvc-sdd/
 - [F_003_order_processing.md](tasks/F_003_order_processing.md) - F_003: 注文処理
 - [F_004_customer_auth.md](tasks/F_004_customer_auth.md) - F_004: 顧客管理・認証
 - [F_005_order_history.md](tasks/F_005_order_history.md) - F_005: 注文履歴参照
-- [integration_tasks.md](tasks/integration_tasks.md) - 結合・テストタスク
+- [integration_tasks.md](tasks/integration_tasks.md) - 結合テストタスク
 
 **Feature 002以降: 個別拡張**
 - 個別拡張は `specs/enhancements/YYYYMM_案件名/` のようなフォルダで管理（日付は6桁、案件名とはアンダースコア区切り）
@@ -958,30 +1016,30 @@ berry-books-mvc-sdd/
 
 ---
 
-## 🎯 ワークフローのまとめ
+## 🎯 開発フローのまとめ
 
 ### 基本的な流れ
 
 **シナリオ1: ベースプロジェクトの実装（完成したSPECから）**
 
 ```
-SPEC（既存） → タスク分解（AI） → 実装（AI）
+設計フェーズ（完成済み） → タスク分解フェーズ（AI） → 実装フェーズ（AI）
 ```
 
-1. **SPECの確認**: `specs/baseline/system/` フォルダの完成したSPECを確認
-2. **Tasks（AI）**: `@instructions/generate_tasks.md` を使って実装タスクに分解
-3. **Implement（AI）**: `@instructions/generate_code.md` を使ってタスクに従って実装
+1. **設計フェーズ（完成済み）**: `specs/baseline/system/` フォルダの完成したSPECを確認
+2. **タスク分解フェーズ（AI）**: `@instructions/generate_tasks.md` を使って実装タスクに分解
+3. **実装フェーズ（AI）**: `@instructions/generate_code.md` を使ってタスクに従って実装
 
 **シナリオ2: 拡張（機能追加・改善・修正）**
 
 ```
-SPEC作成（手動） → タスク分解（AI） → 実装（AI）
+設計フェーズ（人間） → タスク分解フェーズ（AI） → 実装フェーズ（AI）
 ```
 
-1. **SPECの作成（手動）**: `specs/templates/` のテンプレートを参考に拡張内容のSPECを作成
-2. **整合性確認**: 既存のSPECとの整合性を確認
-3. **Tasks（AI）**: `@instructions/generate_tasks.md` を使って実装タスクに分解
-4. **Implement（AI）**: `@instructions/generate_code.md` を使ってタスクに従って実装
+1. **設計フェーズ（人間）**: `specs/templates/` のテンプレートを参考に拡張内容のSPECを作成
+2. **整合性確認（人間）**: 既存のSPECとの整合性を確認
+3. **タスク分解フェーズ（AI）**: `@instructions/generate_tasks.md` を使って実装タスクに分解
+4. **実装フェーズ（AI）**: `@instructions/generate_code.md` を使ってタスクに従って実装
 
 ### 生成AIへの指示の基本パターン
 
@@ -995,6 +1053,10 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 から実装タスクリストを生成してください。
 
 タスクリストは projects/java/berry-books-mvc-sdd/tasks/ ディレクトリに複数ファイルとして保存してください。
+
+タスクファイルの取り扱い:
+- タスクファイルが存在しない場合: 新規作成してください。
+- タスクファイルが既に存在する場合: 既存の内容を確認し、SPECとの整合性をチェックして、必要な部分のみを更新してください。
 ```
 
 **実装（単独）:**
@@ -1005,9 +1067,16 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 に基づいて実装を進めてください。
 
 このタスクのみを実行し、完了したら停止してください。
+
+タスクファイルの取り扱い:
+- @tasks/setup_tasks.md が存在する場合: そのファイルを参照して実装してください。
+- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
 ```
 
-**注意:** 各タスクファイル（setup_tasks.md, common_tasks.md, F_001_book_search.md等）を順番に1つずつ実行してください。
+**注意:** 
+- 既存のタスクファイル（tasks/ディレクトリ）が存在する場合は、それらを参照して実装します。
+- 存在しない場合は、タスク分解フェーズを実行してタスクファイルを生成してください。
+- 各タスクファイル（setup_tasks.md, common_tasks.md, F_001_book_search.md等）を順番に1つずつ実行してください。
 
 **実装（並行作業）:**
 ```
@@ -1019,6 +1088,10 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 
 このタスクのみを実行し、完了したら停止してください。
 
+タスクファイルの取り扱い:
+- @tasks/common_tasks.md が存在する場合: そのファイルを参照して実装してください。
+- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
+
 # 担当者A（F_001）
 @instructions/generate_code.md このインストラクションに従って、
 プロジェクトルート: @projects/java/berry-books-mvc-sdd
@@ -1026,6 +1099,10 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 に基づいて実装を進めてください。
 
 このタスクのみを実行し、完了したら停止してください。
+
+タスクファイルの取り扱い:
+- @tasks/F_001_book_search.md が存在する場合: そのファイルを参照して実装してください。
+- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
 ```
 
 **注意:** 各タスクは独立した作業単位です。タスクが完了したら、次のタスクに進む前に内容を確認してください。
@@ -1055,7 +1132,7 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 - ✅ setup_tasks.md - セットアップタスク
 - ✅ common_tasks.md - 共通機能タスク
 - ✅ F_001_book_search.md ～ F_005_order_history.md - 機能別タスク（並行実行可能）
-- ✅ integration_tasks.md - 結合・テストタスク
+- ✅ integration_tasks.md - 結合テストタスク
 
 これらのSPECと生成AIインストラクションを使って、生成AIが同じアプリケーションを完全に再実装できます。また、複数人での並行作業にも対応しています。
 

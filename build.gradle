@@ -40,10 +40,23 @@ subprojects {
     dependencies {
         // SLF4J Logging（全プロジェクト共通）
         implementation "org.slf4j:slf4j-api:2.0.12"
-        implementation "org.slf4j:slf4j-simple:2.0.12"
         
-        // HSQLDB Database（ランタイム - 全プロジェクト共通）
-        implementation files(rootProject.file('hsqldb/lib/hsqldb.jar'))
+        // berry-books-mvc-sdd用: Log4j2を使用
+        if (project.name == "berry-books-mvc-sdd") {
+            implementation "org.apache.logging.log4j:log4j-core:2.21.1"
+            implementation "org.apache.logging.log4j:log4j-slf4j2-impl:2.21.1"
+        } else {
+            implementation "org.slf4j:slf4j-simple:2.0.12"
+        }
+        
+        // HSQLDB Database
+        if (project.name == "berry-books-mvc-sdd") {
+            // berry-books-mvc-sdd用: Maven Centralから
+            implementation "org.hsqldb:hsqldb:2.7.2"
+        } else {
+            // その他のプロジェクト: ローカルjarファイル
+            implementation files(rootProject.file('hsqldb/lib/hsqldb.jar'))
+        }
         
         // Struts 1.3.10 - Strutsプロジェクト用（TomEE 8用）
         if (project.name == "struts-person") {
@@ -125,6 +138,7 @@ subprojects {
         testImplementation "org.junit.jupiter:junit-jupiter:5.10.0"
         testImplementation "org.mockito:mockito-core:5.5.0"
         testImplementation "org.mockito:mockito-junit-jupiter:5.5.0"
+        testImplementation "com.microsoft.playwright:playwright:1.40.0"
         
         // Jakarta EE API（テスト用）
         testImplementation "jakarta.platform:jakarta.jakartaee-api:10.0.0"
@@ -138,7 +152,13 @@ subprojects {
 
     // WAR設定
     war {
-        archiveFileName = "${project.name}.war"
+        if (project.name == "berry-books-mvc-sdd") {
+            // berry-books-mvc-sdd用: シンプルなWAR名
+            archiveBaseName = "berry-books"
+            archiveVersion = ""
+        } else {
+            archiveFileName = "${project.name}.war"
+        }
         webAppDirectory = file("src/main/webapp")
     }
 
@@ -221,6 +241,14 @@ subprojects {
     // テスト設定
     test {
         useJUnitPlatform()
+        
+        // berry-books-mvc-sdd用: 詳細なテストログ
+        if (project.name == "berry-books-mvc-sdd") {
+            testLogging {
+                events "passed", "skipped", "failed"
+                exceptionFormat "full"
+            }
+        }
     }
 
     // TomEE 8専用タスク（Strutsプロジェクト）

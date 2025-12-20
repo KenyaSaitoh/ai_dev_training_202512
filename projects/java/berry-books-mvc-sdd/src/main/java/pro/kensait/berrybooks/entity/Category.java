@@ -1,28 +1,24 @@
 package pro.kensait.berrybooks.entity;
 
-import java.io.Serializable;
-import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.io.Serializable;
 
 /**
- * カテゴリエンティティ
+ * カテゴリマスタのエンティティクラス
  * 
- * テーブル: CATEGORY
- * 目的: 書籍のカテゴリを管理
+ * <p>書籍のカテゴリを表すエンティティです。</p>
  */
 @Entity
 @Table(name = "CATEGORY")
 public class Category implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
-
+    
     /**
      * カテゴリID（主キー、自動採番）
      */
@@ -30,91 +26,78 @@ public class Category implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CATEGORY_ID")
     private Integer categoryId;
-
+    
     /**
      * カテゴリ名
      */
     @Column(name = "CATEGORY_NAME", length = 20, nullable = false)
     private String categoryName;
-
+    
     /**
-     * このカテゴリに属する書籍リスト
+     * デフォルトコンストラクタ
      */
-    @OneToMany(mappedBy = "category")
-    private List<Book> books;
-
-    // ========================================
-    // Constructors
-    // ========================================
-
     public Category() {
     }
-
-    public Category(Integer categoryId, String categoryName) {
-        this.categoryId = categoryId;
-        this.categoryName = categoryName;
-    }
-
-    // ========================================
-    // Getters and Setters
-    // ========================================
-
+    
+    /**
+     * カテゴリIDを取得します
+     * 
+     * @return カテゴリID
+     */
     public Integer getCategoryId() {
         return categoryId;
     }
-
+    
+    /**
+     * カテゴリIDを設定します
+     * 
+     * @param categoryId カテゴリID
+     */
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
-
+    
+    /**
+     * カテゴリ名を取得します
+     * 
+     * @return カテゴリ名
+     */
     public String getCategoryName() {
         return categoryName;
     }
-
+    
+    /**
+     * カテゴリ名を設定します
+     * 
+     * @param categoryName カテゴリ名
+     */
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
-
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
-    }
-
-    // ========================================
-    // toString, equals, hashCode
-    // ========================================
-
-    @Override
-    public String toString() {
-        return "Category [categoryId=" + categoryId + ", categoryName=" + categoryName + "]";
-    }
-
+    
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((categoryId == null) ? 0 : categoryId.hashCode());
-        return result;
+        int hash = 0;
+        hash += (categoryId != null ? categoryId.hashCode() : 0);
+        return hash;
     }
-
+    
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
+    public boolean equals(Object object) {
+        if (!(object instanceof Category)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        Category other = (Category) object;
+        if ((this.categoryId == null && other.categoryId != null) 
+                || (this.categoryId != null && !this.categoryId.equals(other.categoryId))) {
             return false;
-        Category other = (Category) obj;
-        if (categoryId == null) {
-            if (other.categoryId != null)
-                return false;
-        } else if (!categoryId.equals(other.categoryId))
-            return false;
+        }
         return true;
+    }
+    
+    @Override
+    public String toString() {
+        return "Category[categoryId=" + categoryId + ", categoryName=" + categoryName + "]";
     }
 }
 

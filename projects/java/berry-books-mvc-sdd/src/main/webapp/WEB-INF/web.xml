@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <!--
+        ============================================================================
+        berry-books Web Application Deployment Descriptor
+        ============================================================================
+        プロジェクトID: berry-books
+        バージョン: 1.0.0
+        最終更新日: 2025-12-20
+        Jakarta Servlet: 6.0
+        Jakarta Faces: 4.0
+        ============================================================================
+    -->
+
+    <!-- アプリケーション名 -->
+    <display-name>berry-books Online Bookstore</display-name>
+    <description>
+        Jakarta EE 10とJSF 4.0を使用したオンライン書店Webアプリケーション
+    </description>
+
+    <!-- ============================================================================
+         コンテキストパラメータ
+         ============================================================================ -->
+    
+    <!-- JSF開発モード（本番環境ではfalseに設定） -->
+    <context-param>
+        <param-name>jakarta.faces.PROJECT_STAGE</param-name>
+        <param-value>Development</param-value>
+    </context-param>
+    
+    <!-- JSFのステート保存方法（server: サーバー側にステート保存） -->
+    <context-param>
+        <param-name>jakarta.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>server</param-value>
+    </context-param>
+    
+    <!-- JSFのタイムゾーン設定 -->
+    <context-param>
+        <param-name>jakarta.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    
+    <!-- クライアントサイドバリデーションの有効化 -->
+    <context-param>
+        <param-name>jakarta.faces.INTERPRET_EMPTY_STRING_SUBMITTED_VALUES_AS_NULL</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <!-- ============================================================================
+         Faces Servlet設定
+         ============================================================================ -->
+    
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <!-- Faces Servletマッピング（*.xhtml） -->
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
+    
+    <!-- ============================================================================
+         認証フィルター設定
+         ============================================================================ -->
+    
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>pro.kensait.berrybooks.web.filter.AuthenticationFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>*.xhtml</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+
+    <!-- ============================================================================
+         セッション設定
+         ============================================================================ -->
+    
+    <!-- セッションタイムアウト（60分） -->
+    <session-config>
+        <session-timeout>60</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+            <!-- HTTPS環境ではtrue推奨、開発環境ではfalse -->
+            <secure>false</secure>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+
+    <!-- ============================================================================
+         ウェルカムファイル設定
+         ============================================================================ -->
+    
+    <welcome-file-list>
+        <welcome-file>index.xhtml</welcome-file>
+    </welcome-file-list>
+
+    <!-- ============================================================================
+         エラーページ設定
+         ============================================================================ -->
+    
+    <!-- 404 Not Found -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error/404.xhtml</location>
+    </error-page>
+    
+    <!-- 500 Internal Server Error -->
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error/500.xhtml</location>
+    </error-page>
+    
+    <!-- 一般的な例外 -->
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/error/500.xhtml</location>
+    </error-page>
+
+    <!-- ============================================================================
+         セキュリティ制約（将来的な拡張用、現在は未使用）
+         ============================================================================ -->
+    
+    <!-- 
+        認証はAuthenticationFilterで実装
+        将来的にJAAS認証に移行する場合は、以下のsecurity-constraint設定を使用
+    -->
+
+    <!-- ============================================================================
+         MIME Type設定
+         ============================================================================ -->
+    
+    <mime-mapping>
+        <extension>xhtml</extension>
+        <mime-type>application/xhtml+xml</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>css</extension>
+        <mime-type>text/css</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>js</extension>
+        <mime-type>application/javascript</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>jpg</extension>
+        <mime-type>image/jpeg</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>jpeg</extension>
+        <mime-type>image/jpeg</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>png</extension>
+        <mime-type>image/png</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>gif</extension>
+        <mime-type>image/gif</mime-type>
+    </mime-mapping>
+
+</web-app>

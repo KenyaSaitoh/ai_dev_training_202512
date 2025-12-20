@@ -1,43 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="3.0"
-             xmlns="https://jakarta.ee/xml/ns/persistence"
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
-                                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
-    
-    <!-- ========================================
-         Berry Books Persistence Unit
-         ========================================
-         - トランザクションタイプ: JTA
-         - データソース: jdbc/HsqldbDS (JNDI)
-         - スキーマ生成: none (手動SQLスクリプト使用)
-         ======================================== -->
-    
+                                 https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd"
+             version="3.1">
+
+    <!--
+        ============================================================================
+        berry-books Persistence Configuration
+        ============================================================================
+        プロジェクトID: berry-books
+        バージョン: 1.0.0
+        最終更新日: 2025-12-20
+        Jakarta Persistence (JPA): 3.1
+        Provider: EclipseLink
+        ============================================================================
+    -->
+
     <persistence-unit name="BerryBooksPU" transaction-type="JTA">
         
-        <!-- JNDIデータソース -->
+        <!-- JTAデータソースの指定 (Payara Serverで設定) -->
         <jta-data-source>jdbc/HsqldbDS</jta-data-source>
         
-        <!-- Jakarta EE 10 Provider: EclipseLink -->
-        <!-- Payara Server 6にバンドルされているため、明示的な指定は不要 -->
+        <!--
+            エンティティクラスの自動検出を有効化
+            pro.kensait.berrybooks.entity パッケージ配下の@Entityクラスを自動スキャン
+        -->
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
         
-        <!-- スキーマ生成設定 -->
         <properties>
-            <!-- スキーマ生成は手動SQLスクリプトで実行するため無効化 -->
+            <!-- 
+                スキーマ生成の設定
+                none: DDLスクリプト（1_DDL.sql）を手動で実行
+            -->
             <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
             
-            <!-- EclipseLinkログ設定 -->
+            <!--
+                EclipseLink ログ設定
+                FINE: 実行されるSQLクエリを詳細ログに出力
+            -->
             <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.level.sql" value="FINE"/>
             <property name="eclipselink.logging.parameters" value="true"/>
-            <property name="eclipselink.logging.timestamp" value="true"/>
-            <property name="eclipselink.logging.thread" value="false"/>
-            <property name="eclipselink.logging.session" value="false"/>
             
-            <!-- キャッシュ設定（学習用に2次キャッシュを無効化） -->
+            <!--
+                EclipseLink キャッシュ設定
+                学習用途のため、2次キャッシュを無効化（データの変更を即座に反映）
+            -->
             <property name="eclipselink.cache.shared.default" value="false"/>
             
-            <!-- トランザクション設定 -->
-            <property name="eclipselink.target-database" value="HSQL"/>
+            <!--
+                トランザクション分離レベル
+                READ_COMMITTED: コミット済みデータのみ読み取り可能
+            -->
+            <property name="eclipselink.jdbc.read-connections.min" value="1"/>
+            <property name="eclipselink.jdbc.read-connections.max" value="5"/>
+            
+            <!--
+                楽観的ロック設定
+                楽観的ロック例外を有効化（@Versionカラムの競合検出）
+            -->
+            <property name="eclipselink.optimistic-lock.exception.enabled" value="true"/>
+            
+            <!--
+                ログのフォーマット設定
+                タイムスタンプと実行時間を含む詳細ログを出力
+            -->
+            <property name="eclipselink.logging.timestamp" value="true"/>
+            <property name="eclipselink.logging.session" value="false"/>
+            <property name="eclipselink.logging.thread" value="false"/>
+            
+            <!--
+                接続プール設定（開発環境）
+                最小接続数: 10
+                最大接続数: 50
+            -->
+            <property name="eclipselink.jdbc.connections.min" value="10"/>
+            <property name="eclipselink.jdbc.connections.max" value="50"/>
         </properties>
         
     </persistence-unit>

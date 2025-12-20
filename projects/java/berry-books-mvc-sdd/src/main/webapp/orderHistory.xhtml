@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    
+<h:head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>注文履歴 - berry-books</title>
+    <h:outputStylesheet library="css" name="style.css" />
+</h:head>
+
+<h:body>
+    <!-- ヘッダー -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-title">berry-books</div>
+            <div class="header-nav">
+                <span>#{customerBean.customer.customerName}さん</span>
+                <h:link outcome="bookSearch" value="書籍検索" />
+                <h:link outcome="cartView" value="カート" />
+                <h:link outcome="orderHistory" value="注文履歴" />
+                <h:link outcome="index" value="ログアウト" />
+            </div>
+        </div>
+    </div>
+    
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <div class="card">
+            <h2>注文履歴</h2>
+            
+            <!-- メッセージ表示 -->
+            <h:messages globalOnly="true" styleClass="message" />
+            
+            <!-- 注文履歴が空の場合 -->
+            <h:panelGroup rendered="#{empty orderHistoryBean.orderHistoryList}">
+                <div class="message message-info">
+                    注文履歴はありません
+                </div>
+                <div class="text-center" style="margin-top: 16px;">
+                    <h:link outcome="bookSearch" value="書籍を探す" styleClass="button" />
+                </div>
+            </h:panelGroup>
+            
+            <!-- 注文履歴がある場合 -->
+            <h:panelGroup rendered="#{not empty orderHistoryBean.orderHistoryList}">
+                <h:form>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>注文ID</th>
+                                <th>注文日</th>
+                                <th>決済方法</th>
+                                <th>商品合計</th>
+                                <th>配送料</th>
+                                <th>総合計</th>
+                                <th>詳細</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ui:repeat value="#{orderHistoryBean.orderHistoryList}" var="order">
+                                <tr>
+                                    <td>#{order.orderTranId}</td>
+                                    <td>
+                                        <h:outputText value="#{order.orderDate}">
+                                            <f:convertDateTime pattern="yyyy-MM-dd" />
+                                        </h:outputText>
+                                    </td>
+                                    <td>#{order.settlementName}</td>
+                                    <td>
+                                        <h:outputText value="#{order.totalPrice}">
+                                            <f:convertNumber type="currency" currencySymbol="¥" 
+                                                           groupingUsed="true" minFractionDigits="0" />
+                                        </h:outputText>
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{order.deliveryPrice}">
+                                            <f:convertNumber type="currency" currencySymbol="¥" 
+                                                           groupingUsed="true" minFractionDigits="0" />
+                                        </h:outputText>
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{order.totalPrice + order.deliveryPrice}">
+                                            <f:convertNumber type="currency" currencySymbol="¥" 
+                                                           groupingUsed="true" minFractionDigits="0" />
+                                        </h:outputText>
+                                    </td>
+                                    <td>
+                                        <h:commandLink value="詳細" 
+                                                      action="#{orderHistoryBean.getOrderDetail(order.orderTranId)}"
+                                                      styleClass="text-primary" />
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+                    
+                    <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border-color);" />
+                    
+                    <div style="margin-top: 24px; text-align: center;">
+                        <h:link outcome="bookSearch" value="書籍検索に戻る" styleClass="button button-secondary" />
+                    </div>
+                </h:form>
+            </h:panelGroup>
+        </div>
+    </div>
+    
+    <!-- フッター -->
+    <div class="footer">
+        © 2025 berry-books. All rights reserved.
+    </div>
+</h:body>
+</html>
+

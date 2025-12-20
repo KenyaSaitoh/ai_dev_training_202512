@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    
+<h:head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>注文エラー - berry-books</title>
+    <h:outputStylesheet library="css" name="style.css" />
+</h:head>
+
+<h:body>
+    <!-- ヘッダー -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-title">berry-books</div>
+            <div class="header-nav">
+                <span>#{customerBean.customer.customerName}さん</span>
+                <h:link outcome="bookSearch" value="書籍検索" />
+                <h:link outcome="cartView" value="カート" />
+                <h:link outcome="orderHistory" value="注文履歴" />
+                <h:link outcome="index" value="ログアウト" />
+            </div>
+        </div>
+    </div>
+    
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <div class="card">
+            <div style="text-align: center; padding: 32px 0;">
+                <h2 style="color: #dc3545; margin-bottom: 16px;">
+                    ⚠ エラーが発生しました
+                </h2>
+                
+                <div style="background-color: #fff3cd; border: 1px solid #ffc107; 
+                           border-radius: 8px; padding: 16px; margin: 24px auto; 
+                           max-width: 600px; text-align: left;">
+                    <!-- エラーメッセージ表示 -->
+                    <h:messages globalOnly="true" 
+                               styleClass="message"
+                               errorStyle="color: #dc3545; font-weight: bold;"
+                               infoStyle="color: #0c5460;"
+                               warnStyle="color: #856404;" />
+                    
+                    <div style="margin-top: 16px;">
+                        <p style="margin-bottom: 8px; color: #856404;">
+                            申し訳ございません。注文処理中に問題が発生しました。
+                        </p>
+                        <p style="color: #856404;">
+                            カートを確認して再度お試しください。
+                        </p>
+                    </div>
+                </div>
+                
+                <hr style="margin: 32px 0; border: none; border-top: 1px solid var(--border-color);" />
+                
+                <div style="margin-top: 24px;">
+                    <h:link outcome="cartView" value="カートに戻る" styleClass="button" />
+                    <h:link outcome="bookSearch" value="書籍検索" 
+                           styleClass="button button-secondary" 
+                           style="margin-left: 16px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- フッター -->
+    <div class="footer">
+        © 2025 berry-books. All rights reserved.
+    </div>
+</h:body>
+</html>
+

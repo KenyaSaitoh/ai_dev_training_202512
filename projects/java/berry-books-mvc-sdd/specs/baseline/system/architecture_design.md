@@ -51,9 +51,10 @@ graph TD
 
 | ライブラリ | 目的 | 選定理由 |
 |---------|---------|-----------|
-| SLF4J + Logback | ログ出力 | 業界標準のロギングファサード |
+| SLF4J + Log4j2 | ログ出力 | 業界標準、高性能な非同期ロギング |
 | JUnit 5 | ユニットテスト | 最新のテストフレームワーク |
 | Mockito | モッキング | ユニットテストの独立性確保 |
+| Playwright | E2Eテスト | クロスブラウザ対応、画面遷移テスト自動化 |
 | Jakarta REST Client | REST API呼び出し | berry-books-rest APIとの連携用 |
 
 ### 1.4 外部API連携
@@ -532,8 +533,16 @@ sequenceDiagram
 ### 11.1 ログフレームワーク
 
 ```
-SLF4J (API) → Logback (Implementation)
+SLF4J (API) → Log4j2 (Implementation)
 ```
+
+**依存関係:**
+- `org.slf4j:slf4j-api:2.0.x` - SLF4J API（ロギングファサード）
+- `org.apache.logging.log4j:log4j-core:2.21.x` - Log4j2コア実装
+- `org.apache.logging.log4j:log4j-slf4j2-impl:2.21.x` - SLF4J 2.xバインディング
+
+**設定ファイル:**
+- `src/main/resources/log4j2.xml` - Log4j2設定（XML形式）
 
 ### 11.2 ログレベル
 
@@ -661,8 +670,9 @@ graph TD
 |-------|----------------|---------------|
 | サービスレイヤー | 80%以上 | JUnit 5 + Mockito |
 | DAOレイヤー | 主要メソッド | JUnit 5 + インメモリDB |
-| 結合テスト | 主要フロー | 手動テスト |
-| UI | 重要パス | 手動テスト |
+| E2Eテスト | 主要画面遷移フロー | Playwright (Java) |
+| 結合テスト | 主要フロー | JUnit 5 + Arquillian（オプション） |
+| UI | 重要パス | Playwright + 手動テスト |
 
 ### 13.3 テスト方針
 
@@ -671,6 +681,13 @@ graph TD
 - ビジネスロジックの境界値テスト
 - エラーシナリオのテスト
 - Mockitoを使用してDAOをモック
+
+**E2Eテスト（Playwright）:**
+- 画面遷移図（screen_design.md）に基づいた主要フローの自動化
+- ログイン → 書籍検索 → カート → 注文 → 履歴参照の一連の流れ
+- エラーケース（在庫不足、認証エラー等）の画面表示確認
+- クロスブラウザテスト（Chromium, Firefox, WebKit）
+- スクリーンショット取得とビジュアルリグレッション
 
 **結合テスト:**
 - 主要な業務フローのEnd-to-Endテスト
