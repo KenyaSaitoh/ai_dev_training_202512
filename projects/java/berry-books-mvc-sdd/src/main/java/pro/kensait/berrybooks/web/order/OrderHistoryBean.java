@@ -45,14 +45,49 @@ public class OrderHistoryBean implements Serializable {
     private OrderSummaryTO orderSummary;
     
     /**
+     * 注文ID（注文詳細画面用のパラメータ）
+     */
+    private Integer orderTranId;
+    
+    /**
      * 初期化処理
      * 
-     * <p>注文履歴を読み込みます。</p>
+     * <p>注文履歴一覧画面の初期化を行います。</p>
+     * <p>注文詳細画面の場合は、viewActionから明示的にloadOrderDetail()が呼ばれます。</p>
      */
     @PostConstruct
     public void init() {
-        logger.info("[ OrderHistoryBean#init ]");
-        loadOrderHistory();
+        logger.info("[ OrderHistoryBean#init ] orderTranId={}", orderTranId);
+        
+        // 注文履歴一覧画面の場合のみ、ここで注文履歴を読み込む
+        // 注文詳細画面の場合は、viewActionからloadOrderDetail()が呼ばれる
+        if (orderTranId == null) {
+            loadOrderHistory();
+        }
+    }
+    
+    /**
+     * 注文詳細を読み込みます
+     * 
+     * <p>viewActionから呼ばれ、orderTranIdパラメータから注文詳細を取得します。</p>
+     */
+    public void loadOrderDetail() {
+        logger.info("[ OrderHistoryBean#loadOrderDetail ] orderTranId={}", orderTranId);
+        
+        if (orderTranId != null) {
+            orderSummary = orderService.getOrderDetail(orderTranId);
+            
+            if (orderSummary == null) {
+                logger.warn("OrderSummary not found: orderTranId={}", orderTranId);
+            } else {
+                logger.info("OrderSummary loaded: orderTranId={}, detailCount={}, settlementType={}", 
+                            orderTranId, 
+                            orderSummary.getOrderDetails() != null ? orderSummary.getOrderDetails().size() : 0,
+                            orderSummary.getOrderTran() != null ? orderSummary.getOrderTran().getSettlementType() : "NULL");
+            }
+        } else {
+            logger.warn("orderTranId is null in loadOrderDetail");
+        }
     }
     
     /**
@@ -85,17 +120,8 @@ public class OrderHistoryBean implements Serializable {
     public String getOrderDetail(Integer orderTranId) {
         logger.info("[ OrderHistoryBean#getOrderDetail ] orderTranId={}", orderTranId);
         
-        orderSummary = orderService.getOrderDetail(orderTranId);
-        
-        if (orderSummary == null) {
-            logger.warn("OrderSummary not found: orderTranId={}", orderTranId);
-            return null;
-        }
-        
-        logger.debug("OrderSummary loaded: orderTranId={}", orderTranId);
-        
-        // 注文詳細画面に遷移
-        return "orderDetail?faces-redirect=true";
+        // 注文詳細画面にorderTranIdをパラメータとして渡す
+        return "orderDetail?faces-redirect=true&orderTranId=" + orderTranId;
     }
     
     /**
@@ -133,5 +159,25 @@ public class OrderHistoryBean implements Serializable {
     public void setOrderSummary(OrderSummaryTO orderSummary) {
         this.orderSummary = orderSummary;
     }
+    
+    /**
+     * 注文IDを取得します
+     * 
+     * @return 注文ID
+     */
+    public Integer getOrderTranId() {
+        return orderTranId;
+    }
+    
+    /**
+     * 注文IDを設定します
+     * 
+     * @param orderTranId 注文ID
+     */
+    public void setOrderTranId(Integer orderTranId) {
+        this.orderTranId = orderTranId;
+    }
 }
+
+
 

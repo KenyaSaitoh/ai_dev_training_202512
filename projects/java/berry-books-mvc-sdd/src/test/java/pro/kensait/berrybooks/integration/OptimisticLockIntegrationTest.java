@@ -60,7 +60,7 @@ public class OptimisticLockIntegrationTest extends IntegrationTestBase {
         browser1Item.setBookName("Test Book");
         browser1Item.setPrice(BigDecimal.valueOf(3000));
         browser1Item.setCount(1);
-        browser1Item.setStockVersion(0L); // カート追加時のVERSION
+        browser1Item.setVersion(0L); // カート追加時のVERSION
         
         // ブラウザ2のカートアイテム（同じVERSION値を保持）
         CartItem browser2Item = new CartItem();
@@ -68,7 +68,7 @@ public class OptimisticLockIntegrationTest extends IntegrationTestBase {
         browser2Item.setBookName("Test Book");
         browser2Item.setPrice(BigDecimal.valueOf(3000));
         browser2Item.setCount(1);
-        browser2Item.setStockVersion(0L); // 同じVERSION
+        browser2Item.setVersion(0L); // 同じVERSION
         
         // When: ブラウザ1が先に注文確定
         // 在庫を減算（10 → 9）、VERSIONをインクリメント（0 → 1）
@@ -88,7 +88,7 @@ public class OptimisticLockIntegrationTest extends IntegrationTestBase {
         // → バージョン不一致が発生
         
         // Then: OptimisticLockExceptionがスローされる想定
-        Long browser2Version = browser2Item.getStockVersion(); // 0
+        Long browser2Version = browser2Item.getVersion(); // 0
         Long currentVersion = afterBrowser1.getVersion(); // 1
         
         assertNotEquals(browser2Version, currentVersion, 
@@ -154,17 +154,17 @@ public class OptimisticLockIntegrationTest extends IntegrationTestBase {
         CartItem item1 = new CartItem();
         item1.setBookId(1);
         item1.setCount(2);
-        item1.setStockVersion(0L);
+        item1.setVersion(0L);
         
         CartItem item2 = new CartItem();
         item2.setBookId(2);
         item2.setCount(1);
-        item2.setStockVersion(0L);
+        item2.setVersion(0L);
         
         CartItem item3 = new CartItem();
         item3.setBookId(3);
         item3.setCount(3);
-        item3.setStockVersion(0L);
+        item3.setVersion(0L);
         
         cartItems.add(item1);
         cartItems.add(item2);
@@ -205,4 +205,5 @@ public class OptimisticLockIntegrationTest extends IntegrationTestBase {
                 "書籍3の在庫が不足しているため、注文全体が失敗するはずです");
     }
 }
+
 

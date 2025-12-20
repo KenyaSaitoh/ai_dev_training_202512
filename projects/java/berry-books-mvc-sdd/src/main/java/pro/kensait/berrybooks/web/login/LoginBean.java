@@ -62,9 +62,14 @@ public class LoginBean implements Serializable {
         if (customer != null) {
             // 認証成功: CustomerBeanに顧客情報を設定
             customerBean.setCustomer(customer);
+            
+            // セッションに明示的に保存（AuthenticationFilter用）
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            facesContext.getExternalContext().getSessionMap().put("customerBean", customerBean);
+            
             logger.info("[ LoginBean#login ] Login successful: customerId={}", customer.getCustomerId());
-            // 書籍検索画面に遷移
-            return "/bookSearch.xhtml?faces-redirect=true";
+            // 書籍選択画面（検索結果）に遷移
+            return "/bookSelect.xhtml?faces-redirect=true";
         } else {
             // 認証失敗: エラーメッセージを表示
             logger.info("[ LoginBean#login ] Login failed: email={}", email);

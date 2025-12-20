@@ -1,5 +1,11 @@
 package pro.kensait.berrybooks.web.order;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -7,8 +13,6 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.persistence.OptimisticLockException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pro.kensait.berrybooks.common.MessageUtil;
 import pro.kensait.berrybooks.entity.OrderTran;
 import pro.kensait.berrybooks.service.delivery.DeliveryFeeService;
@@ -17,8 +21,6 @@ import pro.kensait.berrybooks.service.order.OrderTO;
 import pro.kensait.berrybooks.service.order.OutOfStockException;
 import pro.kensait.berrybooks.web.cart.CartSession;
 import pro.kensait.berrybooks.web.customer.CustomerBean;
-import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * 注文処理のコントローラーBean
@@ -51,19 +53,20 @@ public class OrderBean implements Serializable {
     private String deliveryAddress;
     
     /**
-     * 決済方法コード
-     */
-    private Integer settlementCode;
-    
-    /**
      * 注文トランザクション（注文完了後にセット）
      */
     private OrderTran orderTran;
     
     /**
+     * 注文ID（注文成功画面用のパラメータ）
+     */
+    private Integer orderTranId;
+    
+    /**
      * 初期化処理
      * 
      * <p>カートが空の場合はエラーメッセージを表示します（BIZ-005）。</p>
+     * <p>ログインユーザーの住所を配送先住所のデフォルト値として設定します。</p>
      */
     @PostConstruct
     public void init() {
@@ -80,7 +83,24 @@ public class OrderBean implements Serializable {
         }
         
         // デフォルトの決済方法はクレジットカード（2）
-        this.settlementCode = 2;
+        cartSession.setSettlementType(2);
+        
+        // ログインユーザーの住所を配送先住所のデフォルト値として設定
+        if (customerBean != null && customerBean.getCustomer() != null) {
+            this.deliveryAddress = customerBean.getCustomer().getAddress();
+            logger.info("[ OrderBean#init ] Set default delivery address from logged-in customer: {}", 
+                       this.deliveryAddress);
+            
+            // 配送料金を初期計算
+            if (this.deliveryAddress != null && !this.deliveryAddress.trim().isEmpty()) {
+                BigDecimal deliveryFee = deliveryFeeService.calculateDeliveryFee(
+                    cartSession.getTotalPrice(), 
+                    this.deliveryAddress
+                );
+                cartSession.setDeliveryPrice(deliveryFee);
+                logger.info("[ OrderBean#init ] Initial deliveryFee calculated: {}", deliveryFee);
+            }
+        }
     }
     
     /**
@@ -155,11 +175,13 @@ public class OrderBean implements Serializable {
             return null;
         }
         
-        // 配送料金が未計算の場合は計算する
-        if (cartSession.getDeliveryPrice() == null 
-                || cartSession.getDeliveryPrice().compareTo(BigDecimal.ZERO) < 0) {
-            calculateDeliveryFee();
-        }
+        // 配送料金を再計算する（配送先住所が変更されている可能性があるため）
+        BigDecimal deliveryFee = deliveryFeeService.calculateDeliveryFee(
+            cartSession.getTotalPrice(), 
+            deliveryAddress
+        );
+        cartSession.setDeliveryPrice(deliveryFee);
+        logger.info("[ OrderBean#placeOrder ] Calculated deliveryFee={}", deliveryFee);
         
         try {
             // OrderTOを作成
@@ -167,7 +189,7 @@ public class OrderBean implements Serializable {
             orderTO.setCustomerId(customerBean.getCustomer().getCustomerId());
             orderTO.setDeliveryAddress(deliveryAddress);
             orderTO.setDeliveryPrice(cartSession.getDeliveryPrice());
-            orderTO.setSettlementCode(settlementCode);
+            orderTO.setSettlementCode(cartSession.getSettlementType());
             orderTO.setCartItems(cartSession.getCartItems());
             
             // 注文処理を実行
@@ -187,8 +209,8 @@ public class OrderBean implements Serializable {
             logger.info("[ OrderBean#placeOrder ] Order completed: orderTranId={}", 
                        orderTran.getOrderTranId());
             
-            // 注文完了画面に遷移
-            return "orderSuccess?faces-redirect=true";
+            // 注文完了画面に遷移（orderTranIdをパラメータとして渡す）
+            return "orderSuccess?faces-redirect=true&orderTranId=" + orderTran.getOrderTranId();
             
         } catch (OutOfStockException e) {
             // 在庫不足エラー
@@ -256,7 +278,7 @@ public class OrderBean implements Serializable {
      * @return 決済方法コード
      */
     public Integer getSettlementCode() {
-        return settlementCode;
+        return cartSession.getSettlementType();
     }
     
     /**
@@ -265,7 +287,7 @@ public class OrderBean implements Serializable {
      * @param settlementCode 決済方法コード
      */
     public void setSettlementCode(Integer settlementCode) {
-        this.settlementCode = settlementCode;
+        cartSession.setSettlementType(settlementCode);
     }
     
     /**
@@ -303,6 +325,36 @@ public class OrderBean implements Serializable {
         }
         
         return total.add(delivery);
+    }
+    
+    /**
+     * 注文IDを取得します
+     * 
+     * @return 注文ID
+     */
+    public Integer getOrderTranId() {
+        return orderTranId;
+    }
+    
+    /**
+     * 注文IDを設定します
+     * 
+     * @param orderTranId 注文ID
+     */
+    public void setOrderTranId(Integer orderTranId) {
+        this.orderTranId = orderTranId;
+    }
+    
+    /**
+     * 注文成功画面用にデータをロードします
+     * 
+     * <p>viewActionから呼ばれ、orderTranIdパラメータから注文データを取得します。</p>
+     */
+    public void loadOrderSuccess() {
+        logger.info("[ OrderBean#loadOrderSuccess ] orderTranId={}", orderTranId);
+        if (orderTranId != null) {
+            orderTran = orderService.getOrderTranWithDetails(orderTranId);
+        }
     }
 }
 

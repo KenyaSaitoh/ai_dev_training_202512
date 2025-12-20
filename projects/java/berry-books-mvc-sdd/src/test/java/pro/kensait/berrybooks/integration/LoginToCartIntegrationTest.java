@@ -11,6 +11,7 @@ import pro.kensait.berrybooks.entity.Category;
 import pro.kensait.berrybooks.entity.Customer;
 import pro.kensait.berrybooks.service.book.BookService;
 import pro.kensait.berrybooks.service.customer.CustomerService;
+import pro.kensait.berrybooks.web.book.SearchParam;
 import pro.kensait.berrybooks.web.cart.CartItem;
 import pro.kensait.berrybooks.web.cart.CartSession;
 
@@ -62,8 +63,9 @@ public class LoginToCartIntegrationTest extends IntegrationTestBase {
         // 実際のログイン処理はCustomerServiceを通じて行われる想定
         
         // Step 1: 書籍検索（カテゴリ「Java」で検索）
-        Integer javaCategory = 1; // JavaカテゴリのID
-        List<Book> searchResults = bookService.searchBooks(javaCategory, null);
+        SearchParam searchParam = new SearchParam();
+        searchParam.setCategoryId(1); // JavaカテゴリのID
+        List<Book> searchResults = bookService.searchBook(searchParam);
         
         // Then: 検索結果が取得できる
         assertNotNull(searchResults, "検索結果がnullです");
@@ -80,10 +82,10 @@ public class LoginToCartIntegrationTest extends IntegrationTestBase {
         CartItem cartItem = new CartItem();
         cartItem.setBookId(selectedBook.getBookId());
         cartItem.setBookName(selectedBook.getBookName());
-        cartItem.setAuthor(selectedBook.getAuthor());
+        cartItem.setPublisherName(selectedBook.getPublisher().getPublisherName());
         cartItem.setPrice(selectedBook.getPrice());
         cartItem.setCount(1);
-        cartItem.setStockVersion(selectedBook.getStock().getVersion()); // 楽観的ロック用のバージョン
+        cartItem.setVersion(selectedBook.getStock().getVersion()); // 楽観的ロック用のバージョン
         
         cartSession.addItem(cartItem);
         
@@ -110,7 +112,9 @@ public class LoginToCartIntegrationTest extends IntegrationTestBase {
     @DisplayName("複数書籍をカートに追加して合計金額を確認")
     public void testMultipleBooksInCart() throws Exception {
         // Given: 複数の書籍を検索
-        List<Book> searchResults = bookService.searchBooks(1, null); // Javaカテゴリ
+        SearchParam searchParam = new SearchParam();
+        searchParam.setCategoryId(1); // Javaカテゴリ
+        List<Book> searchResults = bookService.searchBook(searchParam);
         assertTrue(searchResults.size() >= 2, "テストには少なくとも2冊の書籍が必要です");
         
         // When: 2冊の書籍をカートに追加
@@ -120,18 +124,18 @@ public class LoginToCartIntegrationTest extends IntegrationTestBase {
         CartItem item1 = new CartItem();
         item1.setBookId(book1.getBookId());
         item1.setBookName(book1.getBookName());
-        item1.setAuthor(book1.getAuthor());
+        item1.setPublisherName(book1.getPublisher().getPublisherName());
         item1.setPrice(book1.getPrice());
         item1.setCount(1);
-        item1.setStockVersion(book1.getStock().getVersion());
+        item1.setVersion(book1.getStock().getVersion());
         
         CartItem item2 = new CartItem();
         item2.setBookId(book2.getBookId());
         item2.setBookName(book2.getBookName());
-        item2.setAuthor(book2.getAuthor());
+        item2.setPublisherName(book2.getPublisher().getPublisherName());
         item2.setPrice(book2.getPrice());
         item2.setCount(2); // 2冊購入
-        item2.setStockVersion(book2.getStock().getVersion());
+        item2.setVersion(book2.getStock().getVersion());
         
         cartSession.addItem(item1);
         cartSession.addItem(item2);
@@ -153,7 +157,9 @@ public class LoginToCartIntegrationTest extends IntegrationTestBase {
     @DisplayName("カートから書籍を削除して合計金額を再計算")
     public void testRemoveFromCart() throws Exception {
         // Given: カートに2冊の書籍が存在する
-        List<Book> searchResults = bookService.searchBooks(1, null);
+        SearchParam searchParam = new SearchParam();
+        searchParam.setCategoryId(1);
+        List<Book> searchResults = bookService.searchBook(searchParam);
         assertTrue(searchResults.size() >= 2, "テストには少なくとも2冊の書籍が必要です");
         
         Book book1 = searchResults.get(0);
@@ -193,4 +199,5 @@ public class LoginToCartIntegrationTest extends IntegrationTestBase {
                 "合計金額が2冊目の価格のみであるはずです");
     }
 }
+
 

@@ -1,9 +1,9 @@
 package pro.kensait.berrybooks.web.book;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import pro.kensait.berrybooks.dao.StockDao;
@@ -23,9 +23,10 @@ import java.util.List;
  * 書籍検索画面のコントローラー
  * 
  * <p>書籍検索画面のビューとビジネスロジックの橋渡しを行います。</p>
+ * <p>セッションスコープを使用して、リダイレクト後も検索結果を保持します。</p>
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class BookSearchBean implements Serializable {
     
     private static final long serialVersionUID = 1L;
@@ -74,12 +75,19 @@ public class BookSearchBean implements Serializable {
     /**
      * 初期化処理
      * カテゴリリストを取得します。
+     * 初期表示時は全書籍を取得します。
      */
     @PostConstruct
     public void init() {
         searchParam = new SearchParam();
         categoryList = categoryService.findAll();
         logger.info("[ BookSearchBean#init ] categoryList size={}", categoryList.size());
+        
+        // 初期表示時は全書籍を取得（ログイン直後のbookSelect表示用）
+        if (bookList == null || bookList.isEmpty()) {
+            bookList = bookService.searchBook(searchParam);
+            logger.info("[ BookSearchBean#init ] Initial bookList loaded, size={}", bookList.size());
+        }
     }
     
     /**

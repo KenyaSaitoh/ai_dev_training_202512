@@ -23,7 +23,7 @@ public class BookDao {
     
     /**
      * 全書籍を取得します（書籍ID昇順）
-     * 在庫情報もJOIN FETCHで同時に取得してN+1問題を回避します。
+     * 在庫情報は@SecondaryTableで自動的にロードされます。
      * 
      * @return 書籍リスト
      */
@@ -32,7 +32,6 @@ public class BookDao {
             "SELECT DISTINCT b FROM Book b " +
             "LEFT JOIN FETCH b.category " +
             "LEFT JOIN FETCH b.publisher " +
-            "LEFT JOIN FETCH b.stock " +
             "ORDER BY b.bookId ASC", 
             Book.class
         );
@@ -61,7 +60,6 @@ public class BookDao {
             "SELECT DISTINCT b FROM Book b " +
             "LEFT JOIN FETCH b.category " +
             "LEFT JOIN FETCH b.publisher " +
-            "LEFT JOIN FETCH b.stock " +
             "WHERE b.bookName LIKE :keyword OR b.author LIKE :keyword " +
             "ORDER BY b.bookId ASC", 
             Book.class
@@ -81,7 +79,6 @@ public class BookDao {
             "SELECT DISTINCT b FROM Book b " +
             "LEFT JOIN FETCH b.category " +
             "LEFT JOIN FETCH b.publisher " +
-            "LEFT JOIN FETCH b.stock " +
             "WHERE b.category.categoryId = :categoryId " +
             "ORDER BY b.bookId ASC", 
             Book.class
@@ -103,7 +100,6 @@ public class BookDao {
             "SELECT DISTINCT b FROM Book b " +
             "LEFT JOIN FETCH b.category " +
             "LEFT JOIN FETCH b.publisher " +
-            "LEFT JOIN FETCH b.stock " +
             "WHERE b.category.categoryId = :categoryId " +
             "AND (b.bookName LIKE :keyword OR b.author LIKE :keyword) " +
             "ORDER BY b.bookId ASC", 

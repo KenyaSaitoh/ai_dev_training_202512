@@ -77,20 +77,15 @@
                                                            groupingUsed="true" minFractionDigits="0" />
                                         </h:outputText>
                                     </td>
-                                    <td>
-                                        <h:outputText value="#{book.stock.quantity}" 
-                                                     rendered="#{book.stock.quantity > 0}" />
-                                        <span class="text-error" 
-                                              rendered="#{book.stock.quantity == 0}">在庫なし</span>
-                                    </td>
+                                    <td>#{book.quantity}</td>
                                     <td>
                                         <h:commandButton value="カートへ" 
                                                         action="#{bookSearchBean.addToCart(book)}"
                                                         styleClass="button button-sm"
-                                                        disabled="#{book.stock.quantity == 0}"
-                                                        rendered="#{book.stock.quantity > 0}" />
-                                        <span class="text-secondary" 
-                                              rendered="#{book.stock.quantity == 0}">購入不可</span>
+                                                        rendered="#{book.quantity > 0}" />
+                                        <h:outputText value="在庫なし" 
+                                                     styleClass="text-error"
+                                                     rendered="#{book.quantity == 0}" />
                                     </td>
                                 </tr>
                             </ui:repeat>
@@ -112,4 +107,6 @@
     </div>
 </h:body>
 </html>
+
+
 

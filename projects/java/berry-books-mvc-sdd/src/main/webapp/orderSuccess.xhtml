@@ -8,6 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>注文完了 - berry-books</title>
     <h:outputStylesheet library="css" name="style.css" />
+    <f:metadata>
+        <f:viewParam name="orderTranId" value="#{orderBean.orderTranId}" />
+        <f:viewAction action="#{orderBean.loadOrderSuccess}" />
+    </f:metadata>
 </h:head>
 
 <h:body>
@@ -48,7 +52,7 @@
                             <th style="padding: 8px;">注文日時:</th>
                             <td style="padding: 8px;">
                                 <h:outputText value="#{orderBean.orderTran.orderDate}">
-                                    <f:convertDateTime pattern="yyyy年MM月dd日" />
+                                    <f:convertDateTime pattern="yyyy年MM月dd日" type="localDate" />
                                 </h:outputText>
                             </td>
                         </tr>

@@ -40,7 +40,7 @@
                     カートは空です
                 </div>
                 <div class="text-center" style="margin-top: 16px;">
-                    <h:link outcome="bookSearch" value="書籍を探す" styleClass="button" />
+                    <h:link outcome="bookSelect" value="書籍を探す" styleClass="button" />
                 </div>
             </h:panelGroup>
             
@@ -113,7 +113,7 @@
                     <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border-color);" />
                     
                     <div style="margin-top: 24px; text-align: center;">
-                        <h:link outcome="bookSearch" value="買い物を続ける" styleClass="button button-secondary" />
+                        <h:link outcome="bookSelect" value="買い物を続ける" styleClass="button button-secondary" />
                         <h:commandButton value="注文に進む" 
                                         action="#{cartBean.proceedToOrder}"
                                         styleClass="button" 
@@ -130,4 +130,6 @@
     </div>
 </h:body>
 </html>
+
+
 

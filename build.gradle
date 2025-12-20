@@ -189,7 +189,9 @@ subprojects {
         dependsOn "war"
         doLast {
             def asadmin = rootProject.file(conf.payaraServer.asadminCmd)
-            def warFile = file("${buildDir}/libs/${project.name}.war")
+            // berry-books-mvc-sdd uses simplified WAR name
+            def warName = project.name == "berry-books-mvc-sdd" ? "berry-books.war" : "${project.name}.war"
+            def warFile = file("${buildDir}/libs/${warName}")
             
             if (!asadmin.exists()) {
                 throw new GradleException("asadmin command not found: ${asadmin}")
@@ -238,9 +240,12 @@ subprojects {
                 conf.hsqldb.driverClass)
     }
 
-    // テスト設定
+    // テスト設定（全プロジェクト共通）
     test {
-        useJUnitPlatform()
+        useJUnitPlatform {
+            // E2Eテスト(@Tag("e2e"))を除外（全プロジェクト共通）
+            excludeTags 'e2e'
+        }
         
         // berry-books-mvc-sdd用: 詳細なテストログ
         if (project.name == "berry-books-mvc-sdd") {
@@ -248,6 +253,35 @@ subprojects {
                 events "passed", "skipped", "failed"
                 exceptionFormat "full"
             }
+        }
+    }
+    
+    // E2Eテスト専用タスク（全プロジェクト共通）
+    task e2eTest(type: Test) {
+        group = "verification"
+        description = "Run E2E tests with @Tag(\"e2e\") (requires deployed application)"
+        
+        useJUnitPlatform {
+            includeTags 'e2e'
+        }
+        
+        testLogging {
+            events "passed", "skipped", "failed"
+            exceptionFormat "full"
+        }
+        
+        // E2Eテストの前に、通常のテストが完了していることを推奨
+        shouldRunAfter test
+        
+        doFirst {
+            println ""
+            println "===================================="
+            println "Running E2E Tests for ${project.name}"
+            println "===================================="
+            println "Make sure the application is deployed:"
+            println "  1. Payara Server is running (gradle startPayara)"
+            println "  2. Application is deployed (gradle :projects:java:${project.name}:deploy)"
+            println ""
         }
     }
 

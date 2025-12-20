@@ -43,6 +43,11 @@ public class CartSession implements Serializable {
     private String deliveryAddress;
     
     /**
+     * 決済方法（1:銀行振込, 2:クレジットカード, 3:着払い）
+     */
+    private Integer settlementType;
+    
+    /**
      * デフォルトコンストラクタ
      */
     public CartSession() {
@@ -59,6 +64,7 @@ public class CartSession implements Serializable {
         totalPrice = BigDecimal.ZERO;
         deliveryPrice = BigDecimal.ZERO;
         deliveryAddress = null;
+        settlementType = null;
     }
     
     /**
@@ -223,5 +229,25 @@ public class CartSession implements Serializable {
     public void setDeliveryAddress(String deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
     }
+    
+    /**
+     * 決済方法を取得します
+     * 
+     * @return 決済方法
+     */
+    public Integer getSettlementType() {
+        return settlementType;
+    }
+    
+    /**
+     * 決済方法を設定します
+     * 
+     * @param settlementType 決済方法
+     */
+    public void setSettlementType(Integer settlementType) {
+        this.settlementType = settlementType;
+    }
 }
+
+
 

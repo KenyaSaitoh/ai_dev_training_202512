@@ -408,4 +408,6 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 - **テストの配置**: ユニットテストは各機能別タスクに含め、E2Eテスト（Playwright）と結合テストは結合タスクに配置
   - E2Eテストは画面遷移図（screen_design.md）の各フローをテストケース化
 - **柔軟性**: プロジェクトの規模や構造に応じて、タスクファイルの分割数を調整可能
+- **E2Eテストの取り扱い**: Playwright等のE2Eテストは、通常のビルド時テストから除外し、個別実行する前提でタスクを記述すること
+  - E2Eテストタスクには、個別実行のための設定（JUnit @Tagアノテーション、Gradle設定等）を含めることを明記
 

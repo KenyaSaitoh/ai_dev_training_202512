@@ -6,7 +6,6 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -26,8 +25,10 @@ import java.io.IOException;
  *   <li>customerInput.xhtml - 新規登録画面</li>
  *   <li>customerOutput.xhtml - 登録完了画面</li>
  * </ul>
+ * 
+ * <p>注意: このフィルターはweb.xmlで定義されているため、
+ * @WebFilterアノテーションは使用しません（二重定義を防ぐため）。</p>
  */
-@WebFilter(urlPatterns = "/*")
 public class AuthenticationFilter implements Filter {
     
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
@@ -87,15 +88,19 @@ public class AuthenticationFilter implements Filter {
         
         if (session != null) {
             customerBean = (CustomerBean) session.getAttribute("customerBean");
+            logger.info("[ AuthenticationFilter#doFilter ] Session exists: sessionId={}, customerBean={}", session.getId(), customerBean);
+        } else {
+            logger.info("[ AuthenticationFilter#doFilter ] No session exists");
         }
         
         // ログイン済みかチェック
         if (customerBean != null && customerBean.getCustomer() != null) {
             // ログイン済み: アクセスを許可
+            logger.info("[ AuthenticationFilter#doFilter ] Access granted to protected page: {}, customerId={}", path, customerBean.getCustomer().getCustomerId());
             chain.doFilter(request, response);
         } else {
             // 未ログイン: ログイン画面にリダイレクト
-            logger.info("Unauthorized access to protected page: {}", path);
+            logger.info("[ AuthenticationFilter#doFilter ] Unauthorized access to protected page: {}", path);
             httpResponse.sendRedirect(contextPath + "/index.xhtml");
         }
     }

@@ -7,9 +7,11 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pro.kensait.berrybooks.common.SettlementType;
+import pro.kensait.berrybooks.dao.BookDao;
 import pro.kensait.berrybooks.dao.OrderDetailDao;
 import pro.kensait.berrybooks.dao.OrderTranDao;
 import pro.kensait.berrybooks.dao.StockDao;
+import pro.kensait.berrybooks.entity.Book;
 import pro.kensait.berrybooks.entity.Customer;
 import pro.kensait.berrybooks.entity.OrderDetail;
 import pro.kensait.berrybooks.entity.OrderDetailPK;
@@ -39,6 +41,9 @@ public class OrderService {
     
     @Inject
     private OrderDetailDao orderDetailDao;
+    
+    @Inject
+    private BookDao bookDao;
     
     /**
      * 注文を作成します（トランザクション処理）
@@ -101,6 +106,9 @@ public class OrderService {
         orderTran.setDeliveryPrice(orderTO.getDeliveryPrice());
         orderTran.setSettlementType(orderTO.getSettlementCode());
         
+        logger.debug("OrderTran created: settlementType={}, deliveryAddress={}", 
+                    orderTO.getSettlementCode(), orderTO.getDeliveryAddress());
+        
         // 合計金額を計算
         BigDecimal totalPrice = orderTO.getCartItems().stream()
             .map(CartItem::getSubTotal)
@@ -128,14 +136,20 @@ public class OrderService {
             pk.setOrderDetailId(detailId++);
             orderDetail.setId(pk);
             
-            orderDetail.setBookId(cartItem.getBookId());
+            // OrderTranとの関連を設定（@MapsIdにより複合主キーのorderTranIdも自動設定）
+            orderDetail.setOrderTran(orderTran);
+            
+            // Bookエンティティを取得して設定（bookIdフィールドはinsertable=falseのため）
+            Book book = bookDao.findById(cartItem.getBookId());
+            orderDetail.setBook(book);
+            
             orderDetail.setPrice(cartItem.getPrice());
             orderDetail.setCount(cartItem.getCount());
             
             orderDetailDao.persist(orderDetail);
             
             logger.debug("OrderDetail created: orderTranId={}, orderDetailId={}, bookId={}", 
-                        pk.getOrderTranId(), pk.getOrderDetailId(), orderDetail.getBookId());
+                        pk.getOrderTranId(), pk.getOrderDetailId(), book.getBookId());
         }
         
         // 7. トランザクションコミット（@Transactionalにより自動）
@@ -196,6 +210,28 @@ public class OrderService {
                     orderTranId, orderDetails.size());
         
         return summaryTO;
+    }
+    
+    /**
+     * 注文トランザクションを明細と共に取得します
+     * 
+     * @param orderTranId 注文ID
+     * @return 注文トランザクション（明細含む）
+     */
+    public OrderTran getOrderTranWithDetails(Integer orderTranId) {
+        logger.info("[ OrderService#getOrderTranWithDetails ] orderTranId={}", orderTranId);
+        
+        // JOIN FETCHで注文トランザクションと明細を同時に取得
+        OrderTran orderTran = orderTranDao.findByIdWithDetails(orderTranId);
+        if (orderTran == null) {
+            logger.warn("OrderTran not found: orderTranId={}", orderTranId);
+            throw new RuntimeException("注文が見つかりません: orderTranId=" + orderTranId);
+        }
+        
+        logger.debug("OrderTran loaded with details: orderTranId={}, detailCount={}", 
+                    orderTranId, orderTran.getOrderDetails().size());
+        
+        return orderTran;
     }
 }
 

@@ -3,6 +3,7 @@ package pro.kensait.berrybooks.web.customer;
 import java.io.Serializable;
 
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import pro.kensait.berrybooks.entity.Customer;
 
@@ -63,6 +64,13 @@ public class CustomerBean implements Serializable {
     public String logout() {
         // セッションをクリア
         customer = null;
+        
+        // セッションから明示的に削除（AuthenticationFilter用）
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        if (facesContext != null) {
+            facesContext.getExternalContext().getSessionMap().remove("customerBean");
+        }
+        
         // ログイン画面に遷移
         return "/index.xhtml?faces-redirect=true";
     }

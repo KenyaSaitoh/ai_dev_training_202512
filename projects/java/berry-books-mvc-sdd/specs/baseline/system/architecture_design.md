@@ -1,9 +1,9 @@
 # berry-books - アーキテクチャ設計書
 
 **プロジェクトID:** berry-books  
-**バージョン:** 1.3.0  
-**最終更新日:** 2025-12-16  
-**ステータス:** アーキテクチャ設計完了（REST API連携追加）
+**バージョン:** 1.3.4  
+**最終更新日:** 2025-12-21  
+**ステータス:** アーキテクチャ設計完了（セッション管理・スコープ設計・複合主キーマッピング・画面遷移・UI/UX改善）
 
 ---
 
@@ -272,17 +272,22 @@ pro.kensait.berrybooks/
 ```mermaid
 graph LR
     A[@RequestScoped] -->|Single Request| B[Input validation<br/>Simple queries]
-    C[@ViewScoped] -->|Single Page<br/>Multiple Ajax| D[Search results<br/>Order input]
-    E[@SessionScoped] -->|User Session| F[Login state<br/>Shopping cart]
+    C[@ViewScoped] -->|Single Page<br/>Multiple Ajax| D[Order input<br/>Simple forms]
+    E[@SessionScoped] -->|User Session| F[Login state<br/>Shopping cart<br/>Search results]
     G[@ApplicationScoped] -->|Application Lifetime| H[Services<br/>DAOs<br/>Stateless beans]
 ```
 
 | スコープ | ライフサイクル | 使用ケース | Serializable実装必須 |
 |-------|-----------|-----------|----------------------------|
 | @RequestScoped | 単一HTTPリクエスト | 入力フォーム、単純なクエリ | いいえ |
-| @ViewScoped | 単一ページビュー（Ajax対応） | 検索結果、複数ステップフォーム | **はい** |
-| @SessionScoped | ユーザーセッション | ログイン状態、ショッピングカート | **はい** |
+| @ViewScoped | 単一ページビュー（Ajax対応） | 注文入力フォーム、単純なフォーム | **はい** |
+| @SessionScoped | ユーザーセッション | ログイン状態、ショッピングカート、**書籍検索結果** | **はい** |
 | @ApplicationScoped | アプリケーション起動〜終了 | Services、DAOs、ユーティリティ | いいえ |
+
+**重要な設計変更:**
+- `BookSearchBean`は`@SessionScoped`を使用（`@ViewScoped`ではない）
+- 理由: `faces-redirect=true`でリダイレクトする場合、`@ViewScoped`では状態が失われる
+- `@SessionScoped`により、リダイレクト後も検索結果（`bookList`）が保持される
 
 ---
 
@@ -369,6 +374,104 @@ stateDiagram-v2
 
 ---
 
+### 7.3 複合主キーとJPAマッピング
+
+ORDER_DETAILテーブルは複合主キー `(ORDER_TRAN_ID, ORDER_DETAIL_ID)` を使用しています。
+ORDER_TRAN_IDは複合主キーの一部であると同時に、ORDER_TRANへの外部キーでもあります。
+
+#### 7.3.1 設計方針
+
+**複合主キーの設計:**
+- 埋め込み可能なクラスとして複合主キーを定義
+- 注文トランザクションIDと注文明細IDで構成
+- equals()とhashCode()を適切に実装
+
+**エンティティ設計:**
+- 複合主キーを埋め込み識別子として保持
+- 親エンティティ（OrderTran）への関連を定義
+- 関連は遅延ロード（LAZY）で設定（N+1問題回避）
+- 複合主キーの一部と外部キーの二重定義を適切に処理
+
+#### 7.3.2 複合主キーと外部キーの統合パターン
+
+**課題:**
+ORDER_TRAN_IDは複合主キーの一部であると同時に、ORDER_TRANへの外部キーでもある。これを誤って処理すると以下の問題が発生する。
+
+**問題パターン:**
+- 外部キーカラムに `insertable = false, updatable = false` を設定
+- JPAはORDER_TRAN_IDをINSERT文に含めない
+- ORDER_TRAN_IDがNULLとなり、NOT NULL制約違反が発生
+
+**解決パターン:**
+- 複合主キーと関連の統合マッピングアノテーション（`@MapsId`）を使用
+- 親エンティティへの関連を設定することで、複合主キーのフィールドが自動的に設定される
+- INSERT文に外部キーカラムが正しく含まれる
+- 複合主キーのフィールドを手動で設定する必要がなくなる
+
+#### 7.3.3 データ永続化フロー
+
+**注文明細の作成手順:**
+1. 複合主キーオブジェクトを生成し、各フィールドを設定
+2. 注文明細エンティティを生成し、複合主キーを設定
+3. 親エンティティ（OrderTran）への関連を設定（複合主キーの一部が自動設定される）
+4. その他のフィールド（書籍ID、価格、数量）を設定
+5. エンティティを永続化
+
+**生成されるSQL:**
+- ORDER_TRAN_ID、ORDER_DETAIL_ID、BOOK_ID、PRICE、COUNTを含むINSERT文
+- 全てのNOT NULL制約を満たす
+
+### 7.4 注文成功画面でのデータロード
+
+#### 7.4.1 課題
+
+**問題:**
+注文完了後、注文成功画面で注文情報（注文番号、注文日時、総合計）が表示されない。
+
+**原因:**
+1. リダイレクト時にViewScopedのBean状態が失われる
+2. URLパラメータで注文IDを引き継ぐ仕組みがない
+3. パラメータから注文データを再取得する仕組みがない
+
+#### 7.4.2 設計方針
+
+**データ引き継ぎパターン:**
+- 注文処理完了時に注文IDをURLパラメータとしてリダイレクト
+- 遷移先画面でURLパラメータを受け取り、該当データを再取得
+- ViewScopedのBeanに注文ID受け取り用フィールドを追加
+- Serviceレイヤーに注文データ（明細含む）を取得するメソッドを追加
+
+**JSFライフサイクル考慮事項:**
+- 初期化メソッド（`@PostConstruct`）はビューパラメータ設定前に実行される
+- ビューパラメータは初期化後に設定される
+- データロードはビューアクションで実行し、パラメータ設定後に確実に取得する
+
+**実行フロー:**
+1. RESTORE_VIEW → 初期化メソッド実行（パラメータはまだ未設定）
+2. APPLY_REQUEST_VALUES → ビューパラメータ設定
+3. INVOKE_APPLICATION → ビューアクション実行（パラメータを使ってデータロード）
+4. RENDER_RESPONSE → 取得データを画面表示
+
+#### 7.4.3 コンポーネント責務
+
+**プレゼンテーション層（Backing Bean）:**
+- 注文ID受け取り用のフィールド保持
+- ビューアクション用のデータロードメソッド提供
+- リダイレクト時の注文ID付与
+
+**ビジネスロジック層（Service）:**
+- 注文IDから注文トランザクションと明細を同時取得
+- データ不在時の例外処理
+
+**データアクセス層（DAO）:**
+- JOIN FETCHで注文トランザクションと明細を一括取得（N+1問題回避）
+
+**ビュー層（XHTML）:**
+- メタデータセクションでビューパラメータとビューアクションを定義
+- 注文情報の各項目を適切にフォーマット表示
+
+---
+
 ## 8. エラーハンドリング方針
 
 ### 8.1 例外階層
@@ -445,7 +548,7 @@ sequenceDiagram
     alt Public Page
         Filter->>User: Allow access
     else Protected Page
-        Filter->>Session: Get CustomerBean
+        Filter->>Session: session.getAttribute("customerBean")
         alt Logged In
             Session-->>Filter: CustomerBean exists
             Filter->>User: Allow access
@@ -462,9 +565,29 @@ sequenceDiagram
     RestAPI-->>Service: CustomerTO
     Service->>Service: Password validation
     Service-->>Bean: Customer object
-    Bean->>Session: Store CustomerBean
+    Bean->>Bean: Set customer in CustomerBean (CDI)
+    Bean->>Session: sessionMap.put("customerBean", customerBean) [EXPLICIT]
     Bean-->>User: Navigate to bookSearch
+    
+    Note over User,Session: Logout Process
+    User->>Bean: Click logout
+    Bean->>Bean: customer = null
+    Bean->>Session: sessionMap.remove("customerBean") [EXPLICIT]
+    Bean-->>User: Redirect to login page
 ```
+
+**重要な実装ポイント:**
+
+1. **AuthenticationFilter の定義**:
+   - `@WebFilter`アノテーションは使用しない（二重定義を防ぐため）
+   - `web.xml`で`<filter>`と`<filter-mapping>`を使用して定義
+   - `urlPatterns="*.xhtml"`でXHTMLページのみをフィルタリング
+
+2. **セッション管理の明示的な処理**:
+   - CDI管理下の`@SessionScoped` Beanは`session.getAttribute()`で取得できないため
+   - ログイン成功時に`FacesContext.getExternalContext().getSessionMap().put()`で明示的に保存
+   - ログアウト時に`sessionMap.remove()`で明示的に削除
+   - これにより、`AuthenticationFilter`がServlet APIの`HttpSession.getAttribute()`で取得可能
 
 ### 9.2 セキュリティ対策
 

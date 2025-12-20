@@ -1,5 +1,8 @@
 package pro.kensait.berrybooks.entity;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,17 +12,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.SecondaryTable;
 import jakarta.persistence.Table;
-import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * 書籍マスタのエンティティクラス
  * 
  * <p>書籍の基本情報を表すエンティティです。</p>
+ * <p>STOCKテーブルを@SecondaryTableとして扱い、在庫数を直接アクセス可能にしています。</p>
  */
 @Entity
 @Table(name = "BOOK")
+@SecondaryTable(name = "STOCK",
+        pkJoinColumns = @PrimaryKeyJoinColumn(name = "BOOK_ID"))
 public class Book implements Serializable {
     
     private static final long serialVersionUID = 1L;
@@ -63,6 +69,13 @@ public class Book implements Serializable {
     private BigDecimal price;
     
     /**
+     * 在庫数（STOCKテーブルから直接マッピング）
+     * 画面表示用に@SecondaryTableを使用してアクセス
+     */
+    @Column(table = "STOCK", name = "QUANTITY")
+    private Integer quantity;
+    
+    /**
      * カテゴリ（多対一のリレーション）
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -78,8 +91,9 @@ public class Book implements Serializable {
     
     /**
      * 在庫情報（一対一のリレーション）
+     * 画面表示で常に必要なのでEAGERフェッチを使用
      */
-    @OneToOne(mappedBy = "book", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "book", fetch = FetchType.EAGER)
     private Stock stock;
     
     /**
@@ -253,12 +267,42 @@ public class Book implements Serializable {
     /**
      * カバー画像のファイル名を取得します
      * 
-     * <p>書籍名に「.jpg」を付加したファイル名を返します。</p>
+     * <p>書籍名の空白をアンダースコアに置き換えて「.jpg」を付加したファイル名を返します。</p>
      * 
-     * @return カバー画像のファイル名（例: "Java SEディープダイブ.jpg"）
+     * @return カバー画像のファイル名（例: "Java_SEディープダイブ.jpg"）
      */
     public String getImageFileName() {
-        return bookName + ".jpg";
+        if (bookName == null) {
+            return "no-image.jpg";
+        }
+        return bookName.replace(" ", "_") + ".jpg";
+    }
+    
+    /**
+     * 在庫数を取得します
+     * 
+     * @return 在庫数
+     */
+    public Integer getQuantity() {
+        return quantity;
+    }
+    
+    /**
+     * 在庫数を設定します
+     * 
+     * @param quantity 在庫数
+     */
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+    
+    /**
+     * 在庫があるかどうかを判定します
+     * 
+     * @return 在庫がある場合はtrue、ない場合はfalse
+     */
+    public boolean isInStock() {
+        return quantity != null && quantity > 0;
     }
     
     @Override

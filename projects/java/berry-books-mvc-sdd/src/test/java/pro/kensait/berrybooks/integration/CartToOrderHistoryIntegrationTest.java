@@ -5,16 +5,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import pro.kensait.berrybooks.entity.Book;
-import pro.kensait.berrybooks.entity.Customer;
-import pro.kensait.berrybooks.entity.OrderTran;
 import pro.kensait.berrybooks.service.book.BookService;
-import pro.kensait.berrybooks.service.order.OrderService;
 import pro.kensait.berrybooks.service.order.OrderTO;
 import pro.kensait.berrybooks.service.order.OrderHistoryTO;
+import pro.kensait.berrybooks.web.book.SearchParam;
 import pro.kensait.berrybooks.web.cart.CartItem;
 import pro.kensait.berrybooks.web.cart.CartSession;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,14 +36,12 @@ import java.util.List;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
 
-    private OrderService orderService;
     private BookService bookService;
     private CartSession cartSession;
 
     @BeforeEach
     public void setUp() {
         // テスト用のサービスとセッションを初期化
-        orderService = new OrderService();
         bookService = new BookService();
         cartSession = new CartSession();
         
@@ -57,17 +54,19 @@ public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
     @DisplayName("カート → 注文処理 → 注文履歴の統合フロー")
     public void testCartToOrderHistoryFlow() throws Exception {
         // Given: カートに書籍が1冊存在する
-        List<Book> books = bookService.searchBooks(1, null); // Javaカテゴリ
+        SearchParam searchParam = new SearchParam();
+        searchParam.setCategoryId(1); // Javaカテゴリ
+        List<Book> books = bookService.searchBook(searchParam);
         assertFalse(books.isEmpty(), "テスト用の書籍が必要です");
         
         Book testBook = books.get(0);
         CartItem cartItem = new CartItem();
         cartItem.setBookId(testBook.getBookId());
         cartItem.setBookName(testBook.getBookName());
-        cartItem.setAuthor(testBook.getAuthor());
+        cartItem.setPublisherName(testBook.getPublisher().getPublisherName());
         cartItem.setPrice(testBook.getPrice());
         cartItem.setCount(1);
-        cartItem.setStockVersion(testBook.getStock().getVersion());
+        cartItem.setVersion(testBook.getStock().getVersion());
         
         cartSession.addItem(cartItem);
         cartSession.calculateTotalPrice();
@@ -81,7 +80,7 @@ public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
         OrderTO orderTO = new OrderTO();
         orderTO.setCustomerId(1); // テスト用顧客ID
         orderTO.setDeliveryAddress("東京都渋谷区テスト町1-2-3");
-        orderTO.setSettlementType(1); // 銀行振込
+        orderTO.setSettlementCode(1); // 銀行振込
         orderTO.setCartItems(cartItems);
         
         // Step 3: 配送料金を計算（通常: 800円）
@@ -97,7 +96,7 @@ public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
         // ここでは注文TOの検証のみ行う
         assertNotNull(orderTO.getCustomerId(), "顧客IDがnullです");
         assertNotNull(orderTO.getDeliveryAddress(), "配送先住所がnullです");
-        assertNotNull(orderTO.getSettlementType(), "決済方法がnullです");
+        assertNotNull(orderTO.getSettlementCode(), "決済方法がnullです");
         assertNotNull(orderTO.getCartItems(), "カートアイテムリストがnullです");
         assertEquals(1, orderTO.getCartItems().size(), "注文アイテムが1件であるはずです");
         
@@ -173,17 +172,17 @@ public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
         
         OrderHistoryTO order1 = new OrderHistoryTO();
         order1.setOrderTranId(1);
-        order1.setOrderDate(java.sql.Date.valueOf("2025-12-01"));
+        order1.setOrderDate(LocalDate.of(2025, 12, 1));
         order1.setTotalPrice(BigDecimal.valueOf(3000));
         
         OrderHistoryTO order2 = new OrderHistoryTO();
         order2.setOrderTranId(2);
-        order2.setOrderDate(java.sql.Date.valueOf("2025-12-15"));
+        order2.setOrderDate(LocalDate.of(2025, 12, 15));
         order2.setTotalPrice(BigDecimal.valueOf(5000));
         
         OrderHistoryTO order3 = new OrderHistoryTO();
         order3.setOrderTranId(3);
-        order3.setOrderDate(java.sql.Date.valueOf("2025-12-10"));
+        order3.setOrderDate(LocalDate.of(2025, 12, 10));
         order3.setTotalPrice(BigDecimal.valueOf(4000));
         
         orderHistoryList.add(order1);
@@ -203,4 +202,3 @@ public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
                 "最も古い注文（12/01）が最後に表示されるはずです");
     }
 }
-

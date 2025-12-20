@@ -1,8 +1,21 @@
 package pro.kensait.berrybooks.e2e;
 
-import com.microsoft.playwright.*;
-import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.AfterAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.options.LoadState;
 
 /**
  * T_INTEG_008: Playwright E2Eテストスイートの作成
@@ -20,9 +33,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * - テストコードは src/test/java/ 配下の e2e パッケージに配置
  * - Page Object Modelパターンの採用を推奨
  * - テストデータの初期化・クリーンアップ処理を含める
+ * - @Tag("e2e")により、通常のビルド（./gradlew test）では実行されない
+ * - 個別実行コマンド: ./gradlew :projects:java:berry-books-mvc-sdd:e2eTest
  * 
- * 期待結果: 自動E2Eテストが正常に実行され、全フローが検証される
+ * 期待結果: 自動E2Eテストが正常に実行され、全フローが検証される（個別実行時）
  */
+@Tag("e2e")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PlaywrightE2ETestSuite {
 
@@ -241,4 +257,5 @@ public class PlaywrightE2ETestSuite {
         }
     }
 }
+
 

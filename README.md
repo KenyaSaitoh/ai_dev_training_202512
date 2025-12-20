@@ -182,7 +182,6 @@ chmod +x projects/python/accounting_etl_sdd/*.sh
 プロジェクトごとのアクセスURL例：
 ```
 http://localhost:8080/berry-books-mvc
-http://localhost:8080/berry-books-mvc-sdd
 http://localhost:8080/berry-books-rest/customers/1
 ```
 

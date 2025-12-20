@@ -75,7 +75,7 @@ CREATE INDEX IDX_BOOK_NAME ON BOOK(BOOK_NAME);
 CREATE TABLE STOCK (
     BOOK_ID         INTEGER PRIMARY KEY,
     QUANTITY        INTEGER NOT NULL,
-    VERSION         BIGINT NOT NULL DEFAULT 0,
+    VERSION         BIGINT NOT NULL,
     CONSTRAINT FK_STOCK_BOOK FOREIGN KEY (BOOK_ID) REFERENCES BOOK(BOOK_ID),
     CONSTRAINT CHK_STOCK_QUANTITY CHECK (QUANTITY >= 0)
 );
@@ -175,4 +175,6 @@ CREATE INDEX IDX_ORDER_DETAIL_BOOK ON ORDER_DETAIL(BOOK_ID);
 -- - 外部キー制約: 全てのリレーションシップに対応
 -- - インデックス: 検索最適化のためのインデックスを配置
 -- ============================================================================
+
+
 

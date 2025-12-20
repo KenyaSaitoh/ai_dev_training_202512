@@ -11,6 +11,12 @@
     <h:outputStylesheet library="css" name="style.css" />
 </h:head>
 
+<!-- ビューパラメータでorderTranIdを受け取る -->
+<f:metadata>
+    <f:viewParam name="orderTranId" value="#{orderHistoryBean.orderTranId}" />
+    <f:viewAction action="#{orderHistoryBean.loadOrderDetail}" />
+</f:metadata>
+
 <h:body>
     <!-- ヘッダー -->
     <div class="header">
@@ -42,19 +48,13 @@
                         <td style="width: 150px; border: none; padding: 8px 0; font-weight: bold;">注文日:</td>
                         <td style="border: none; padding: 8px 0;">
                             <h:outputText value="#{orderHistoryBean.orderSummary.orderTran.orderDate}">
-                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                <f:convertDateTime pattern="yyyy-MM-dd" type="localDate" />
                             </h:outputText>
                         </td>
                     </tr>
                     <tr>
                         <td style="border: none; padding: 8px 0; font-weight: bold;">配送先:</td>
                         <td style="border: none; padding: 8px 0;">#{orderHistoryBean.orderSummary.orderTran.deliveryAddress}</td>
-                    </tr>
-                    <tr>
-                        <td style="border: none; padding: 8px 0; font-weight: bold;">決済方法:</td>
-                        <td style="border: none; padding: 8px 0;">
-                            #{pro.kensait.berrybooks.common.SettlementType.getNameByCode(orderHistoryBean.orderSummary.orderTran.settlementType)}
-                        </td>
                     </tr>
                 </table>
             </div>
@@ -152,4 +152,6 @@
     </div>
 </h:body>
 </html>
+
+
 

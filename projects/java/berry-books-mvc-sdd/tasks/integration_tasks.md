@@ -130,7 +130,12 @@
     - テストコードは `src/test/java/` 配下の e2e パッケージに配置
     - Page Object Modelパターンの採用を推奨
     - テストデータの初期化・クリーンアップ処理を含める
-  - **期待結果**: 自動E2Eテストが正常に実行され、全フローが検証される
+    - **ビルド時除外設定**: E2Eテストは通常のビルド（`./gradlew test`）では実行しない
+      - 全E2Eテストクラスに `@Tag("e2e")` アノテーションを付与
+      - `build.gradle` の test タスクで "e2e" タグを除外: `test { useJUnitPlatform { excludeTags 'e2e' } }`
+      - E2E専用Gradleタスクを定義: `task e2eTest(type: Test) { useJUnitPlatform { includeTags 'e2e' } }`
+      - 個別実行コマンド例: `./gradlew :projects:java:berry-books-mvc-sdd:e2eTest`
+  - **期待結果**: 自動E2Eテストが正常に実行され、全フローが検証される（個別実行時）
 
 ---
 

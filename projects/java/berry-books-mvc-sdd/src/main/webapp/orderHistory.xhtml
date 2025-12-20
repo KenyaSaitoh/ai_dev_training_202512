@@ -65,7 +65,7 @@
                                     <td>#{order.orderTranId}</td>
                                     <td>
                                         <h:outputText value="#{order.orderDate}">
-                                            <f:convertDateTime pattern="yyyy-MM-dd" />
+                                            <f:convertDateTime pattern="yyyy-MM-dd" type="localDate" />
                                         </h:outputText>
                                     </td>
                                     <td>#{order.settlementName}</td>
@@ -113,4 +113,6 @@
     </div>
 </h:body>
 </html>
+
+
 

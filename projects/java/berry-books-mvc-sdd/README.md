@@ -29,29 +29,220 @@ Jakarta EE 10によるオンライン書店「**Berry Books**」のWebアプリ�
 
 ### 2つの利用シナリオ
 
-#### シナリオ1: berry-books-mvc-sddの実装（完成したSPECから）
+#### シナリオ1: 新規・更改案件
 完成したSPECを使って、生成AIにアプリケーション全体を実装させます。
 
 **対象:**
-- 仕様駆動開発の実装フェーズの学習
-- 生成AIによるコード生成の実践
+- 新規開発（ゼロからの構築）
+- 大規模な更改・リプレース
 - 完全なSPECからの実装体験
 
-**実装の開始方法:** 下記の「シナリオ1: 実装フェーズの実行」を参照
+**詳細:** 下記の「[📦 シナリオ1: 新規・更改案件の実装](#-シナリオ1-新規更改案件の実装)」を参照
 
-#### シナリオ2: 既存プロジェクトへの拡張
-既に稼働しているberry-books-mvc-sddを拡張する場合。既存のアーキテクチャを前提に、拡張内容のSPECを作成し、実装します。
+#### シナリオ2: 小規模改善・機能拡張案件
+既に稼働しているシステムに対して、小規模な改善や機能追加を行います。
 
 **対象:**
 - 新機能の追加（例: 在庫アラート機能）
 - 既存機能の改善・拡張
-- バグ修正
-- セキュリティ対策
+- バグ修正・セキュリティ対策
 - パフォーマンス改善
 
-**SPECの作成方法:** 下記の「シナリオ2: 拡張の実行」を参照
+**詳細:** 下記の「[🚀 シナリオ2: 小規模改善・機能拡張案件](#-シナリオ2-小規模改善機能拡張案件)」を参照
 
-**SPECの配置:** `specs/enhancements/YYYYMM_案件名/` のような個別フォルダに配置
+---
+
+## 📁 プロジェクト構成
+
+```
+berry-books-mvc-sdd/
+├── instructions/             # 生成AI用インストラクションファイル
+│   ├── generate_tasks.md     # タスク分解インストラクション
+│   └── generate_code.md      # 実装インストラクション
+├── memory/                   # プロジェクト憲章（AIが参照）
+│   └── constitution.md       # 開発憲章（開発原則、品質基準、組織標準）
+├── specs/                    # SPEC（仕様書）
+│   ├── baseline/             # 001: ベースラインSPEC
+│   │   ├── system/           # システム全体のSPEC
+│   │   │   ├── requirements.md       # 要件定義書
+│   │   │   ├── architecture_design.md  # アーキテクチャ設計書
+│   │   │   ├── functional_design.md  # 機能設計書
+│   │   │   ├── behaviors.md          # 振る舞い仕様書
+│   │   │   ├── data_model.md         # データモデル仕様書
+│   │   │   ├── screen_design.md      # 画面設計書
+│   │   │   └── external_interface.md # 外部インターフェース仕様書
+│   │   └── features/         # 個別機能のSPEC（F_001～F_005）
+│   │       ├── F_001_book_search/      # 書籍検索・閲覧
+│   │       ├── F_002_shopping_cart/    # ショッピングカート管理
+│   │       ├── F_003_order_processing/ # 注文処理
+│   │       ├── F_004_customer_auth/    # 顧客管理・認証
+│   │       └── F_005_order_history/    # 注文履歴参照
+│   ├── tasks/                # 実装タスク（並行作業対応・複数ファイルに分割）
+│   │   ├── tasks.md                       # メインタスクリスト（全体概要）
+│   │   ├── setup_tasks.md                 # セットアップタスク
+│   │   ├── common_tasks.md                # 共通機能タスク
+│   │   ├── F_001_book_search.md           # F_001: 書籍検索・閲覧
+│   │   ├── F_002_shopping_cart.md         # F_002: ショッピングカート管理
+│   │   ├── F_003_order_processing.md      # F_003: 注文処理
+│   │   ├── F_004_customer_auth.md         # F_004: 顧客管理・認証
+│   │   ├── F_005_order_history.md         # F_005: 注文履歴参照
+│   │   └── integration_tasks.md           # 結合テストタスク
+│   ├── enhancements/         # 拡張SPEC（機能追加・改善・修正）
+│   │   └── 202512_inventory_alert/  # 例: 在庫アラート機能
+│   │       ├── requirements.md
+│   │       ├── functional_design.md
+│   │       ├── behaviors.md
+│   │       └── tasks/
+│   │           ├── tasks.md
+│   │           ├── setup_tasks.md
+│   │           └── feature_tasks.md
+│   └── templates/            # SPECテンプレート
+│       ├── requirements.md
+│       ├── architecture_design.md
+│       ├── functional_design.md
+│       ├── behaviors.md
+│       ├── data_model.md
+│       ├── screen_design.md
+│       ├── external_interface.md
+│       └── tasks.md
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   ├── resources/
+│   │   └── webapp/
+│   └── test/
+├── sql/
+│   └── hsqldb/
+└── README.md
+```
+
+**主要フォルダの説明:**
+
+- **`instructions/`**: 生成AIに指示を出すためのインストラクションファイル
+- **`memory/`**: プロジェクトの憲章（開発原則、品質基準）※人間が作成、AIが参照
+- **`specs/baseline/`**: ベースラインSPEC（システム全体・個別機能）
+- **`specs/tasks/`**: 実装タスク（複数ファイルに分割、並行作業対応）
+- **`specs/enhancements/`**: 拡張SPEC（002以降: 機能追加・改善・修正）
+- **`specs/templates/`**: 拡張のSPECを作成する際のテンプレート
+- **`src/`**: 実装コード（生成AIが生成）
+- **`sql/`**: SQL（生成AIが生成）
+
+---
+
+## 🔧 セットアップとビルド
+
+### 前提条件
+
+- JDK 21以上
+- Gradle 8.x以上
+- Payara Server 6（プロジェクトルートの`payara6/`に配置）
+- HSQLDB（プロジェクトルートの`hsqldb/`に配置）
+
+> **Note:** ① と ② の手順は、ルートの`README.md`を参照してください。
+
+### ③ 依存関係の確認
+
+このプロジェクトを開始する前に、以下が起動していることを確認してください：
+
+- **① HSQLDBサーバー** （`./gradlew startHsqldb`）
+- **② Payara Server** （`./gradlew startPayara`）
+
+### ④ プロジェクトを開始するときに1回だけ実行
+
+```bash
+# 1. データベーステーブルとデータを作成
+./gradlew :projects:java:berry-books-mvc-sdd:setupHsqldb
+
+# 2. プロジェクトをビルド
+./gradlew :projects:java:berry-books-mvc-sdd:war
+
+# 3. プロジェクトをデプロイ
+./gradlew :projects:java:berry-books-mvc-sdd:deploy
+```
+
+> **重要:** このプロジェクトは独自のデータベーススキーマを使用します。`berry-books-mvc`とは異なるテーブル構成のため、`setupHsqldb`を必ず実行してください。
+
+### ⑤ プロジェクトを終了するときに1回だけ実行（CleanUp）
+
+```bash
+# プロジェクトをアンデプロイ
+./gradlew :projects:java:berry-books-mvc-sdd:undeploy
+```
+
+### ⑥ アプリケーション作成・更新のたびに実行
+
+```bash
+# アプリケーションを再ビルドして再デプロイ
+./gradlew :projects:java:berry-books-mvc-sdd:war
+./gradlew :projects:java:berry-books-mvc-sdd:deploy
+```
+
+### 📍 アクセスURL
+
+デプロイ後、以下のURLにアクセス：
+
+- **トップページ**: http://localhost:8080/berry-books-mvc-sdd
+
+---
+
+## 🧪 テストの実行
+
+アプリケーションをデプロイせずに、テストのみを実行したい場合は以下の手順に従ってください。
+
+### 前提条件
+
+テストを実行する前に、以下が起動していることを確認してください：
+
+- **① HSQLDBサーバー** （`./gradlew startHsqldb`）
+- **② データベースのセットアップ** （`./gradlew :projects:java:berry-books-mvc-sdd:setupHsqldb`）
+
+> **Note:** Payara Server は起動不要です（単体テストの場合）。E2Eテストを実行する場合は Payara Server も起動が必要です。
+
+### すべてのテストを実行（E2Eテストを除く）
+
+```bash
+# プロジェクトのすべてのテストを実行（E2Eテストは除外）
+./gradlew :projects:java:berry-books-mvc-sdd:test
+```
+
+> **Note:** 通常のビルド時テスト（`./gradlew test`）では、Playwright E2Eテストは除外されます。E2Eテストは個別に実行する設計となっています。
+
+### 特定のテストクラスを実行
+
+```bash
+# 特定のテストクラスのみを実行（例: BookServiceTest）
+./gradlew :projects:java:berry-books-mvc-sdd:test --tests "pro.kensait.berrybooks.service.BookServiceTest"
+
+# パターンマッチングで複数のテストクラスを実行（例: すべての統合テスト）
+./gradlew :projects:java:berry-books-mvc-sdd:test --tests "*IntegrationTest"
+```
+
+### E2Eテスト（Playwright）を実行
+
+E2Eテストは通常のビルド時テストとは別に、専用のGradleタスクで個別実行します。E2Eテストを実行する場合は、アプリケーションがデプロイされている必要があります：
+
+```bash
+# 1. Payara Server を起動（まだの場合）
+./gradlew startPayara
+
+# 2. アプリケーションをデプロイ（まだの場合）
+./gradlew :projects:java:berry-books-mvc-sdd:deploy
+
+# 3. E2Eテスト専用タスクを実行
+./gradlew :projects:java:berry-books-mvc-sdd:e2eTest
+```
+
+> **Note:** E2Eテストクラスには `@Tag("e2e")` アノテーションが付与されており、通常の `test` タスクでは実行されません。`e2eTest` タスクで個別に実行する設計です。
+
+### テストレポートの確認
+
+テスト実行後、レポートは以下の場所に生成されます：
+
+```
+projects/java/berry-books-mvc-sdd/build/reports/tests/test/index.html
+```
+
+ブラウザでこのファイルを開くと、テスト結果の詳細を確認できます。
 
 ---
 
@@ -96,58 +287,13 @@ Jakarta EE 10によるオンライン書店「**Berry Books**」のWebアプリ�
 
 ---
 
-## 📦 シナリオ1: 実装フェーズの実行（完成したSPECから）
+## 📦 シナリオ1: 新規・更改案件の実装
 
-**このプロジェクト（berry-books-mvc-sdd）は、完成したSPECが `specs/` に用意されています。**
+**このプロジェクト（berry-books-mvc-sdd）は、完成したSPECが `specs/baseline/` に用意されています。**
 
-### 既存のSPECファイル
+完成したSPECから、生成AIにアプリケーション全体を実装させます。
 
-```
-specs/
-├── baseline/                   # ベースラインSPEC（001）
-│   ├── system/                 # システム全体のSPEC（概要）
-│   │   ├── requirements.md         # 要件定義書（What & Why）
-│   │   ├── architecture_design.md  # アーキテクチャ設計書
-│   │   ├── functional_design.md    # 機能設計書（概要、リンク集）
-│   │   ├── behaviors.md            # 振る舞い仕様書（概要、リンク集）
-│   │   ├── data_model.md           # データモデル仕様書（ER図、テーブル定義）
-│   │   ├── screen_design.md        # 画面設計書（概要、リンク集）
-│   │   └── external_interface.md   # 外部インターフェース仕様書
-│   └── features/               # 個別機能のSPEC
-│       ├── F_001_book_search/      # 書籍検索・閲覧
-│       │   ├── functional_design.md
-│       │   ├── screen_design.md
-│       │   └── behaviors.md
-│       ├── F_002_shopping_cart/    # ショッピングカート管理
-│       │   ├── functional_design.md
-│       │   ├── screen_design.md
-│       │   └── behaviors.md
-│       ├── F_003_order_processing/ # 注文処理
-│       │   ├── functional_design.md
-│       │   ├── screen_design.md
-│       │   └── behaviors.md
-│       ├── F_004_customer_auth/    # 顧客管理・認証
-│       │   ├── functional_design.md
-│       │   ├── screen_design.md
-│       │   └── behaviors.md
-│       └── F_005_order_history/    # 注文履歴参照
-│           ├── functional_design.md
-│           ├── screen_design.md
-│           └── behaviors.md
-├── tasks/                      # 実装タスク（並行作業対応・複数ファイルに分割）
-│   ├── tasks.md                    # メインタスクリスト（全体概要と担当割り当て）
-│   ├── setup_tasks.md              # セットアップタスク
-│   ├── common_tasks.md             # 共通機能タスク（共通エンティティ・サービス）
-│   ├── F_001_book_search.md        # F_001: 書籍検索・閲覧
-│   ├── F_002_shopping_cart.md      # F_002: ショッピングカート管理
-│   ├── F_003_order_processing.md   # F_003: 注文処理
-│   ├── F_004_customer_auth.md      # F_004: 顧客管理・認証
-│   ├── F_005_order_history.md      # F_005: 注文履歴参照
-│   └── integration_tasks.md        # 結合テストタスク
-├── enhancements/               # 拡張SPEC（002以降）
-│   └── (拡張時に作成)
-└── templates/                  # SPECテンプレート
-```
+> プロジェクト構成の詳細は「[📁 プロジェクト構成](#-プロジェクト構成)」を参照してください。
 
 ### 実行手順
 
@@ -351,9 +497,11 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 
 **内容:**
 - 機能間結合テスト
-- エンドツーエンドテスト（Playwright推奨）
+- エンドツーエンドテスト（Playwright推奨・個別実行）
 - パフォーマンステスト
 - 最終検証
+
+> **Note:** Playwright E2Eテストは通常のビルド（`./gradlew test`）では実行されず、`./gradlew e2eTest` で個別に実行する設計です。
 
 ---
 
@@ -380,9 +528,9 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 
 ---
 
-## 🚀 シナリオ2: 拡張の実行（機能追加・改善・修正）
+## 🚀 シナリオ2: 小規模改善・機能拡張案件
 
-既存のberry-booksプロジェクトを拡張する場合の開発フローです。
+既に稼働しているシステムに対して、小規模な改善や機能追加を行う場合の開発フローです。
 
 ### 開発フロー
 
@@ -402,64 +550,15 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 | 実装範囲 | 全レイヤー | 必要な部分のみ |
 | SPEC作成 | テンプレート参照 | テンプレート参照 |
 
-### 個別拡張のSPEC配置
+### 拡張のSPEC配置
 
-拡張内容ごとに専用のフォルダを作成します：
+拡張内容ごとに専用のフォルダを `specs/enhancements/YYYYMM_案件名/` に作成します。
 
-```
-specs/
-├── baseline/                        # 001: ベースプロジェクト（berry-books-mvc-sdd本体）
-│   ├── system/                      # システム全体のSPEC
-│   │   ├── requirements.md
-│   │   ├── architecture_design.md
-│   │   ├── functional_design.md
-│   │   ├── behaviors.md
-│   │   ├── data_model.md
-│   │   ├── screen_design.md
-│   │   └── external_interface.md
-│   └── features/                    # 個別機能のSPEC
-│       ├── F_001_book_search/
-│       ├── F_002_shopping_cart/
-│       ├── F_003_order_processing/
-│       ├── F_004_customer_auth/
-│       └── F_005_order_history/
-├── tasks/                           # 実装タスク（ベースプロジェクト用）
-│   ├── tasks.md                     # メインタスクリスト
-│   ├── setup_tasks.md
-│   ├── common_tasks.md
-│   ├── F_001_book_search.md
-│   ├── F_002_shopping_cart.md
-│   ├── F_003_order_processing.md
-│   ├── F_004_customer_auth.md
-│   ├── F_005_order_history.md
-│   └── integration_tasks.md
-├── enhancements/                    # 拡張SPEC（機能追加・改善・修正）
-│   ├── 202512_inventory_alert/     # 在庫アラート機能（新機能）
-│   │   ├── requirements.md          # 拡張の要件定義
-│   │   ├── architecture_design.md   # アーキテクチャの差分
-│   │   ├── functional_design.md     # 機能設計
-│   │   ├── behaviors.md             # 受入基準
-│   │   ├── data_model.md            # データモデル仕様書の差分（必要に応じて）
-│   │   ├── screen_design.md         # 画面設計（必要に応じて）
-│   │   └── tasks/                   # 実装タスク（複数ファイルに分割可能）
-│   │       ├── tasks.md             # メインタスクリスト
-│   │       ├── setup_tasks.md       # セットアップタスク
-│   │       └── feature_tasks.md     # 機能実装タスク
-│   └── 202512_security_patch/      # セキュリティパッチ（修正）
-│       ├── requirements.md
-│       ├── functional_design.md
-│       └── tasks/
-│           └── tasks.md             # 実装タスク（小規模な場合は1ファイルでも可）
-└── templates/                       # SPECテンプレート
-    ├── requirements.md
-    ├── architecture_design.md
-    ├── functional_design.md
-    ├── behaviors.md
-    ├── data_model.md
-    ├── screen_design.md
-    ├── external_interface.md
-    └── tasks.md
-```
+**例:**
+- `specs/enhancements/202512_inventory_alert/` - 在庫アラート機能（新機能）
+- `specs/enhancements/202512_security_patch/` - セキュリティパッチ（修正）
+
+> プロジェクト構成の詳細は「[📁 プロジェクト構成](#-プロジェクト構成)」を参照してください。
 
 ### 設計フェーズにおけるSPECの作成方法
 
@@ -492,273 +591,14 @@ specs/
 
 ---
 
-## 📋 生成AIへの指示方法
-
-このプロジェクトでは、`instructions/` フォルダにある3つのインストラクションファイルを使用して、生成AIに指示を出します。
-
-### 利用可能なインストラクションファイル
-
-```
-instructions/
-├── generate_tasks.md  # SPECから実装タスクへの分解
-└── generate_code.md   # タスクリストに基づく実装
-```
-
-**注意:** `memory/` 配下の憲章ファイルは人間が作成しますが、AIはタスク生成・コード生成時にこれらを参照し、開発原則と品質基準を遵守します。
-
----
-
-### インストラクション1: Tasks（タスク分解）
-
-**目的:** 完成したSPECから具体的な実装タスクに分解します。複数人での並行作業を考慮して、複数のタスクファイルに分割されます。
-
-**注意:** このプロジェクトには既にタスクファイルが存在します。**既存のタスクファイルをそのまま使用する場合は、このインストラクションをスキップして「インストラクション2: Implement（実装）」に進んでください。** タスクファイルを更新・再生成したい場合、またはSPECを修正した場合のみ、このインストラクションを使用してください。
-
-**生成AIへの指示（ベースプロジェクト）:**
-```
-@instructions/generate_tasks.md このインストラクションに従って、
-プロジェクトルート: @projects/java/berry-books-mvc-sdd
-SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
-から実装タスクリストを生成してください。
-
-タスクリストは projects/java/berry-books-mvc-sdd/tasks/ ディレクトリに複数ファイルとして保存してください。
-
-タスクファイルの取り扱い:
-- タスクファイルが存在しない場合: 新規作成してください。
-- タスクファイルが既に存在する場合: 既存の内容を確認し、SPECとの整合性をチェックして、必要な部分のみを更新してください。
-```
-
-**生成AIへの指示（拡張）:**
-```
-@instructions/generate_tasks.md このインストラクションに従って、
-プロジェクトルート: @projects/java/berry-books-mvc-sdd
-SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_alert/
-から実装タスクリストを生成してください。
-
-タスクリストは projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_alert/tasks/ ディレクトリに保存してください。
-
-タスクファイルの取り扱い:
-- タスクファイルが存在しない場合: 新規作成してください。
-- タスクファイルが既に存在する場合: 既存の内容を確認し、SPECとの整合性をチェックして、必要な部分のみを更新してください。
-```
-
-**生成されるファイル（ベースプロジェクト）:**
-- `tasks/tasks.md` - メインタスクリスト（全体概要と担当割り当て）
-- `tasks/setup_tasks.md` - セットアップタスク
-- `tasks/common_tasks.md` - 共通機能タスク
-- `tasks/F_001_book_search.md` - F_001: 書籍検索・閲覧
-- `tasks/F_002_shopping_cart.md` - F_002: ショッピングカート管理
-- `tasks/F_003_order_processing.md` - F_003: 注文処理
-- `tasks/F_004_customer_auth.md` - F_004: 顧客管理・認証
-- `tasks/F_005_order_history.md` - F_005: 注文履歴参照
-- `tasks/integration_tasks.md` - 結合テストタスク
-
-**生成されるファイル（拡張の例）:**
-- `specs/enhancements/202512_inventory_alert/tasks/tasks.md` - メインタスクリスト
-- `specs/enhancements/202512_inventory_alert/tasks/setup_tasks.md` - セットアップタスク
-- `specs/enhancements/202512_inventory_alert/tasks/feature_tasks.md` - 機能実装タスク
-
-**インストラクションが参照するSPEC:**
-- `requirements.md` - 要件定義書
-- `architecture_design.md` - アーキテクチャ設計書
-- `functional_design.md` - 機能設計書
-- `data_model.md` - データモデル仕様書
-- `screen_design.md` - 画面設計書
-- `behaviors.md` - 振る舞い仕様書
-- `external_interface.md` - 外部インターフェース仕様書
-- `features/` - 個別機能の詳細設計
-
-**タスク分割の利点:**
-- **並行作業**: 複数人が同時に異なる機能を実装可能
-- **明確な担当**: 各担当者が自分のタスクファイルに集中できる
-- **進捗管理**: 機能ごとに進捗を追跡しやすい
-- **柔軟性**: 規模に応じてタスクファイルの分割数を調整可能
-
----
-
-### インストラクション2: Implement（実装）
-
-**目的:** タスクリストに従って実装を進めます。
-
-**重要:** プロジェクトルートとタスクリストのパスを明示的に指定します。
-
-**基本的な指示方法:**
-```
-@instructions/generate_code.md このインストラクションに従って、
-プロジェクトルート: @<プロジェクトルートのパス>
-タスクリスト: @<タスクファイルのパス>
-に基づいて実装を進めてください。
-```
-
-#### パターンA: 単独での実装（1人で全て実装）
-
-**ベースプロジェクト:**
-```
-@instructions/generate_code.md このインストラクションに従って、
-プロジェクトルート: @projects/java/berry-books-mvc-sdd
-タスクリスト: @projects/java/berry-books-mvc-sdd/tasks/tasks.md
-に基づいて実装を進めてください。
-
-セットアップタスクから順に実行してください。
-
-タスクファイルの取り扱い:
-- @tasks/tasks.md が存在する場合: そのファイルを参照して実装してください。
-- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
-```
-
-**拡張:**
-```
-@instructions/generate_code.md このインストラクションに従って、
-プロジェクトルート: @projects/java/berry-books-mvc-sdd
-タスクリスト: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_alert/tasks/tasks.md
-に基づいて実装を進めてください。
-
-このタスクのみを実行し、完了したら停止してください。
-
-タスクファイルの取り扱い:
-- @specs/enhancements/202512_inventory_alert/tasks/tasks.md が存在する場合: そのファイルを参照して実装してください。
-- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
-
-注意: 既存コードの修正は慎重に行い、既存機能に影響を与えないようにしてください。
-```
-
-#### パターンB: チームでの並行実装（複数人で分担）
-
-各担当者が自分のタスクファイルを指定して実装します。
-
-**共通機能チーム:**
-```
-@instructions/generate_code.md このインストラクションに従って、
-プロジェクトルート: @projects/java/berry-books-mvc-sdd
-タスクリスト: @projects/java/berry-books-mvc-sdd/tasks/common_tasks.md
-に基づいて実装を進めてください。
-
-タスクファイルの取り扱い:
-- @tasks/common_tasks.md が存在する場合: そのファイルを参照して実装してください。
-- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
-```
-
-**担当者A（F_001: 書籍検索・閲覧）:**
-```
-@instructions/generate_code.md このインストラクションに従って、
-プロジェクトルート: @projects/java/berry-books-mvc-sdd
-タスクリスト: @projects/java/berry-books-mvc-sdd/tasks/F_001_book_search.md
-に基づいて実装を進めてください。
-
-タスクファイルの取り扱い:
-- @tasks/F_001_book_search.md が存在する場合: そのファイルを参照して実装してください。
-- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
-
-注意: 共通機能タスク（common_tasks.md）の完了を待ってから開始してください。
-```
-
-**担当者B（F_002: ショッピングカート管理）:**
-```
-@instructions/generate_code.md このインストラクションに従って、
-プロジェクトルート: @projects/java/berry-books-mvc-sdd
-タスクリスト: @projects/java/berry-books-mvc-sdd/tasks/F_002_shopping_cart.md
-に基づいて実装を進めてください。
-
-タスクファイルの取り扱い:
-- @tasks/F_002_shopping_cart.md が存在する場合: そのファイルを参照して実装してください。
-- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
-
-注意: 共通機能タスク（common_tasks.md）の完了を待ってから開始してください。
-```
-
-**担当者C～E:** 同様に`F_003_order_processing.md`～`F_005_order_history.md`を指定
-
-**実装対象:**
-- ソースコード（Java、XHTML、CSS等）
-- テストコード
-- 設定ファイル
-
-**インストラクションが参照するSPEC:**
-- `tasks/` - 実装タスク分解（複数ファイル）
-- `requirements.md` - 要件定義書
-- `architecture_design.md` - アーキテクチャ設計書
-- `functional_design.md` - 機能設計書
-- `data_model.md` - データモデル仕様書
-- `screen_design.md` - 画面設計書
-- `behaviors.md` - 振る舞い仕様書
-- `external_interface.md` - 外部インターフェース仕様書
-- `features/` - 個別機能の詳細設計
-
-**実装の進め方:**
-1. **プロジェクトルートの明示**: 必ず`プロジェクトルート: @<パス>`を指定
-2. **単独実装**: メインタスクリスト（`tasks/tasks.md`）を上から順に実行
-3. **並行実装**: 各担当者が自分のタスクファイルを実行（共通機能完了後）
-4. `[P]`マークのタスクは並行実行可能
-5. 各タスク完了後、タスクファイルのチェックボックスを更新
-6. フェーズごとに動作確認を実施
-
----
-
-## 💡 重要なポイント
-
-### 仕様駆動開発の実装フェーズに特化
-
-このプロジェクトは、**完成したSPECを使って生成AIに実装させる**ことに焦点を当てています。
-
-**重要な前提:**
-1. **SPECは既に完成している** - `specs/baseline/` フォルダに全てのSPECが存在
-2. **実装だけを生成AIに依頼** - タスク分解と実装のみを生成AIが担当
-3. **SPECの作成は手動** - 拡張の場合、テンプレートを使って人間が作成
-
-### インストラクションファイルの使い方
-
-**3つのインストラクションファイル:**
-- `instructions/constitution.md` - プロジェクト憲章の作成（初回のみ）
-- `instructions/generate_tasks.md` - SPECから実装タスクへの分解
-- `instructions/generate_code.md` - タスクリストに基づく実装
-
-**基本的な開発フロー:**
-```
-設計フェーズ（人間） → タスク分解フェーズ（AI） → 実装フェーズ（AI）
-```
-
-### 生成AIへの指示の基本パターン
-
-Cursor等の生成AIツールで、`@` 記法を使ってファイルを参照します：
-
-**重要:** プロジェクトルートを必ず明示的に指定してください。
-
-**タスク分解の例:**
-```
-@instructions/generate_tasks.md このインストラクションに従って、
-プロジェクトルート: @projects/java/berry-books-mvc-sdd
-SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
-から実装タスクリストを生成してください。
-
-タスクリストは projects/java/berry-books-mvc-sdd/tasks/ ディレクトリに複数ファイルとして保存してください。
-```
-
-**実装の例:**
-```
-@instructions/generate_code.md このインストラクションに従って、
-プロジェクトルート: @projects/java/berry-books-mvc-sdd
-タスクリスト: @projects/java/berry-books-mvc-sdd/tasks/tasks.md
-に基づいて実装を進めてください。
-```
-
-### 拡張のSPEC作成
-
-既存プロジェクトを拡張する場合、SPECは手動で作成します：
-
-1. **テンプレートを参考に作成**: `specs/templates/` フォルダのテンプレートを参考に、拡張内容のSPECを作成
-2. **既存SPECを参考**: `specs/baseline/system/` （概要）と `specs/baseline/features/` （詳細設計）を参考に記述スタイルを合わせる
-3. **整合性を確認**: 既存のアーキテクチャと整合していることを確認
-
----
-
-## 🎯 実際の開発例（シナリオ2: 拡張）
+## 🎯 実際の開発例（シナリオ2: 小規模改善・機能拡張案件）
 
 ### 例1: 在庫アラート機能の追加（新機能）
 
 **前提条件:**
-- berry-books-mvc-sddプロジェクトが既に稼働している
+- システムが既に稼働している
 - 既存の在庫管理機能（Stock エンティティ、楽観的ロック）がある
-- 新機能は `specs/enhancements/202512_inventory_alert/` に配置
+- 拡張内容は `specs/enhancements/202512_inventory_alert/` に配置
 
 #### ステップ1: SPECの作成（手動）
 
@@ -796,8 +636,6 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 タスクファイルの取り扱い:
 - タスクファイルが存在しない場合: 新規作成してください。
 - タスクファイルが既に存在する場合: 既存の内容を確認し、SPECとの整合性をチェックして、必要な部分のみを更新してください。
-
-注意: 既存ファイルの修正タスクと新規ファイル作成タスクを明確に区別してください。
 ```
 
 **生成されるタスクファイル（拡張の規模に応じて）:**
@@ -816,112 +654,10 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/enhancements/202512_inventory_ale
 に基づいて実装を進めてください。
 
 このタスクのみを実行し、完了したら停止してください。
-
-タスクファイルの取り扱い:
-- @specs/enhancements/202512_inventory_alert/tasks/tasks.md が存在する場合: そのファイルを参照して実装してください。
-- 存在しない場合: ステップ2のタスク分解フェーズを先に実行して、タスクファイルを生成してください。
-
-注意: 既存コードの修正は慎重に行い、既存機能に影響を与えないようにしてください。
 ```
 
 **複数人で実装する場合:**
 各担当者が個別のタスクファイルを指定して並行作業が可能です。
-
----
-
-## 📁 プロジェクト構成
-
-```
-berry-books-mvc-sdd/
-├── instructions/             # 生成AI用インストラクションファイル
-│   ├── constitution.md       # 憲章作成インストラクション
-│   ├── generate_tasks.md     # タスク分解インストラクション
-│   └── generate_code.md      # 実装インストラクション
-├── memory/                   # プロジェクト憲章（AIが参照）
-│   └── constitution.md       # 開発憲章（開発原則、品質基準、組織標準）
-├── specs/                    # SPEC（仕様書）
-│   ├── baseline/             # 001: ベースラインSPEC
-│   │   ├── system/           # システム全体のSPEC
-│   │   │   ├── requirements.md       # 要件定義書
-│   │   │   ├── architecture_design.md  # アーキテクチャ設計書
-│   │   │   ├── functional_design.md  # 機能設計書
-│   │   │   ├── behaviors.md          # 振る舞い仕様書
-│   │   │   ├── data_model.md         # データモデル仕様書
-│   │   │   ├── screen_design.md      # 画面設計書
-│   │   │   └── external_interface.md # 外部インターフェース仕様書
-│   │   └── features/         # 個別機能のSPEC（F_001～F_005）
-│   │       ├── F_001_book_search/      # 書籍検索・閲覧
-│   │       ├── F_002_shopping_cart/    # ショッピングカート管理
-│   │       ├── F_003_order_processing/ # 注文処理
-│   │       ├── F_004_customer_auth/    # 顧客管理・認証
-│   │       └── F_005_order_history/    # 注文履歴参照
-│   ├── tasks/                # 実装タスク（並行作業対応・複数ファイルに分割）
-│   │   ├── tasks.md                       # メインタスクリスト（全体概要）
-│   │   ├── setup_tasks.md                 # セットアップタスク
-│   │   ├── common_tasks.md                # 共通機能タスク
-│   │   ├── F_001_book_search.md           # F_001: 書籍検索・閲覧
-│   │   ├── F_002_shopping_cart.md         # F_002: ショッピングカート管理
-│   │   ├── F_003_order_processing.md      # F_003: 注文処理
-│   │   ├── F_004_customer_auth.md         # F_004: 顧客管理・認証
-│   │   ├── F_005_order_history.md         # F_005: 注文履歴参照
-│   │   └── integration_tasks.md           # 結合テストタスク
-│   ├── enhancements/         # 拡張SPEC（アンダースコア区切り命名）
-│   │   └── (拡張時に作成)
-│   │       └── 202512_inventory_alert/  # 例: 在庫アラート機能（新機能）
-│   │           ├── requirements.md
-│   │           ├── functional_design.md
-│   │           ├── behaviors.md
-│   │           └── tasks/            # 拡張の実装タスク
-│   │               ├── tasks.md              # メインタスクリスト
-│   │               ├── setup_tasks.md        # セットアップタスク
-│   │               └── feature_tasks.md      # 機能実装タスク
-│   └── templates/            # SPECテンプレート
-│       ├── requirements.md
-│       ├── architecture_design.md
-│       ├── functional_design.md
-│       ├── behaviors.md
-│       ├── data_model.md
-│       ├── screen_design.md
-│       ├── external_interface.md
-│       └── tasks.md
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   ├── resources/
-│   │   └── webapp/
-│   └── test/
-├── sql/
-│   └── hsqldb/
-└── README.md
-```
-
-**主要フォルダの説明:**
-
-- **`instructions/`**: 生成AIに指示を出すためのインストラクションファイル（2つ：generate_tasks.md, generate_code.md）
-- **`memory/`**: プロジェクトの憲章（開発原則、品質基準）※人間が作成、AIが参照
-- **`specs/baseline/system/`**: システム全体のベースラインSPEC（001: berry-books-mvc-sdd本体）
-- **`specs/baseline/features/`**: 個別機能のSPEC（F_001～F_005の詳細設計）
-- **`specs/tasks/`**: ベースプロジェクトの実装タスク（複数ファイルに分割、並行作業対応）
-- **`specs/enhancements/`**: 拡張SPEC（002以降: 機能追加・改善・修正）
-- **`specs/templates/`**: 拡張のSPECを作成する際のテンプレート
-- **`src/`**: 実装コード（生成AIが生成）
-- **`sql/`**: SQL（生成AIが生成）
-
-**タスクファイルの特徴:**
-- **複数ファイルに分割**: 機能ごとにタスクファイルを分割し、並行作業を容易に
-- **担当者割り当て**: 各タスクファイルに推奨担当者数と役割を記載
-- **依存関係管理**: メインタスクリスト（`tasks.md`）で全体の実行順序を管理
-
----
-
-## 🔧 セットアップ
-
-### 前提条件
-
-- JDK 21以上
-- Gradle 8.x以上
-- Payara Server 6
-- HSQLDB
 
 ---
 
@@ -952,195 +688,27 @@ berry-books-mvc-sdd/
 
 ---
 
-## 📖 ドキュメント
+## 📖 主要ドキュメント
 
-### Constitution（開発憲章）
-- [Constitution（開発憲章）](memory/constitution.md) - プロジェクト全体の開発原則
-  - **重要**: AIはタスク生成・コード生成時にこの憲章を参照し、開発原則と品質基準を遵守します
-  - `memory/` 配下には、組織やチームで共通的に使われる憲章ファイルも配置可能です
+> 詳細なプロジェクト構成は「[📁 プロジェクト構成](#-プロジェクト構成)」を参照してください。
 
-### Specifications（SPEC）
+### 憲章とインストラクション
 
-**Feature 001: berry-books-mvc-sdd（ベースプロジェクト）**
+- **[constitution.md](memory/constitution.md)** - 開発憲章（開発原則、品質基準、組織標準）
+  - AIはタスク生成・コード生成時にこれを参照します
+- **[generate_tasks.md](instructions/generate_tasks.md)** - タスク分解インストラクション
+- **[generate_code.md](instructions/generate_code.md)** - 実装インストラクション
 
-*システム全体のSPEC:*
-- [requirements.md](specs/baseline/system/requirements.md) - 要件定義書
-- [architecture_design.md](specs/baseline/system/architecture_design.md) - アーキテクチャ設計書
-- [functional_design.md](specs/baseline/system/functional_design.md) - 機能設計書（基本設計）
-- [behaviors.md](specs/baseline/system/behaviors.md) - 振る舞い仕様書（Acceptance Criteria）
-- [data_model.md](specs/baseline/system/data_model.md) - データモデル仕様書
-- [screen_design.md](specs/baseline/system/screen_design.md) - 画面設計書
-- [external_interface.md](specs/baseline/system/external_interface.md) - 外部インターフェース仕様書
+### SPEC（仕様書）
 
-*個別機能のSPEC:*
-- [F_001: 書籍検索・閲覧](specs/baseline/features/F_001_book_search/)
-- [F_002: ショッピングカート管理](specs/baseline/features/F_002_shopping_cart/)
-- [F_003: 注文処理](specs/baseline/features/F_003_order_processing/)
-- [F_004: 顧客管理・認証](specs/baseline/features/F_004_customer_auth/)
-- [F_005: 注文履歴参照](specs/baseline/features/F_005_order_history/)
+- **[specs/baseline/system/](specs/baseline/system/)** - システム全体のSPEC（要件定義、アーキテクチャ設計、データモデル等）
+- **[specs/baseline/features/](specs/baseline/features/)** - 個別機能のSPEC（F_001～F_005）
+- **[specs/templates/](specs/templates/)** - 拡張SPEC作成用テンプレート
 
-**実装タスク（並行作業対応）:**
-- [tasks.md](tasks/tasks.md) - メインタスクリスト（全体概要と担当割り当て）
-- [setup_tasks.md](tasks/setup_tasks.md) - セットアップタスク
-- [common_tasks.md](tasks/common_tasks.md) - 共通機能タスク
-- [F_001_book_search.md](tasks/F_001_book_search.md) - F_001: 書籍検索・閲覧
-- [F_002_shopping_cart.md](tasks/F_002_shopping_cart.md) - F_002: ショッピングカート管理
-- [F_003_order_processing.md](tasks/F_003_order_processing.md) - F_003: 注文処理
-- [F_004_customer_auth.md](tasks/F_004_customer_auth.md) - F_004: 顧客管理・認証
-- [F_005_order_history.md](tasks/F_005_order_history.md) - F_005: 注文履歴参照
-- [integration_tasks.md](tasks/integration_tasks.md) - 結合テストタスク
+### 実装タスク
 
-**Feature 002以降: 個別拡張**
-- 個別拡張は `specs/enhancements/YYYYMM_案件名/` のようなフォルダで管理（日付は6桁、案件名とはアンダースコア区切り）
-- 例: `specs/enhancements/202512_inventory_alert/`（在庫アラート機能）, `specs/enhancements/202512_security_patch/`（セキュリティパッチ）など
-
-### Templates（テンプレート）
-
-拡張のSPECを作成する際のテンプレート：
-- [requirements.md](specs/templates/requirements.md) - 要件定義書テンプレート
-- [architecture_design.md](specs/templates/architecture_design.md) - アーキテクチャ設計書テンプレート
-- [functional_design.md](specs/templates/functional_design.md) - 機能設計書テンプレート
-- [behaviors.md](specs/templates/behaviors.md) - 振る舞い仕様書テンプレート
-- [data_model.md](specs/templates/data_model.md) - データモデル仕様書テンプレート
-- [screen_design.md](specs/templates/screen_design.md) - 画面設計書テンプレート
-- [external_interface.md](specs/templates/external_interface.md) - 外部インターフェース仕様書テンプレート
-- [tasks.md](specs/templates/tasks.md) - タスク分解テンプレート
-
-### Instructions（インストラクション）
-
-生成AIに指示を出すためのインストラクションファイル：
-- [generate_tasks.md](instructions/generate_tasks.md) - タスク分解インストラクション
-- [generate_code.md](instructions/generate_code.md) - 実装インストラクション
-
-**注意:** `memory/` 配下の憲章ファイルは人間が作成しますが、AIはこれらを参照して開発を行います。
-
----
-
-## 🎯 開発フローのまとめ
-
-### 基本的な流れ
-
-**シナリオ1: ベースプロジェクトの実装（完成したSPECから）**
-
-```
-設計フェーズ（完成済み） → タスク分解フェーズ（AI） → 実装フェーズ（AI）
-```
-
-1. **設計フェーズ（完成済み）**: `specs/baseline/system/` フォルダの完成したSPECを確認
-2. **タスク分解フェーズ（AI）**: `@instructions/generate_tasks.md` を使って実装タスクに分解
-3. **実装フェーズ（AI）**: `@instructions/generate_code.md` を使ってタスクに従って実装
-
-**シナリオ2: 拡張（機能追加・改善・修正）**
-
-```
-設計フェーズ（人間） → タスク分解フェーズ（AI） → 実装フェーズ（AI）
-```
-
-1. **設計フェーズ（人間）**: `specs/templates/` のテンプレートを参考に拡張内容のSPECを作成
-2. **整合性確認（人間）**: 既存のSPECとの整合性を確認
-3. **タスク分解フェーズ（AI）**: `@instructions/generate_tasks.md` を使って実装タスクに分解
-4. **実装フェーズ（AI）**: `@instructions/generate_code.md` を使ってタスクに従って実装
-
-### 生成AIへの指示の基本パターン
-
-Cursor等の生成AIツールで、`@` 記法を使ってファイルを参照します：
-
-**タスク分解:**
-```
-@instructions/generate_tasks.md このインストラクションに従って、
-プロジェクトルート: @projects/java/berry-books-mvc-sdd
-SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
-から実装タスクリストを生成してください。
-
-タスクリストは projects/java/berry-books-mvc-sdd/tasks/ ディレクトリに複数ファイルとして保存してください。
-
-タスクファイルの取り扱い:
-- タスクファイルが存在しない場合: 新規作成してください。
-- タスクファイルが既に存在する場合: 既存の内容を確認し、SPECとの整合性をチェックして、必要な部分のみを更新してください。
-```
-
-**実装（単独）:**
-```
-@instructions/generate_code.md このインストラクションに従って、
-プロジェクトルート: @projects/java/berry-books-mvc-sdd
-タスクリスト: @projects/java/berry-books-mvc-sdd/tasks/setup_tasks.md
-に基づいて実装を進めてください。
-
-このタスクのみを実行し、完了したら停止してください。
-
-タスクファイルの取り扱い:
-- @tasks/setup_tasks.md が存在する場合: そのファイルを参照して実装してください。
-- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
-```
-
-**注意:** 
-- 既存のタスクファイル（tasks/ディレクトリ）が存在する場合は、それらを参照して実装します。
-- 存在しない場合は、タスク分解フェーズを実行してタスクファイルを生成してください。
-- 各タスクファイル（setup_tasks.md, common_tasks.md, F_001_book_search.md等）を順番に1つずつ実行してください。
-
-**実装（並行作業）:**
-```
-# 共通機能チーム
-@instructions/generate_code.md このインストラクションに従って、
-プロジェクトルート: @projects/java/berry-books-mvc-sdd
-タスクリスト: @projects/java/berry-books-mvc-sdd/tasks/common_tasks.md
-に基づいて実装を進めてください。
-
-このタスクのみを実行し、完了したら停止してください。
-
-タスクファイルの取り扱い:
-- @tasks/common_tasks.md が存在する場合: そのファイルを参照して実装してください。
-- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
-
-# 担当者A（F_001）
-@instructions/generate_code.md このインストラクションに従って、
-プロジェクトルート: @projects/java/berry-books-mvc-sdd
-タスクリスト: @projects/java/berry-books-mvc-sdd/tasks/F_001_book_search.md
-に基づいて実装を進めてください。
-
-このタスクのみを実行し、完了したら停止してください。
-
-タスクファイルの取り扱い:
-- @tasks/F_001_book_search.md が存在する場合: そのファイルを参照して実装してください。
-- 存在しない場合: タスク分解フェーズを先に実行して、タスクファイルを生成してください。
-```
-
-**注意:** 各タスクは独立した作業単位です。タスクが完了したら、次のタスクに進む前に内容を確認してください。
-
-### リバースエンジニアリング完了
-
-本プロジェクトのベースラインSPECは、berry-books-mvcプロジェクトの既存実装からリバースエンジニアリングで作成されました。
-
-**完成したベースラインSPEC（`specs/baseline/system/`）:**
-- ✅ requirements.md - 要件定義書（ビジネス要件、機能要件）
-- ✅ architecture_design.md - アーキテクチャ設計書（技術スタック、アーキテクチャパターン、Mermaid図）
-- ✅ functional_design.md - 機能設計書（クラス設計、ユーザーフロー）
-- ✅ behaviors.md - 振る舞い仕様書（Acceptance Criteria、Gherkin形式）
-- ✅ data_model.md - データモデル仕様書（ER図、テーブル定義）
-- ✅ screen_design.md - 画面設計書（PlantUML形式、draw.io互換）
-- ✅ external_interface.md - 外部インターフェース仕様書（REST API連携）
-
-**完成した個別機能SPEC（`specs/baseline/features/`）:**
-- ✅ F_001_book_search/ - 書籍検索・閲覧
-- ✅ F_002_shopping_cart/ - ショッピングカート管理
-- ✅ F_003_order_processing/ - 注文処理
-- ✅ F_004_customer_auth/ - 顧客管理・認証
-- ✅ F_005_order_history/ - 注文履歴参照
-
-**完成した実装タスク（`tasks/`・並行作業対応）:**
-- ✅ tasks.md - メインタスクリスト（全体概要と担当割り当て）
-- ✅ setup_tasks.md - セットアップタスク
-- ✅ common_tasks.md - 共通機能タスク
-- ✅ F_001_book_search.md ～ F_005_order_history.md - 機能別タスク（並行実行可能）
-- ✅ integration_tasks.md - 結合テストタスク
-
-これらのSPECと生成AIインストラクションを使って、生成AIが同じアプリケーションを完全に再実装できます。また、複数人での並行作業にも対応しています。
-
----
-
-## 📝 ライセンス
-
-このプロジェクトは教育目的で作成されています。
+- **[tasks/tasks.md](tasks/tasks.md)** - メインタスクリスト（全体概要）
+- **[tasks/](tasks/)** - 機能別タスクファイル（setup、common、F_001～F_005、integration）
 
 ---
 
@@ -1150,4 +718,3 @@ SPEC: @projects/java/berry-books-mvc-sdd/specs/baseline/system/
 - [Payara Server Documentation](https://docs.payara.fish/)
 - [PlantUML](https://plantuml.com/)
 - [Mermaid](https://mermaid.js.org/)
-

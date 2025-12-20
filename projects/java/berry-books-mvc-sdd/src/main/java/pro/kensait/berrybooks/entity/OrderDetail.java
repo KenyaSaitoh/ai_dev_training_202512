@@ -47,9 +47,11 @@ public class OrderDetail implements Serializable {
     
     /**
      * 注文トランザクション（多対一のリレーション）
+     * @MapsId を使用して、複合主キーの orderTranId フィールドにマッピング
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ORDER_TRAN_ID", insertable = false, updatable = false)
+    @JoinColumn(name = "ORDER_TRAN_ID")
+    @jakarta.persistence.MapsId("orderTranId")
     private OrderTran orderTran;
     
     /**

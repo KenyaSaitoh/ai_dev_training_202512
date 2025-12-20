@@ -1,9 +1,9 @@
 # berry-books - データモデル仕様書
 
 **プロジェクトID:** berry-books  
-**バージョン:** 1.1.0  
-**最終更新日:** 2025-12-16  
-**ステータス:** データモデル完成
+**バージョン:** 1.1.2  
+**最終更新日:** 2025-12-20  
+**ステータス:** データモデル完成（DDL実装上の注意・JPA複合主キーマッピング追加）
 
 ---
 
@@ -245,6 +245,12 @@ classDiagram
 - VERSION列はJPAの`@Version`で自動管理
 - 更新時にVERSION値をチェックし、不一致の場合は`OptimisticLockException`
 
+**DDL実装上の注意:**
+- HSQLDBでは`VERSION BIGINT NOT NULL DEFAULT 0`構文がサポートされていない
+- `DEFAULT 0`を削除して`VERSION BIGINT NOT NULL`とする
+- 初期値0はINSERT文で明示的に指定する
+- 例: `INSERT INTO STOCK (BOOK_ID, QUANTITY, VERSION) VALUES (1, 3, 0);`
+
 **楽観的ロックメカニズム:**
 ```sql
 -- JPAが生成:
@@ -377,6 +383,28 @@ stateDiagram-v2
   - 明細 3: 書籍C、数量3
 
 (1001, 1), (1001, 2), (1001, 3)
+```
+
+**実装上の注意（JPA）:**
+```
+ORDER_DETAILエンティティでは複合主キー（@EmbeddedId）を使用しています。
+ORDER_TRAN_IDは複合主キーの一部であると同時に、OrderTranへの外部キーでもあります。
+
+JPAマッピングでは、@ManyToOne関係に@MapsId("orderTranId")アノテーションを使用して、
+複合主キーのorderTranIdフィールドが@ManyToOne関係から自動的に設定されるように
+構成する必要があります。
+
+誤った実装例（insertable=false, updatable=falseを使用）:
+  @JoinColumn(name = "ORDER_TRAN_ID", insertable = false, updatable = false)
+  
+正しい実装例（@MapsIdを使用）:
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "ORDER_TRAN_ID")
+  @MapsId("orderTranId")
+  private OrderTran orderTran;
+
+@MapsIdを使用することで、orderTranオブジェクトを設定するだけで、
+複合主キーのorderTranIdフィールドが自動的に設定されます。
 ```
 
 ---

@@ -125,6 +125,11 @@
      - スクリーンショット取得機能を含め、視覚的な確認も可能にする
      - テストは`src/test/java/<パッケージ>/e2e/`配下に配置（パッケージはarchitecture_design.mdの「4. パッケージ構造」を参照）
      - Playwright Java APIを使用してブラウザ自動化を実装
+     - **ビルド時の除外設定**: E2Eテストは通常のビルド（`./gradlew test`）では実行されず、個別に実行する設定にする
+       - JUnit 5の`@Tag("e2e")`アノテーションをE2Eテストクラスに付与
+       - Gradleの`build.gradle`で、testタスクから"e2e"タグを除外する設定を追加: `test { useJUnitPlatform { excludeTags 'e2e' } }`
+       - E2E専用のGradleタスク（例: `e2eTest`）を定義し、個別実行可能にする: `task e2eTest(type: Test) { useJUnitPlatform { includeTags 'e2e' } }`
+       - テストクラス名の命名規則で識別可能にする（例: `*E2ETest.java`パターン）
 
 5. コンポーネント別の参照ドキュメント優先度と使用方法：
    
