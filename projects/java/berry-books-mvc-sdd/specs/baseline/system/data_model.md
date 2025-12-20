@@ -1,8 +1,8 @@
 # berry-books - データモデル仕様書
 
 **プロジェクトID:** berry-books  
-**バージョン:** 1.0.0  
-**最終更新日:** 2025-12-13  
+**バージョン:** 1.1.0  
+**最終更新日:** 2025-12-16  
 **ステータス:** データモデル完成
 
 ---
@@ -83,6 +83,7 @@ classDiagram
         +String author
         +BigDecimal price
         +Integer quantity
+        +getImageFileName() String
     }
     
     class Category {
@@ -210,6 +211,13 @@ classDiagram
 - 書籍名、著者名は必須
 - 価格は0以上の整数
 - カテゴリと出版社は必須（外部キー参照）
+
+**カバー画像の取り扱い:**
+- カバー画像ファイルは `webapp/resources/covers/` 配下に配置
+- 画像ファイル名は書籍名（BOOK_NAME）をそのまま使用し、拡張子 `.jpg` を付加
+- 例: 書籍名 `Java SEディープダイブ` → 画像ファイル名 `Java SEディープダイブ.jpg`
+- 画像ファイルが存在しない場合は `no-image.jpg` を表示
+- 画像ファイル名の生成はアプリケーション層（Bookエンティティ）で実装
 
 **サンプルデータ:**
 ```

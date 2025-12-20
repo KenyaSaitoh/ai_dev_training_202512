@@ -1,46 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+<persistence version="3.0"
+             xmlns="https://jakarta.ee/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
-                                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
-             version="3.0">
+                                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
     
-    <!-- Berry Books Persistence Unit -->
+    <!-- ========================================
+         Berry Books Persistence Unit
+         ========================================
+         - トランザクションタイプ: JTA
+         - データソース: jdbc/HsqldbDS (JNDI)
+         - スキーマ生成: none (手動SQLスクリプト使用)
+         ======================================== -->
+    
     <persistence-unit name="BerryBooksPU" transaction-type="JTA">
         
-        <!-- JTA Data Source JNDI Name -->
+        <!-- JNDIデータソース -->
         <jta-data-source>jdbc/HsqldbDS</jta-data-source>
         
-        <!-- Entity Classes -->
-        <class>pro.kensait.berrybooks.entity.Publisher</class>
-        <class>pro.kensait.berrybooks.entity.Category</class>
-        <class>pro.kensait.berrybooks.entity.Book</class>
-        <class>pro.kensait.berrybooks.entity.Stock</class>
-        <class>pro.kensait.berrybooks.entity.Customer</class>
-        <class>pro.kensait.berrybooks.entity.OrderTran</class>
-        <class>pro.kensait.berrybooks.entity.OrderDetail</class>
-        <class>pro.kensait.berrybooks.entity.OrderDetailPK</class>
+        <!-- Jakarta EE 10 Provider: EclipseLink -->
+        <!-- Payara Server 6にバンドルされているため、明示的な指定は不要 -->
         
-        <!-- Exclude unlisted classes -->
-        <exclude-unlisted-classes>false</exclude-unlisted-classes>
-        
+        <!-- スキーマ生成設定 -->
         <properties>
-            <!-- Schema Generation: none (use SQL scripts) -->
+            <!-- スキーマ生成は手動SQLスクリプトで実行するため無効化 -->
             <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
             
-            <!-- EclipseLink Logging -->
+            <!-- EclipseLinkログ設定 -->
             <property name="eclipselink.logging.level" value="FINE"/>
-            <property name="eclipselink.logging.level.sql" value="FINE"/>
             <property name="eclipselink.logging.parameters" value="true"/>
-            <property name="eclipselink.logging.timestamp" value="false"/>
-            <property name="eclipselink.logging.session" value="false"/>
+            <property name="eclipselink.logging.timestamp" value="true"/>
             <property name="eclipselink.logging.thread" value="false"/>
+            <property name="eclipselink.logging.session" value="false"/>
             
-            <!-- Disable Second Level Cache for learning purposes -->
+            <!-- キャッシュ設定（学習用に2次キャッシュを無効化） -->
             <property name="eclipselink.cache.shared.default" value="false"/>
             
-            <!-- Connection Pool (managed by Payara) -->
-            <property name="eclipselink.jdbc.native-sql" value="true"/>
+            <!-- トランザクション設定 -->
+            <property name="eclipselink.target-database" value="HSQL"/>
         </properties>
         
     </persistence-unit>

@@ -221,11 +221,11 @@ Clineにプロンプトで指示を与えると、以下の流れで処理が実
   * レッスン3：不具合修正
   * レッスン4：機能拡張
   * レッスン5：単体テスト生成
-* berry-books-frontend：ReactによるSPA（オンライン書店の管理者画面）
+* berry-books-frontend-vibe：ReactによるSPA（オンライン書店の管理者画面）
   * レッスン6：仕様書からのスクラッチ開発（React）
-* struts-to-jsf-person：StrutsからJSFへのマイグレーション
+* struts-to-jsf-person-sdd：StrutsからJSFへのマイグレーション
   * レッスン7：フレームワークのマイグレーション（リライト）
-* accounting_glue：PySpark/GlueによるETL処理（会計EPRへのバッチデータ連携）
+* accounting_etl_sdd：PySpark/GlueによるETL処理（会計EPRへのバッチデータ連携）
   * レッスン8：仕様書からのスクラッチ開発（PySpark/Glue）
   
 ---

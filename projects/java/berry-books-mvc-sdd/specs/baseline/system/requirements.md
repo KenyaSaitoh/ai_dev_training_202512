@@ -1,9 +1,9 @@
 # berry-books - 要件定義書
 
 **プロジェクトID:** berry-books  
-**バージョン:** 1.1.0  
-**最終更新日:** 2025-12-14  
-**ステータス:** 要件確定（業務フロー・画面一覧追加）
+**バージョン:** 1.2.0  
+**最終更新日:** 2025-12-16  
+**ステータス:** 要件確定（REST API連携追加）
 
 ---
 
@@ -398,9 +398,24 @@ graph TD
 
 ## 9. 外部インターフェース仕様書
 
-本システムでは、外部システムとの連携は行わない。
+本システムは、顧客管理機能について、berry-books-restプロジェクトが提供するREST APIを経由してCUSTOMERテーブルにアクセスします。
 
-### 9.1 対象外の外部連携
+### 9.1 berry-books-rest API連携
+
+**連携先:** berry-books-rest プロジェクト
+
+**連携内容:** CUSTOMERテーブルへのアクセス（顧客情報取得、認証、登録）
+
+**連携方式:** REST API (JAX-RS 3.1)
+
+**主要エンドポイント:**
+- `GET /customers/{customerId}` - 顧客取得
+- `GET /customers/query_email?email={email}` - メールアドレス検索（ログイン用）
+- `POST /customers/` - 顧客新規登録
+
+**詳細:** [external_interface.md](external_interface.md) を参照
+
+### 9.2 対象外の外部連携
 
 | 連携先 | 連携内容 | 対象外とした理由 |
 |--------|---------|----------------|
@@ -589,6 +604,7 @@ graph TD
 - [ ] アーキテクチャ設計書（architecture_design.md）が完成している
 - [ ] データモデル仕様書（data_model.md）が完成している
 - [ ] 画面仕様書（screen_design.md）が完成している
+- [ ] 外部インターフェース仕様書（external_interface.md）が完成している
 
 ### 12.5 技術要件の充足
 
@@ -608,7 +624,7 @@ graph TD
 - [architecture_design.md](architecture_design.md) - アーキテクチャ設計書
 - [data_model.md](data_model.md) - データモデル仕様書
 - [screen_design.md](screen_design.md) - 画面仕様書
-- [tasks.md](tasks.md) - 実装タスク
+- [external_interface.md](external_interface.md) - 外部インターフェース仕様書
 
 
 

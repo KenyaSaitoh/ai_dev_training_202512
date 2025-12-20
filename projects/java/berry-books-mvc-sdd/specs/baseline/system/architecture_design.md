@@ -1,9 +1,9 @@
 # berry-books - アーキテクチャ設計書
 
 **プロジェクトID:** berry-books  
-**バージョン:** 1.2.0  
-**最終更新日:** 2025-12-14  
-**ステータス:** アーキテクチャ設計完了
+**バージョン:** 1.3.0  
+**最終更新日:** 2025-12-16  
+**ステータス:** アーキテクチャ設計完了（REST API連携追加）
 
 ---
 
@@ -54,6 +54,13 @@ graph TD
 | SLF4J + Logback | ログ出力 | 業界標準のロギングファサード |
 | JUnit 5 | ユニットテスト | 最新のテストフレームワーク |
 | Mockito | モッキング | ユニットテストの独立性確保 |
+| Jakarta REST Client | REST API呼び出し | berry-books-rest APIとの連携用 |
+
+### 1.4 外部API連携
+
+| 連携先 | プロトコル | 目的 |
+|--------|----------|------|
+| berry-books-rest | REST API (JAX-RS) | CUSTOMERテーブルへのアクセス |
 
 ---
 
@@ -84,11 +91,17 @@ graph TB
         DB[(HSQLDB<br/>testdb)]
     end
     
+    subgraph "External API Layer"
+        RestAPI[berry-books-rest<br/>REST API]
+    end
+    
     View -->|User Input| Controller
     Controller -->|@Inject| Service
     Service -->|@Inject| DAO
+    Service -->|REST Client| RestAPI
     DAO -->|@PersistenceContext| Entity
     Entity -->|JDBC| DB
+    RestAPI -->|JDBC| DB
     
     Controller -->|Display Data| View
 ```
@@ -99,8 +112,9 @@ graph TB
 |-------|-----------------|-------------------|
 | **View (XHTML)** | • UIレンダリング<br/>• ユーザー入力の収集<br/>• 表示フォーマット | • ビジネスロジック<br/>• 直接データベースアクセス<br/>• 複雑な計算 |
 | **Controller (Managed Bean)** | • リクエスト処理<br/>• ナビゲーション制御<br/>• 入力検証の表示<br/>• サービス委譲 | • 直接データベースアクセス<br/>• ビジネスルール実装<br/>• トランザクション管理 |
-| **Service** | • ビジネスロジック<br/>• トランザクション境界<br/>• 複数DAOの連携<br/>• ビジネス検証 | • UI固有ロジック<br/>• 直接SQLクエリ<br/>• HTTPリクエスト処理 |
+| **Service** | • ビジネスロジック<br/>• トランザクション境界<br/>• 複数DAOの連携<br/>• ビジネス検証<br/>• REST API呼び出し（顧客管理） | • UI固有ロジック<br/>• 直接SQLクエリ<br/>• HTTPリクエスト処理 |
 | **DAO** | • CRUD操作<br/>• クエリ実行<br/>• エンティティライフサイクル管理 | • ビジネスロジック<br/>• トランザクション制御<br/>• UI関連処理 |
+| **REST Client** | • REST API呼び出し<br/>• リクエスト/レスポンス変換<br/>• エラーハンドリング | • ビジネスロジック<br/>• 直接データベースアクセス |
 | **Entity** | • データ構造<br/>• リレーションシップ<br/>• データベースマッピング | • ビジネスロジック<br/>• 検証ロジック（Bean Validationを使用） |
 
 ---
@@ -201,7 +215,7 @@ pro.kensait.berrybooks/
 │   ├── category/
 │   │   └── CategoryService     # カテゴリ管理
 │   ├── customer/
-│   │   ├── CustomerService     # 顧客管理
+│   │   ├── CustomerService     # 顧客管理（REST API経由）
 │   │   └── EmailAlreadyExistsException
 │   ├── delivery/
 │   │   └── DeliveryFeeService  # 配送料金計算
@@ -216,10 +230,13 @@ pro.kensait.berrybooks/
 ├── dao/                         # データアクセス層
 │   ├── BookDao                 # 書籍データアクセス
 │   ├── CategoryDao             # カテゴリデータアクセス
-│   ├── CustomerDao             # 顧客データアクセス
 │   ├── StockDao                # 在庫データアクセス
 │   ├── OrderTranDao            # 注文トランザクションデータアクセス
 │   └── OrderDetailDao          # 注文明細データアクセス
+│
+├── client/                      # 外部APIクライアント層
+│   └── customer/
+│       └── CustomerRestClient   # 顧客管理REST APIクライアント
 │
 └── entity/                      # 永続化層（JPAエンティティ）
     ├── Book                    # 書籍エンティティ
@@ -419,7 +436,7 @@ sequenceDiagram
     participant Session
     participant Bean as CustomerBean
     participant Service as CustomerService
-    participant DB as Database
+    participant RestAPI as berry-books-rest API
     
     User->>Filter: HTTP Request
     Filter->>Filter: Extract request URI
@@ -437,11 +454,12 @@ sequenceDiagram
         end
     end
     
-    Note over User,DB: Login Process
+    Note over User,RestAPI: Login Process
     User->>Bean: Enter credentials
     Bean->>Service: authenticate(email, password)
-    Service->>DB: SELECT * FROM CUSTOMER
-    DB-->>Service: Customer record
+    Service->>RestAPI: GET /customers/query_email?email={email}
+    RestAPI-->>Service: CustomerTO
+    Service->>Service: Password validation
     Service-->>Bean: Customer object
     Bean->>Session: Store CustomerBean
     Bean-->>User: Navigate to bookSearch

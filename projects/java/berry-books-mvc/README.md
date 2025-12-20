@@ -38,7 +38,7 @@ Jakarta EE 10とJSF (Jakarta Server Faces) 4.0を使用したオンライン書�
 ./gradlew :projects:java:berry-books-mvc:deploy
 ```
 
-> **重要:** `setupHsqldb`は**このプロジェクトで実行**してください。他のBerry Booksプロジェクト（`berry-books-rest`、`berry-books-frontend`）でも同じデータベースを使用します。
+> **重要:** `setupHsqldb`は**このプロジェクトで実行**してください。他のBerry Booksプロジェクト（`berry-books-rest`、`berry-books-frontend`、`berry-books-frontend-vibe`）でも同じデータベースを使用します。
 
 ### ⑤ プロジェクトを終了するときに1回だけ実行（CleanUp）
 
@@ -461,7 +461,8 @@ berry-books-rest API / Database (HSQLDB)
 ## 🔗 関連プロジェクト
 
 - **berry-books-rest**: 同じデータベースを使用するREST APIプロジェクト（顧客管理API）
-- **berry-books-frontend**: Reactで構築された管理者画面（顧客一覧・統計情報表示）
+- **berry-books-frontend**: Reactで構築された管理者画面・完成版（顧客一覧・統計情報表示）
+- **berry-books-frontend-vibe**: Reactで構築された管理者画面・研修用（顧客一覧・統計情報表示）
 
 > **Note:** これらのプロジェクトは**このプロジェクト（berry-books-mvc）でセットアップしたデータベース**を使用します。
 

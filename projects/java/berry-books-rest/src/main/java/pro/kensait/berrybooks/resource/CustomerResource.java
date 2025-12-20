@@ -19,16 +19,15 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import pro.kensait.berrybooks.dto.CustomerStatsTO;
 import pro.kensait.berrybooks.dto.CustomerTO;
-import pro.kensait.berrybooks.dto.OrderHistoryTO;
-import pro.kensait.berrybooks.dto.OrderItemTO;
 import pro.kensait.berrybooks.entity.Customer;
-import pro.kensait.berrybooks.entity.OrderDetail;
-import pro.kensait.berrybooks.entity.OrderTran;
 import pro.kensait.berrybooks.service.CustomerService;
 
-// 顧客情報を提供するREST APIリソースクラス
+/**
+ * 顧客マスタ管理REST APIリソースクラス
+ * 顧客情報（CUSTOMER テーブル）のCRUD操作を提供します。
+ * 注文情報は管理しません（アプリケーション層の責務）。
+ */
 @Path("/customers")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -39,33 +38,22 @@ public class CustomerResource {
     @Inject
     private CustomerService customerService;
 
-    // APIメソッド：全顧客と統計情報を取得する
+    // APIメソッド：全顧客を取得する
     @GET
     @Path("/")
-    public Response getAllWithStats() {
-        logger.info("[ CustomerResource#getAllWithStats ]");
+    public Response getAll() {
+        logger.info("[ CustomerResource#getAll ]");
 
         // 全顧客を取得
         List<Customer> customers = customerService.getAllCustomers();
 
-        // 顧客ごとに統計情報を追加
-        List<CustomerStatsTO> responseCustomers = new ArrayList<>();
+        // 顧客エンティティリストから、HTTPレスポンス返却用の顧客TOリストを生成する
+        List<CustomerTO> responseCustomers = new ArrayList<>();
         for (Customer customer : customers) {
-            Long orderCount = customerService.getOrderCount(customer.getCustomerId());
-            Long totalBooks = customerService.getTotalBookCount(customer.getCustomerId());
-            
-            responseCustomers.add(new CustomerStatsTO(
-                customer.getCustomerId(),
-                customer.getCustomerName(),
-                customer.getEmail(),
-                customer.getBirthday(),
-                customer.getAddress(),
-                orderCount,
-                totalBooks
-            ));
+            responseCustomers.add(toCustomerTO(customer));
         }
 
-        // 顧客統計リスト（ボディ）とHTTPステータスOKを持つResponseを返す
+        // 顧客リスト（ボディ）とHTTPステータスOKを持つResponseを返す
         return Response.ok(responseCustomers).build();
     }
 
@@ -83,25 +71,6 @@ public class CustomerResource {
  
         // 顧客TO（ボディ）とHTTPステータスOKを持つResponseを返す
         return Response.ok(responseCustomer).build();
-    }
-
-    // APIメソッド：顧客の注文履歴を取得する
-    @GET
-    @Path("/{customerId}/orders")
-    public Response getOrderHistory(@PathParam("customerId") Integer customerId) {
-        logger.info("[ CustomerResource#getOrderHistory ]");
-
-        // 顧客の注文履歴を取得する
-        List<OrderTran> orderTrans = customerService.getOrderHistory(customerId);
-
-        // OrderTranエンティティから、HTTPレスポンス返却用のOrderHistoryTOリストを生成する
-        List<OrderHistoryTO> responseOrders = new ArrayList<>();
-        for (OrderTran orderTran : orderTrans) {
-            responseOrders.add(toOrderHistoryTO(orderTran));
-        }
- 
-        // 注文履歴リスト（ボディ）とHTTPステータスOKを持つResponseを返す
-        return Response.ok(responseOrders).build();
     }
 
     // APIメソッド：顧客を取得する（一意キーからの条件検索）
@@ -210,34 +179,6 @@ public class CustomerResource {
                 customerTO.email(),
                 customerTO.birthday(),
                 customerTO.address());
-    }
-
-    // 詰め替え処理（OrderTran→OrderHistoryTO）
-    private OrderHistoryTO toOrderHistoryTO(OrderTran orderTran) {
-        List<OrderItemTO> items = new ArrayList<>();
-        
-        if (orderTran.getOrderDetails() != null) {
-            for (OrderDetail detail : orderTran.getOrderDetails()) {
-                items.add(new OrderItemTO(
-                    detail.getOrderDetailId(),
-                    detail.getBook().getBookId(),
-                    detail.getBook().getBookName(),
-                    detail.getBook().getAuthor(),
-                    detail.getPrice(),
-                    detail.getCount()
-                ));
-            }
-        }
-        
-        return new OrderHistoryTO(
-            orderTran.getOrderTranId(),
-            orderTran.getOrderDate(),
-            orderTran.getTotalPrice(),
-            orderTran.getDeliveryPrice(),
-            orderTran.getDeliveryAddress(),
-            orderTran.getSettlementType(),
-            items
-        );
     }
 }
 

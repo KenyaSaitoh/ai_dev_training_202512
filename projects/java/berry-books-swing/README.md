@@ -380,7 +380,8 @@ java -Djava.awt.headless=false -jar build/libs/berry-books-swing-1.0.0.jar
 
 - [Java Swing Documentation](https://docs.oracle.com/javase/tutorial/uiswing/)
 - [berry-books-rest API](../berry-books-rest/README.md)
-- [berry-books-frontend (React版)](../../react/berry-books-frontend/README.md)
+- [berry-books-frontend (React版・完成版)](../../react/berry-books-frontend/README.md)
+- [berry-books-frontend-vibe (React版・研修用)](../../react/berry-books-frontend-vibe/README.md)
 
 ## 🆚 他のクライアントとの比較
 

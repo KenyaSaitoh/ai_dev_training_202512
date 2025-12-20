@@ -1,4 +1,4 @@
-# berry-books-frontend プロジェクト
+# berry-books-frontend プロジェクト（完成版）
 
 ## 📖 概要
 
@@ -21,7 +21,7 @@ Berry Books オンライン書店の管理者画面（React + TypeScript）で�
 
 - **① HSQLDBサーバー** （`./gradlew startHsqldb`）
 - **② Payara Server** （`./gradlew startPayara`）
-- **berry-books プロジェクトでデータベース初期化済み** （`./gradlew :projects:java:berry-books:setupHsqldb`）
+- **berry-books-mvc プロジェクトでデータベース初期化済み** （`./gradlew :projects:java:berry-books-mvc:setupHsqldb`）
 - **berry-books-rest がデプロイ済み** （`./gradlew :projects:java:berry-books-rest:deploy`）
 
 ### ④ プロジェクトを開始するときに1回だけ実行
@@ -199,7 +199,7 @@ server: {
 
 ```bash
 # プロジェクトルートで実行
-./gradlew :projects:java:berry-books:setupHsqldb
+./gradlew :projects:java:berry-books-mvc:setupHsqldb
 ```
 
 ### ④ berry-books-rest をデプロイ

@@ -1,62 +1,97 @@
 package pro.kensait.berrybooks.entity;
 
 import java.io.Serializable;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
- * Category Entity (カテゴリマスタ)
+ * カテゴリエンティティ
  * 
- * Represents a book category in the system.
+ * テーブル: CATEGORY
+ * 目的: 書籍のカテゴリを管理
  */
 @Entity
 @Table(name = "CATEGORY")
 public class Category implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
+    /**
+     * カテゴリID（主キー、自動採番）
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CATEGORY_ID")
     private Integer categoryId;
-    
-    @Column(name = "CATEGORY_NAME", nullable = false, length = 20)
+
+    /**
+     * カテゴリ名
+     */
+    @Column(name = "CATEGORY_NAME", length = 20, nullable = false)
     private String categoryName;
-    
+
+    /**
+     * このカテゴリに属する書籍リスト
+     */
+    @OneToMany(mappedBy = "category")
+    private List<Book> books;
+
+    // ========================================
     // Constructors
-    
+    // ========================================
+
     public Category() {
     }
-    
+
     public Category(Integer categoryId, String categoryName) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
     }
-    
+
+    // ========================================
     // Getters and Setters
-    
+    // ========================================
+
     public Integer getCategoryId() {
         return categoryId;
     }
-    
+
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
-    
+
     public String getCategoryName() {
         return categoryName;
     }
-    
+
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
-    
-    // hashCode, equals, toString
-    
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
+    }
+
+    // ========================================
+    // toString, equals, hashCode
+    // ========================================
+
+    @Override
+    public String toString() {
+        return "Category [categoryId=" + categoryId + ", categoryName=" + categoryName + "]";
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -64,7 +99,7 @@ public class Category implements Serializable {
         result = prime * result + ((categoryId == null) ? 0 : categoryId.hashCode());
         return result;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -81,9 +116,5 @@ public class Category implements Serializable {
             return false;
         return true;
     }
-    
-    @Override
-    public String toString() {
-        return "Category [categoryId=" + categoryId + ", categoryName=" + categoryName + "]";
-    }
 }
+

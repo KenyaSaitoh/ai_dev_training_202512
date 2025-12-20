@@ -1,4 +1,4 @@
-# berry-books - 機能設計書（概要）
+# berry-books - 機能設計書
 
 **プロジェクトID:** berry-books  
 **バージョン:** 1.1.0  
@@ -24,11 +24,11 @@
 
 | 機能ID | 機能名 | 説明 | 詳細ドキュメント |
 |--------|--------|------|-----------------|
-| F-001 | 書籍検索・閲覧 | カテゴリやキーワードで書籍を検索し、一覧表示する | [../features/F-001-book-search/functional_design.md](../features/F-001-book-search/functional_design.md) |
-| F-002 | ショッピングカート管理 | 選択した書籍をカートに追加・管理する | [../features/F-002-shopping-cart/functional_design.md](../features/F-002-shopping-cart/functional_design.md) |
-| F-003 | 注文処理 | カート内の書籍を購入し、配送先と決済方法を指定する | [../features/F-003-order-processing/functional_design.md](../features/F-003-order-processing/functional_design.md) |
-| F-004 | 顧客管理・認証 | アカウントを登録してログインする | [../features/F-004-customer-auth/functional_design.md](../features/F-004-customer-auth/functional_design.md) |
-| F-005 | 注文履歴参照 | 過去の注文履歴を確認する | [../features/F-005-order-history/functional_design.md](../features/F-005-order-history/functional_design.md) |
+| F-001 | 書籍検索・閲覧 | カテゴリやキーワードで書籍を検索し、一覧表示する | [../features/F_001_book_search/functional_design.md](../features/F_001_book_search/functional_design.md) |
+| F-002 | ショッピングカート管理 | 選択した書籍をカートに追加・管理する | [../features/F_002_shopping_cart/functional_design.md](../features/F_002_shopping_cart/functional_design.md) |
+| F-003 | 注文処理 | カート内の書籍を購入し、配送先と決済方法を指定する | [../features/F_003_order_processing/functional_design.md](../features/F_003_order_processing/functional_design.md) |
+| F-004 | 顧客管理・認証 | アカウントを登録してログインする | [../features/F_004_customer_auth/functional_design.md](../features/F_004_customer_auth/functional_design.md) |
+| F-005 | 注文履歴参照 | 過去の注文履歴を確認する | [../features/F_005_order_history/functional_design.md](../features/F_005_order_history/functional_design.md) |
 
 ---
 
@@ -42,6 +42,9 @@
 | BR-002 | キーワード未入力の場合、書籍名と著者の両方を検索 |
 | BR-003 | 検索結果は書籍ID昇順でソート |
 | BR-004 | 在庫0の書籍も表示（購入不可） |
+| BR-005 | カバー画像ファイル名は書籍名 + ".jpg" で生成 |
+| BR-006 | カバー画像のパスは`resources/covers/{書籍名}.jpg` |
+| BR-007 | 画像ファイルが存在しない場合は`no-image.jpg`を表示 |
 
 ### 3.2 ショッピングカート管理（F-002）
 
@@ -216,26 +219,26 @@ classDiagram
 各機能の詳細設計は、以下のドキュメントを参照してください。
 
 ### F-001: 書籍検索・閲覧
-- [機能設計](../features/F-001-book-search/functional_design.md)
-- [画面設計](../features/F-001-book-search/screen_design.md)
-- [振る舞い仕様](../features/F-001-book-search/behaviors.md)
+- [機能設計](../features/F_001_book_search/functional_design.md)
+- [画面設計](../features/F_001_book_search/screen_design.md)
+- [振る舞い仕様](../features/F_001_book_search/behaviors.md)
 
 ### F-002: ショッピングカート管理
-- [機能設計](../features/F-002-shopping-cart/functional_design.md)
-- [画面設計](../features/F-002-shopping-cart/screen_design.md)
-- [振る舞い仕様](../features/F-002-shopping-cart/behaviors.md)
+- [機能設計](../features/F_002_shopping_cart/functional_design.md)
+- [画面設計](../features/F_002_shopping_cart/screen_design.md)
+- [振る舞い仕様](../features/F_002_shopping_cart/behaviors.md)
 
 ### F-003: 注文処理
-- [機能設計](../features/F-003-order-processing/functional_design.md)
-- [画面設計](../features/F-003-order-processing/screen_design.md)
-- [振る舞い仕様](../features/F-003-order-processing/behaviors.md)
+- [機能設計](../features/F_003_order_processing/functional_design.md)
+- [画面設計](../features/F_003_order_processing/screen_design.md)
+- [振る舞い仕様](../features/F_003_order_processing/behaviors.md)
 
 ### F-004: 顧客管理・認証
-- [機能設計](../features/F-004-customer-auth/functional_design.md)
-- [画面設計](../features/F-004-customer-auth/screen_design.md)
-- [振る舞い仕様](../features/F-004-customer-auth/behaviors.md)
+- [機能設計](../features/F_004_customer_auth/functional_design.md)
+- [画面設計](../features/F_004_customer_auth/screen_design.md)
+- [振る舞い仕様](../features/F_004_customer_auth/behaviors.md)
 
 ### F-005: 注文履歴参照
-- [機能設計](../features/F-005-order-history/functional_design.md)
-- [画面設計](../features/F-005-order-history/screen_design.md)
-- [振る舞い仕様](../features/F-005-order-history/behaviors.md)
+- [機能設計](../features/F_005_order_history/functional_design.md)
+- [画面設計](../features/F_005_order_history/screen_design.md)
+- [振る舞い仕様](../features/F_005_order_history/behaviors.md)

@@ -1,62 +1,97 @@
 package pro.kensait.berrybooks.entity;
 
 import java.io.Serializable;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
- * Publisher Entity (出版社マスタ)
+ * 出版社エンティティ
  * 
- * Represents a book publisher in the system.
+ * テーブル: PUBLISHER
+ * 目的: 出版社の基本情報を管理
  */
 @Entity
 @Table(name = "PUBLISHER")
 public class Publisher implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
+    /**
+     * 出版社ID（主キー、自動採番）
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PUBLISHER_ID")
     private Integer publisherId;
-    
-    @Column(name = "PUBLISHER_NAME", nullable = false, length = 30)
+
+    /**
+     * 出版社名
+     */
+    @Column(name = "PUBLISHER_NAME", length = 30, nullable = false)
     private String publisherName;
-    
+
+    /**
+     * この出版社が出版した書籍リスト
+     */
+    @OneToMany(mappedBy = "publisher")
+    private List<Book> books;
+
+    // ========================================
     // Constructors
-    
+    // ========================================
+
     public Publisher() {
     }
-    
+
     public Publisher(Integer publisherId, String publisherName) {
         this.publisherId = publisherId;
         this.publisherName = publisherName;
     }
-    
+
+    // ========================================
     // Getters and Setters
-    
+    // ========================================
+
     public Integer getPublisherId() {
         return publisherId;
     }
-    
+
     public void setPublisherId(Integer publisherId) {
         this.publisherId = publisherId;
     }
-    
+
     public String getPublisherName() {
         return publisherName;
     }
-    
+
     public void setPublisherName(String publisherName) {
         this.publisherName = publisherName;
     }
-    
-    // hashCode, equals, toString
-    
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
+    }
+
+    // ========================================
+    // toString, equals, hashCode
+    // ========================================
+
+    @Override
+    public String toString() {
+        return "Publisher [publisherId=" + publisherId + ", publisherName=" + publisherName + "]";
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -64,7 +99,7 @@ public class Publisher implements Serializable {
         result = prime * result + ((publisherId == null) ? 0 : publisherId.hashCode());
         return result;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -81,9 +116,5 @@ public class Publisher implements Serializable {
             return false;
         return true;
     }
-    
-    @Override
-    public String toString() {
-        return "Publisher [publisherId=" + publisherId + ", publisherName=" + publisherName + "]";
-    }
 }
+

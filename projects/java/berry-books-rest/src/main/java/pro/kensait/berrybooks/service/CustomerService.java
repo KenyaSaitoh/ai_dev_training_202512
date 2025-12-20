@@ -7,16 +7,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pro.kensait.berrybooks.dao.CustomerDao;
-import pro.kensait.berrybooks.dao.OrderTranDao;
 import pro.kensait.berrybooks.entity.Customer;
-import pro.kensait.berrybooks.entity.OrderTran;
 import pro.kensait.berrybooks.exception.CustomerExistsException;
 import pro.kensait.berrybooks.exception.CustomerNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-// 顧客情報の取得・登録・更新・削除を行うサービスクラス
+/**
+ * 顧客マスタ管理サービス
+ * 顧客情報（CUSTOMER テーブル）のCRUD操作を提供します。
+ * 注文情報は管理しません（アプリケーション層の責務）。
+ */
 @ApplicationScoped
 @Transactional
 public class CustomerService {
@@ -30,9 +32,6 @@ public class CustomerService {
 
     @Inject
     private CustomerDao customerDao;
-
-    @Inject
-    private OrderTranDao orderTranDao;
 
     // サービスメソッド：顧客を取得する（一意キーからの条件検索）
     public Customer getCustomerById(Integer customerId) {
@@ -115,35 +114,10 @@ public class CustomerService {
         }
     }
 
-    // サービスメソッド：顧客の注文履歴を取得する
-    public List<OrderTran> getOrderHistory(Integer customerId) {
-        logger.info("[ CustomerService#getOrderHistory ]");
-        
-        // 顧客の存在確認
-        Customer customer = customerDao.findById(customerId);
-        if (customer == null) {
-            throw new CustomerNotFoundException(CUSTOMER_NOT_FOUND_MESSAGE);
-        }
-        
-        return orderTranDao.findByCustomerId(customerId);
-    }
-
     // サービスメソッド：全顧客を取得する
     public List<Customer> getAllCustomers() {
         logger.info("[ CustomerService#getAllCustomers ]");
         return customerDao.findAll();
-    }
-
-    // サービスメソッド：顧客の注文件数を取得する
-    public Long getOrderCount(Integer customerId) {
-        logger.info("[ CustomerService#getOrderCount ]");
-        return orderTranDao.countOrdersByCustomerId(customerId);
-    }
-
-    // サービスメソッド：顧客の購入冊数を取得する
-    public Long getTotalBookCount(Integer customerId) {
-        logger.info("[ CustomerService#getTotalBookCount ]");
-        return orderTranDao.sumBookCountByCustomerId(customerId);
     }
 }
 

@@ -1,8 +1,8 @@
-# berry-books - 振る舞い仕様書（概要）
+# berry-books - 振る舞い仕様書
 
 **プロジェクトID:** berry-books  
 **バージョン:** 1.1.0  
-**Last Updated:** 2025-12-16  
+**最終更新日:** 2025-12-16  
 **ステータス:** 受入基準詳細化
 
 ---
@@ -19,7 +19,6 @@
 - [functional_design.md](functional_design.md) - 機能設計（Flows & UI）
 - [architecture_design.md](architecture_design.md) - アーキテクチャ設計
 - [data_model.md](data_model.md) - データモデル
-- [tasks.md](tasks.md) - 実装タスク
 
 ---
 
@@ -47,7 +46,7 @@
 
 ### F-001: 書籍検索・閲覧
 
-**詳細:** [../features/F-001-book-search/behaviors.md](../features/F-001-book-search/behaviors.md)
+**詳細:** [../features/F_001_book_search/behaviors.md](../features/F_001_book_search/behaviors.md)
 
 - Scenario 1: カテゴリで書籍を絞り込む
 - Scenario 2: キーワードで書籍を検索する
@@ -56,7 +55,7 @@
 
 ### F-002: ショッピングカート管理
 
-**詳細:** [../features/F-002-shopping-cart/behaviors.md](../features/F-002-shopping-cart/behaviors.md)
+**詳細:** [../features/F_002_shopping_cart/behaviors.md](../features/F_002_shopping_cart/behaviors.md)
 
 - Scenario 1: 書籍をカートに追加する
 - Scenario 2: カート内の書籍を削除する
@@ -65,7 +64,7 @@
 
 ### F-003: 注文処理
 
-**詳細:** [../features/F-003-order-processing/behaviors.md](../features/F-003-order-processing/behaviors.md)
+**詳細:** [../features/F_003_order_processing/behaviors.md](../features/F_003_order_processing/behaviors.md)
 
 - Scenario 1: 注文を確定する（正常系）
 - Scenario 2: 在庫不足エラー（異常系）
@@ -76,7 +75,7 @@
 
 ### F-004: 顧客管理・認証
 
-**詳細:** [../features/F-004-customer-auth/behaviors.md](../features/F-004-customer-auth/behaviors.md)
+**詳細:** [../features/F_004_customer_auth/behaviors.md](../features/F_004_customer_auth/behaviors.md)
 
 - Scenario 1: 新規顧客登録（正常系）
 - Scenario 2: メールアドレス重複エラー（異常系）
@@ -87,7 +86,7 @@
 
 ### F-005: 注文履歴参照
 
-**詳細:** [../features/F-005-order-history/behaviors.md](../features/F-005-order-history/behaviors.md)
+**詳細:** [../features/F_005_order_history/behaviors.md](../features/F_005_order_history/behaviors.md)
 
 - Scenario 1: 注文履歴一覧を表示する
 - Scenario 2: 注文詳細を表示する
@@ -271,16 +270,16 @@
 各機能の詳細な振る舞い仕様は、以下のドキュメントを参照してください。
 
 ### F-001: 書籍検索・閲覧
-- [振る舞い仕様](../features/F-001-book-search/behaviors.md)
+- [振る舞い仕様](../features/F_001_book_search/behaviors.md)
 
 ### F-002: ショッピングカート管理
-- [振る舞い仕様](../features/F-002-shopping-cart/behaviors.md)
+- [振る舞い仕様](../features/F_002_shopping_cart/behaviors.md)
 
 ### F-003: 注文処理
-- [振る舞い仕様](../features/F-003-order-processing/behaviors.md)
+- [振る舞い仕様](../features/F_003_order_processing/behaviors.md)
 
 ### F-004: 顧客管理・認証
-- [振る舞い仕様](../features/F-004-customer-auth/behaviors.md)
+- [振る舞い仕様](../features/F_004_customer_auth/behaviors.md)
 
 ### F-005: 注文履歴参照
-- [振る舞い仕様](../features/F-005-order-history/behaviors.md)
+- [振る舞い仕様](../features/F_005_order_history/behaviors.md)

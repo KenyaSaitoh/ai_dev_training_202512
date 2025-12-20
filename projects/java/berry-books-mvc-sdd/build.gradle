@@ -1,0 +1,210 @@
+plugins {
+    id 'war'
+    id 'java'
+}
+
+group = 'pro.kensait'
+version = '1.0.0'
+
+// Java 21を使用
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // ========================================
+    // Jakarta EE 10 Dependencies
+    // ========================================
+    // Payara Server 6にバンドルされているため、compileOnlyとする
+    compileOnly 'jakarta.platform:jakarta.jakartaee-api:10.0.0'
+    
+    // ========================================
+    // Logging Dependencies
+    // ========================================
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+    
+    // ========================================
+    // Database Driver (HSQLDB)
+    // ========================================
+    // アプリケーションサーバーで使用するため、runtimeOnlyではなくimplementation
+    implementation 'org.hsqldb:hsqldb:2.7.2'
+    
+    // ========================================
+    // Test Dependencies
+    // ========================================
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+    testImplementation 'org.mockito:mockito-core:5.5.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// ========================================
+// WAR構成
+// ========================================
+war {
+    archiveBaseName = 'berry-books'
+    archiveVersion = ''
+}
+
+// ========================================
+// テスト設定
+// ========================================
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
+
+// ========================================
+// カスタムタスク: HSQLDBセットアップ
+// ========================================
+task setupHsqldb(type: Exec) {
+    description = 'HSQLDBサーバーを起動し、データベースを初期化'
+    group = 'database'
+    
+    workingDir projectDir
+    
+    // Windows/Linuxの両方に対応
+    if (System.properties['os.name'].toLowerCase().contains('windows')) {
+        commandLine 'cmd', '/c', 'echo Please run HSQLDB server manually'
+    } else {
+        commandLine 'sh', '-c', 'echo Please run HSQLDB server manually'
+    }
+    
+    doLast {
+        println ''
+        println '========================================='
+        println 'HSQLDB Setup Instructions'
+        println '========================================='
+        println '1. Start HSQLDB server:'
+        println '   java -cp hsqldb/lib/hsqldb.jar org.hsqldb.server.Server --database.0 file:hsqldb/data/testdb --dbname.0 testdb --port 9001'
+        println ''
+        println '2. Execute DDL script:'
+        println '   Run sql/hsqldb/01_create_tables.sql'
+        println ''
+        println '3. Execute DML script:'
+        println '   Run sql/hsqldb/02_insert_master_data.sql'
+        println '========================================='
+    }
+}
+
+// ========================================
+// カスタムタスク: Payaraデプロイ
+// ========================================
+task deploy(type: Exec, dependsOn: war) {
+    description = 'Deploy WAR file to Payara Server'
+    group = 'deployment'
+    
+    workingDir projectDir
+    
+    // Payara asadmin コマンドの場所を設定（環境に応じて変更）
+    def asadminCmd = System.getenv('PAYARA_HOME') ? 
+        "${System.getenv('PAYARA_HOME')}/bin/asadmin" : 
+        'payara6/bin/asadmin'
+    
+    if (System.properties['os.name'].toLowerCase().contains('windows')) {
+        asadminCmd += '.bat'
+    }
+    
+    commandLine asadminCmd, 'deploy', '--force', 'true', '--contextroot', 'berry-books', 
+                "${buildDir}/libs/berry-books.war"
+    
+    doFirst {
+        println "Deploying ${buildDir}/libs/berry-books.war to Payara Server..."
+    }
+    
+    doLast {
+        println ''
+        println '========================================='
+        println 'Deployment Successful!'
+        println '========================================='
+        println 'Access URL: http://localhost:8080/berry-books/'
+        println '========================================='
+    }
+}
+
+// ========================================
+// カスタムタスク: Payaraアンデプロイ
+// ========================================
+task undeploy(type: Exec) {
+    description = 'Undeploy application from Payara Server'
+    group = 'deployment'
+    
+    workingDir projectDir
+    
+    def asadminCmd = System.getenv('PAYARA_HOME') ? 
+        "${System.getenv('PAYARA_HOME')}/bin/asadmin" : 
+        'payara6/bin/asadmin'
+    
+    if (System.properties['os.name'].toLowerCase().contains('windows')) {
+        asadminCmd += '.bat'
+    }
+    
+    commandLine asadminCmd, 'undeploy', 'berry-books'
+    
+    doLast {
+        println 'Application undeployed successfully.'
+    }
+}
+
+// ========================================
+// カスタムタスク: SDD成果物のクリーンアップ
+// ========================================
+task cleanSddArtifacts {
+    description = 'Clean SDD artifacts (src, sql) while preserving directory structure'
+    group = 'build'
+    
+    doLast {
+        // 削除対象のディレクトリとファイル
+        def dirsToClean = [
+            'src/main/java',
+            'src/main/resources/META-INF',
+            'src/main/webapp/resources',
+            'src/main/webapp/WEB-INF',
+            'src/test/java',
+            'src/test/resources',
+            'sql/hsqldb'
+        ]
+        
+        dirsToClean.each { dirPath ->
+            def dir = file(dirPath)
+            if (dir.exists()) {
+                // ディレクトリ内のファイルを削除
+                dir.listFiles().each { it.delete() }
+                
+                // .gitkeepファイルを作成
+                new File(dir, '.gitkeep').text = ''
+                
+                println "Cleaned: ${dirPath}"
+            }
+        }
+        
+        println ''
+        println '========================================='
+        println 'SDD Artifacts Cleaned!'
+        println '========================================='
+        println 'Directory structure preserved with .gitkeep files'
+        println 'You can now regenerate implementation from SPEC'
+        println '========================================='
+    }
+}
+
+// ========================================
+// ソースエンコーディング設定
+// ========================================
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Javadoc) {
+    options.encoding = 'UTF-8'
+}
+

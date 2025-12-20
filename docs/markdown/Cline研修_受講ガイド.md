@@ -39,20 +39,20 @@ cline_training_work/
 │   │   │   ├── src/                 # Javaソースコード
 │   │   │   └── spec/                # OpenAPI仕様書
 │   │   │
-│   │   └── struts-to-jsf-person/    # レッスン8: マイグレーション【研修用】
+│   │   └── struts-to-jsf-person-sdd/    # レッスン8: マイグレーション【研修用】
 │   │       ├── src/                 # Javaソースコード（Struts 1.3）
 │   │       ├── spec/                # 移行仕様書
 │   │       └── prompts/
 │   │           └── lesson_8_migration/
 │   │
 │   ├── react/
-│   │   └── berry-books-frontend/    # レッスン7: React SPA【研修用】
+│   │   └── berry-books-frontend-vibe/ # レッスン7: React SPA【研修用】
 │   │       ├── src/                 # React + TypeScriptソースコード
 │   │       └── prompts/
 │   │           └── lesson_7_spec_driven/
 │   │
 │   └── python/
-│       └── accounting_glue/         # レッスン9: ETLスクラッチ開発【研修用】
+│       └── accounting_etl_sdd/      # レッスン9: ETLスクラッチ開発【研修用】
 │           ├── src/                 # Pythonソースコード
 │           ├── spec/                # 要件定義書、基本設計書、詳細設計書
 │           ├── ddl/                 # データ定義（入出力仕様）
@@ -67,9 +67,9 @@ cline_training_work/
 | `berry-books-1` | Jakarta EE 10<br>JSF, CDI, JPA | 小規模改善、ガイドライン準拠、<br>不具合検出、機能拡張、単体テスト |
 | `berry-books-2` | Jakarta EE 10<br>JSF, CDI, JPA | 大規模リファクタリング<br>（Service/DAO分離） |
 | `berry-books-rest` | Jakarta EE 10<br>JAX-RS, CDI, JPA | REST API【完成版】<br>バックエンドAPI提供 |
-| `berry-books-frontend` | React 18 + TypeScript 5<br>Vite | スペック駆動開発<br>（OpenAPI仕様からのReact SPA実装） |
-| `struts-to-jsf-person` | Struts 1.3 → Jakarta EE 10<br>JSF, CDI, JPA | レガシーFWの<br>モダナイゼーション |
-| `accounting_glue` | Python<br>Pandas / PySpark | ETL処理のスクラッチ開発<br>（データ統合・変換） |
+| `berry-books-frontend-vibe` | React 18 + TypeScript 5<br>Vite | スペック駆動開発<br>（OpenAPI仕様からのReact SPA実装） |
+| `struts-to-jsf-person-sdd` | Struts 1.3 → Jakarta EE 10<br>JSF, CDI, JPA | レガシーFWの<br>モダナイゼーション |
+| `accounting_etl_sdd` | Python<br>Pandas / PySpark | ETL処理のスクラッチ開発<br>（データ統合・変換） |
 
 ## 🎓 学習手順
 
@@ -91,9 +91,9 @@ Clineのチャットパネルに、対象プロジェクトのソースフォル
 **例:**
 - レッスン1～5: `projects/java/berry-books-1/` を追加
 - レッスン6: `projects/java/berry-books-2/` を追加
-- レッスン7: `projects/react/berry-books-frontend` を追加
-- レッスン8: `projects/java/struts-to-jsf-person` を追加
-- レッスン9: `projects/python/accounting_glue` を追加
+- レッスン7: `projects/react/berry-books-frontend-vibe` を追加
+- レッスン8: `projects/java/struts-to-jsf-person-sdd` を追加
+- レッスン9: `projects/python/accounting_etl_sdd` を追加
 
 #### 2. プロンプトの選択
 
@@ -246,13 +246,13 @@ projects/java/berry-books-2/prompts/lesson_6_refactoring/
 
 ---
 
-#### レッスン7: スペック駆動開発【berry-books-frontend】
+#### レッスン7: スペック駆動開発【berry-books-frontend-vibe】
 
 **目的:** OpenAPI仕様書からのReact SPA実装
 
 **プロンプト格納先:**
 ```
-projects/react/berry-books-frontend/prompts/lesson_7_spec_driven/
+projects/react/berry-books-frontend-vibe/prompts/lesson_7_spec_driven/
 ├── prompt_1_simple.txt
 ├── prompt_2_just.txt
 └── prompt_3_much.txt
@@ -260,13 +260,13 @@ projects/react/berry-books-frontend/prompts/lesson_7_spec_driven/
 
 ---
 
-#### レッスン8: Jakarta EE 10マイグレーション【struts-to-jsf-person】
+#### レッスン8: Jakarta EE 10マイグレーション【struts-to-jsf-person-sdd】
 
 **目的:** レガシーシステム（Struts 1.3）のモダナイゼーション
 
 **プロンプト格納先:**
 ```
-projects/java/struts-to-jsf-person/prompts/lesson_8_migration/
+projects/java/struts-to-jsf-person-sdd/prompts/lesson_8_migration/
 ├── prompt_1_simple.txt
 ├── prompt_2_just.txt
 ├── prompt_3_much_1-jpa.txt（データアクセス層）
@@ -278,13 +278,13 @@ projects/java/struts-to-jsf-person/prompts/lesson_8_migration/
 
 ---
 
-#### レッスン9: ETLスクラッチ開発【accounting_glue】
+#### レッスン9: ETLスクラッチ開発【accounting_etl_sdd】
 
 **目的:** Python/PySparkによるデータ統合ETL処理の実装
 
 **プロンプト格納先:**
 ```
-projects/python/accounting_glue/prompts/lesson_9_etl_scratch/
+projects/python/accounting_etl_sdd/prompts/lesson_9_etl_scratch/
 ├── prompt_1_simple.txt
 ├── prompt_2_just.txt
 └── prompt_3_much.txt
@@ -300,13 +300,13 @@ projects/python/accounting_glue/prompts/lesson_9_etl_scratch/
 
 Jakarta EE 10を使用したオンライン書店のWebアプリケーション（顧客向け画面）。書籍検索、ショッピングカート、注文処理などのEC機能を実装している。
 
-> **Note**: 管理者画面は別途`berry-books-frontend`（React SPA）として実装。データベースは両プロジェクトで共有。
+> **Note**: 管理者画面は別途`berry-books-frontend`/`berry-books-frontend-vibe`（React SPA）として実装。データベースは両プロジェクトで共有。
 
 **採用技術**
 
 - **フレームワーク**: Jakarta EE 10（JSF, CDI, JPA）
 - **サーバー**: Payara Server 6
-- **データベース**: HSQLDB（`berry-books-frontend`と共有）
+- **データベース**: HSQLDB（`berry-books-frontend`/`berry-books-frontend-vibe`と共有）
 - **テスト**: JUnit 5 + Mockito
 
 **システム構成**
@@ -385,7 +385,7 @@ Jakarta EE 10を使用したオンライン書店のWebアプリケーション�
 
 Berry Books オンライン書店のREST APIバックエンド。Jakarta EE 10のJAX-RSを使用し、顧客管理機能をRESTful APIとして提供している。
 
-> **Note**: このプロジェクトは研修課題ではなく、**レッスン7（berry-books-frontend）のバックエンドAPIとして使用**される。
+> **Note**: このプロジェクトは研修課題ではなく、**レッスン7（berry-books-frontend-vibe）のバックエンドAPIとして使用**される。
 
 **採用技術**
 
@@ -398,7 +398,7 @@ Berry Books オンライン書店のREST APIバックエンド。Jakarta EE 10�
 
 ```
 [React Frontend] ⇄ [Payara Server] ⇄ [HSQLDB（共有DB）]
-(berry-books-frontend)  (berry-books-rest.war)
+(berry-books-frontend-vibe) (berry-books-rest.war)
                         └─ JAX-RS Resource
                         └─ Service (@ApplicationScoped)
                         └─ DAO (@ApplicationScoped)
@@ -424,7 +424,7 @@ http://localhost:8080/berry-books-rest/
 
 ---
 
-#### 📗 berry-books-frontend（レッスン7）
+#### 📗 berry-books-frontend-vibe（レッスン7）
 
 **概要**
 
@@ -478,7 +478,7 @@ http://localhost:3000
 
 ---
 
-#### 📙 struts-to-jsf-person（レッスン8）
+#### 📙 struts-to-jsf-person-sdd（レッスン8）
 
 **概要**
 
@@ -526,7 +526,7 @@ http://localhost:3000
 
 ---
 
-#### 📘 accounting_glue（レッスン9）
+#### 📘 accounting_etl_sdd（レッスン9）
 
 **概要**
 
