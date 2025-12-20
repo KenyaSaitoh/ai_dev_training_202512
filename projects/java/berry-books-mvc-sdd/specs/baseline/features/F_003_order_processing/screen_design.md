@@ -43,7 +43,7 @@
                  | (X) クレジットカード
                  | ( ) 着払い
   }
-  [  注文する（方式1）  ]  [  注文する（方式2）  ]
+  [  注文する  ]
   買い物を続ける
 }
 @endsalt
@@ -66,13 +66,10 @@ ELSE
 
 ### 動作
 
-- **買い物を続ける**: bookSelect.xhtmlへ遷移
-- **注文する（方式1）**: `OrderBean.placeOrder1()` 
-  - JavaScript確認ダイアログ表示
-  - 成功 → orderSuccess.xhtml（リダイレクト、orderTranIdをパラメータで渡す）
-  - 在庫不足 → orderError.xhtmlへ遷移（flash scopeでエラーメッセージ）
-- **注文する（方式2）**: `OrderBean.placeOrder2()`
-  - 方式1と異なる実装パターン（トランザクション管理の検証用）
+- **買い物を続ける**: bookSelect画面へ遷移
+- **注文するボタン**: 確認ダイアログ表示後、注文処理実行
+  - 成功時: orderSuccess画面へ遷移（注文IDをパラメータで渡す）
+  - 在庫不足時: orderError画面へ遷移（エラーメッセージ表示）
 
 ---
 

@@ -42,32 +42,21 @@
 
 | エリア | コンポーネント | 説明 |
 |--------|--------------|------|
-| タイトル | h2 | "条件を入力して書籍を検索してください" |
-| 検索フォーム | カテゴリドロップダウン | `bookSearchBean.searchParam.categoryId`にバインド。`bookSearchBean.categoryList`から生成 |
-| | キーワード入力 | `bookSearchBean.searchParam.keyword`にバインド |
-| | 検索実行ボタン | `bookSearchBean.search()` を呼び出し |
-| ナビゲーション | 注文履歴を表示する | orderHistory.xhtmlへ |
+| タイトル | 見出し | "条件を入力して書籍を検索してください" |
+| 検索フォーム | カテゴリドロップダウン | カテゴリリストから選択 |
+| | キーワード入力 | 書籍名検索用キーワード |
+| | 検索実行ボタン | 検索を実行しbookSelect画面へ |
+| ナビゲーション | 注文履歴を表示する | orderHistory画面へ |
 
 ### 検索ロジック
 
-**検索実行ボタン**: `BookSearchBean.search()`
-- `SearchParam`オブジェクトから検索条件を取得
-- `BookService.searchBook(SearchParam)`を使用
-- カテゴリIDとキーワードの組み合わせで検索
-- 結果は`bookList`プロパティに格納
-- bookSelect画面へリダイレクト（`faces-redirect=true`）
+検索条件の組み合わせ:
+- カテゴリ選択 + キーワード入力 → 複合検索（部分一致）
+- カテゴリ選択のみ → カテゴリ検索
+- キーワード入力のみ → 書籍名検索（部分一致）
+- 条件なし → 全書籍取得
 
-検索条件:
-```
-IF カテゴリ選択 AND キーワード入力
-  → カテゴリ + キーワード複合検索（LIKEで部分一致）
-ELSE IF カテゴリ選択のみ
-  → カテゴリ検索
-ELSE IF キーワード入力のみ
-  → キーワード検索（書籍名のLIKE検索）
-ELSE
-  → 全書籍取得
-```
+検索実行後、bookSelect画面へ遷移
 
 ---
 
@@ -114,42 +103,25 @@ ELSE
 
 ### 画像表示ルール
 
-- **画像リソース配置**: `webapp/resources/images/covers/`ディレクトリ
-- **画像ファイル名**: 書籍名（BOOK_NAME）のスペースをアンダースコアに置換し、拡張子 `.jpg` を付加
-  - 例: `Java SEディープダイブ` → `Java_SEディープダイブ.jpg`
-- **画像パス**: `library="images" name="covers/#{book.bookName.replace(' ', '_')}.jpg"`
-- **サイズ**: 
-  - CSSクラス: `.book-thumbnail`（`styleClass="book-thumbnail"`で指定）
-  - 高さ: `5cm`（幅は自動調整、アスペクト比維持）
-  - 最大幅: `100%`（セル幅を超えない）
-- **画像セル**: 
-  - CSSクラス: `.book-image-cell`
-  - 中央配置、垂直方向も中央
-  - パディング: 8px
-- **画像なし**: ファイルが存在しない場合、JavaScriptのonErrorで`no-image.jpg`を表示
-  - `onError="this.onerror=null; this.src='#{request.contextPath}/jakarta.faces.resource/no-image.jpg?ln=images/covers'"`
-- **Alt属性**: 書籍名を設定
-- **スタイル**: 角丸（4px）、シャドウ付き、ホバー時に拡大・シャドウ強調
+- **画像配置**: imagesリソースライブラリのcoversフォルダ
+- **ファイル名規則**: 書籍名のスペースをアンダースコアに置換 + `.jpg`
+- **サイズ**: 高さ5cm、幅は自動調整（アスペクト比維持）
+- **画像不在時**: no-image.jpgを表示
+- **スタイル**: サムネイル表示、中央配置
 
 ### 動作
 
-- **画面初期化（preRenderViewイベント）**: `BookSearchBean.refreshBookList()` 
-  - ページレンダリング前に書籍リストを最新の状態に更新
-  - 在庫数を最新化（他のユーザーの購入により在庫が減っている可能性があるため）
-  - `<f:metadata><f:event type="preRenderView" listener="#{bookSearchBean.refreshBookList}" /></f:metadata>`で実装
-- **買い物カゴへボタン**: `CartBean.addBook(book.bookId, 1)` → cartView.xhtmlへリダイレクト
-  - 在庫バージョン番号を保存してカートに追加（BR-012）
-  - 既存の書籍を追加する場合、数量を加算（BR-011）
-- **在庫なし**: ボタンの代わりに「入荷待ち」テキストを表示（`rendered="#{book.quantity == 0}"`）
-- **現在の買い物カゴの内容を表示する**: cartView.xhtmlへ遷移（h:link）
-- **ログアウトボタン**: `LoginBean.processLogout()` → index.xhtmlへ遷移
+- **画面初期化**: 書籍リストを最新の状態に更新（在庫数を含む）
+- **買い物カゴへボタン**: 在庫バージョン番号を保存してカートに追加（BR-012）。既存書籍は数量加算（BR-011）。cartView画面へ遷移
+- **在庫なし**: ボタンの代わりに「入荷待ち」テキストを表示
+- **現在の買い物カゴの内容を表示する**: cartView画面へ遷移
+- **ログアウトボタン**: index画面へ遷移
 
 ---
 
-## 3. 実装のポイント
+## 3. 設計のポイント
 
-- **書籍一覧の表示**: `<ui:repeat>`を使用してテーブル形式で表示
-- **在庫管理**: 在庫が0の場合、ボタンの代わりに「入荷待ち」テキストを表示
-- **画像の動的生成**: 書籍名から画像ファイル名を生成し、存在しない場合はフォールバック画像を表示
-- **複数の履歴表示方式**: 注文履歴は3つの異なる実装方式（方式1、2、3）をサポート
+- **書籍一覧**: テーブル形式で表示
+- **在庫管理**: 在庫が0の場合は「入荷待ち」表示
+- **画像表示**: 書籍名から画像ファイル名を生成、存在しない場合はフォールバック画像
 
