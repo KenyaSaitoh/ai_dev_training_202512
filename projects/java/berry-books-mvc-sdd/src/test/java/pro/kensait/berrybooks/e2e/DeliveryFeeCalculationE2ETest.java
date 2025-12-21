@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * 
  * 期待結果: 全パターンで配送料金が正しく計算される
  */
+@Tag("e2e")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DeliveryFeeCalculationE2ETest extends E2ETestBase {
 

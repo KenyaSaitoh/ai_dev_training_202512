@@ -1,9 +1,17 @@
 package pro.kensait.berrybooks.integration;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+import pro.kensait.berrybooks.dao.BookDao;
 import pro.kensait.berrybooks.entity.Book;
+import pro.kensait.berrybooks.entity.Publisher;
+import pro.kensait.berrybooks.entity.Stock;
 import pro.kensait.berrybooks.service.book.BookService;
 import pro.kensait.berrybooks.service.order.OrderTO;
 import pro.kensait.berrybooks.service.order.OrderHistoryTO;
@@ -32,16 +40,21 @@ import java.util.List;
  * 
  * 期待結果: 注文が正常に完了し、注文履歴に表示される
  */
+@ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
 
+    @Mock
+    private BookDao bookDao;
+    
+    @InjectMocks
     private BookService bookService;
+    
     private CartSession cartSession;
 
     @BeforeEach
     public void setUp() {
-        // テスト用のサービスとセッションを初期化
-        bookService = new BookService();
+        // テスト用のセッションを初期化
         cartSession = new CartSession();
         
         // カートをクリア
@@ -52,13 +65,36 @@ public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
     @Order(1)
     @DisplayName("カート → 注文処理 → 注文履歴の統合フロー")
     public void testCartToOrderHistoryFlow() throws Exception {
+        // Given: テスト用の書籍データを準備
+        Publisher publisher = new Publisher();
+        publisher.setPublisherId(1);
+        publisher.setPublisherName("Test Publisher");
+        
+        Stock stock = new Stock();
+        stock.setBookId(1);
+        stock.setQuantity(10);
+        stock.setVersion(1L);
+        
+        final Book mockBook = new Book();
+        mockBook.setBookId(1);
+        mockBook.setBookName("Test Book");
+        mockBook.setPublisher(publisher);
+        mockBook.setPrice(new BigDecimal("3000"));
+        mockBook.setStock(stock);
+        
+        List<Book> bookList = new ArrayList<>();
+        bookList.add(mockBook);
+        
+        // BookDaoのモック設定
+        when(bookDao.findByCategory(1)).thenReturn(bookList);
+        
         // Given: カートに書籍が1冊存在する
         SearchParam searchParam = new SearchParam();
         searchParam.setCategoryId(1); // Javaカテゴリ
         List<Book> books = bookService.searchBook(searchParam);
         assertFalse(books.isEmpty(), "テスト用の書籍が必要です");
         
-        Book testBook = books.get(0);
+        final Book testBook = books.get(0);
         CartItem cartItem = new CartItem();
         cartItem.setBookId(testBook.getBookId());
         cartItem.setBookName(testBook.getBookName());
@@ -99,17 +135,17 @@ public class CartToOrderHistoryIntegrationTest extends IntegrationTestBase {
         assertNotNull(orderTO.getCartItems(), "カートアイテムリストがnullです");
         assertEquals(1, orderTO.getCartItems().size(), "注文アイテムが1件であるはずです");
         
-        // Step 5: 注文完了後、カートをクリア
-        cartSession.clear();
-        assertTrue(cartSession.getCartItems().isEmpty(), 
-                "注文完了後、カートは空であるはずです");
-        
-        // Step 6: 注文履歴に反映されることを確認（サービスレイヤーでの確認）
+        // Step 5: 注文履歴に反映されることを確認（サービスレイヤーでの確認）
         // 実際のテストではorderServiceを使用して注文履歴を取得
         // ここではOrderTOの構造のみ検証
         assertTrue(orderTO.getCartItems().stream()
                 .anyMatch(item -> item.getBookId().equals(testBook.getBookId())),
                 "注文履歴に購入した書籍が含まれるはずです");
+        
+        // Step 6: 注文完了後、カートをクリア
+        cartSession.clear();
+        assertTrue(cartSession.getCartItems().isEmpty(), 
+                "注文完了後、カートは空であるはずです");
     }
     
     @Test

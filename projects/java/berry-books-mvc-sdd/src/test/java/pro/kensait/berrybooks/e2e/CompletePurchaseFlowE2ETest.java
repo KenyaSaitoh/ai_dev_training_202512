@@ -1,8 +1,12 @@
 package pro.kensait.berrybooks.e2e;
 
-import com.microsoft.playwright.Locator;
-import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 /**
  * T_INTEG_005: 新規顧客の完全購入フロー E2Eテスト
@@ -25,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * 
  * 期待結果: 全フローが正常に動作し、注文が完了する
  */
+@Tag("e2e")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CompletePurchaseFlowE2ETest extends E2ETestBase {
 

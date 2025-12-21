@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * 
  * 期待結果: 在庫不足エラーが正しく表示され、カートに戻れる
  */
+@Tag("e2e")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StockErrorFlowE2ETest extends E2ETestBase {
 

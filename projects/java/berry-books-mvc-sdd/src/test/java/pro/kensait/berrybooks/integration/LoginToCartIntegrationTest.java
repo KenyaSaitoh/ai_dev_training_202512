@@ -2,13 +2,20 @@ package pro.kensait.berrybooks.integration;
 
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import pro.kensait.berrybooks.dao.BookDao;
 import pro.kensait.berrybooks.dao.CategoryDao;
 import pro.kensait.berrybooks.entity.Book;
 import pro.kensait.berrybooks.entity.Category;
 import pro.kensait.berrybooks.entity.Customer;
+import pro.kensait.berrybooks.entity.Publisher;
+import pro.kensait.berrybooks.entity.Stock;
 import pro.kensait.berrybooks.service.book.BookService;
 import pro.kensait.berrybooks.service.customer.CustomerService;
 import pro.kensait.berrybooks.web.book.SearchParam;
@@ -16,6 +23,7 @@ import pro.kensait.berrybooks.web.cart.CartItem;
 import pro.kensait.berrybooks.web.cart.CartSession;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,18 +40,21 @@ import java.util.List;
  * 
  * 期待結果: カートに書籍が追加され、合計金額が正しく表示される
  */
+@ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LoginToCartIntegrationTest extends IntegrationTestBase {
 
-    private CustomerService customerService;
+    @Mock
+    private BookDao bookDao;
+    
+    @InjectMocks
     private BookService bookService;
+    
     private CartSession cartSession;
 
     @BeforeEach
     public void setUp() {
-        // テスト用のサービスとセッションを初期化
-        customerService = new CustomerService();
-        bookService = new BookService();
+        // テスト用のセッションを初期化
         cartSession = new CartSession();
         
         // カートをクリア
@@ -54,9 +65,28 @@ public class LoginToCartIntegrationTest extends IntegrationTestBase {
     @Order(1)
     @DisplayName("ログイン → 書籍検索 → カート追加の統合フロー")
     public void testLoginToCartFlow() throws Exception {
-        // Given: テスト用顧客が存在する
-        String testEmail = "test@example.com";
-        String testPassword = "password123";
+        // Given: テスト用の書籍データを準備
+        Publisher publisher = new Publisher();
+        publisher.setPublisherId(1);
+        publisher.setPublisherName("Test Publisher");
+        
+        Stock stock = new Stock();
+        stock.setBookId(1);
+        stock.setQuantity(10);
+        stock.setVersion(1L);
+        
+        Book testBook = new Book();
+        testBook.setBookId(1);
+        testBook.setBookName("Java Test Book");
+        testBook.setPublisher(publisher);
+        testBook.setPrice(new BigDecimal("3000"));
+        testBook.setStock(stock);
+        
+        List<Book> bookList = new ArrayList<>();
+        bookList.add(testBook);
+        
+        // BookDaoのモック設定
+        when(bookDao.findByCategory(1)).thenReturn(bookList);
         
         // When: ログイン処理
         // Note: このテストはサービスレイヤーの統合テスト
@@ -111,15 +141,51 @@ public class LoginToCartIntegrationTest extends IntegrationTestBase {
     @Order(2)
     @DisplayName("複数書籍をカートに追加して合計金額を確認")
     public void testMultipleBooksInCart() throws Exception {
+        // Given: テスト用の書籍データを準備（2冊）
+        Publisher publisher = new Publisher();
+        publisher.setPublisherId(1);
+        publisher.setPublisherName("Test Publisher");
+        
+        Stock stock1 = new Stock();
+        stock1.setBookId(1);
+        stock1.setQuantity(10);
+        stock1.setVersion(1L);
+        
+        Book book1 = new Book();
+        book1.setBookId(1);
+        book1.setBookName("Java Test Book 1");
+        book1.setPublisher(publisher);
+        book1.setPrice(new BigDecimal("3000"));
+        book1.setStock(stock1);
+        
+        Stock stock2 = new Stock();
+        stock2.setBookId(2);
+        stock2.setQuantity(10);
+        stock2.setVersion(1L);
+        
+        Book book2 = new Book();
+        book2.setBookId(2);
+        book2.setBookName("Java Test Book 2");
+        book2.setPublisher(publisher);
+        book2.setPrice(new BigDecimal("4000"));
+        book2.setStock(stock2);
+        
+        List<Book> bookList = new ArrayList<>();
+        bookList.add(book1);
+        bookList.add(book2);
+        
+        // BookDaoのモック設定
+        when(bookDao.findByCategory(1)).thenReturn(bookList);
+        
         // Given: 複数の書籍を検索
         SearchParam searchParam = new SearchParam();
         searchParam.setCategoryId(1); // Javaカテゴリ
         List<Book> searchResults = bookService.searchBook(searchParam);
         assertTrue(searchResults.size() >= 2, "テストには少なくとも2冊の書籍が必要です");
         
-        // When: 2冊の書籍をカートに追加
-        Book book1 = searchResults.get(0);
-        Book book2 = searchResults.get(1);
+        // When: 2冊の書籍をカートに追加（モックから返された書籍を再利用）
+        book1 = searchResults.get(0);
+        book2 = searchResults.get(1);
         
         CartItem item1 = new CartItem();
         item1.setBookId(book1.getBookId());
@@ -156,6 +222,42 @@ public class LoginToCartIntegrationTest extends IntegrationTestBase {
     @Order(3)
     @DisplayName("カートから書籍を削除して合計金額を再計算")
     public void testRemoveFromCart() throws Exception {
+        // Given: テスト用の書籍データを準備（2冊）
+        Publisher publisher = new Publisher();
+        publisher.setPublisherId(1);
+        publisher.setPublisherName("Test Publisher");
+        
+        Stock stock1 = new Stock();
+        stock1.setBookId(1);
+        stock1.setQuantity(10);
+        stock1.setVersion(1L);
+        
+        Book book1Entity = new Book();
+        book1Entity.setBookId(1);
+        book1Entity.setBookName("Java Test Book 1");
+        book1Entity.setPublisher(publisher);
+        book1Entity.setPrice(new BigDecimal("3000"));
+        book1Entity.setStock(stock1);
+        
+        Stock stock2 = new Stock();
+        stock2.setBookId(2);
+        stock2.setQuantity(10);
+        stock2.setVersion(1L);
+        
+        Book book2Entity = new Book();
+        book2Entity.setBookId(2);
+        book2Entity.setBookName("Java Test Book 2");
+        book2Entity.setPublisher(publisher);
+        book2Entity.setPrice(new BigDecimal("4000"));
+        book2Entity.setStock(stock2);
+        
+        List<Book> bookList = new ArrayList<>();
+        bookList.add(book1Entity);
+        bookList.add(book2Entity);
+        
+        // BookDaoのモック設定
+        when(bookDao.findByCategory(1)).thenReturn(bookList);
+        
         // Given: カートに2冊の書籍が存在する
         SearchParam searchParam = new SearchParam();
         searchParam.setCategoryId(1);

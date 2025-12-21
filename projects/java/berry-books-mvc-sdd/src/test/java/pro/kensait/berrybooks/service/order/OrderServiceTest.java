@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import jakarta.persistence.OptimisticLockException;
+import pro.kensait.berrybooks.dao.BookDao;
 import pro.kensait.berrybooks.dao.OrderDetailDao;
 import pro.kensait.berrybooks.dao.OrderTranDao;
 import pro.kensait.berrybooks.dao.StockDao;
@@ -52,6 +53,9 @@ class OrderServiceTest {
     
     @Mock
     private OrderDetailDao orderDetailDao;
+    
+    @Mock
+    private BookDao bookDao;
     
     @InjectMocks
     private OrderService orderService;
@@ -110,6 +114,26 @@ class OrderServiceTest {
         when(stockDao.findByBookId(1)).thenReturn(stock1);
         when(stockDao.findByBookId(2)).thenReturn(stock2);
         when(stockDao.update(any(Stock.class))).thenAnswer(i -> i.getArgument(0));
+        
+        // BookDaoのモック設定
+        Publisher publisher = new Publisher();
+        publisher.setPublisherId(1);
+        publisher.setPublisherName("Test Publisher");
+        
+        Book book1 = new Book();
+        book1.setBookId(1);
+        book1.setBookName("Java SE ディープダイブ");
+        book1.setPublisher(publisher);
+        book1.setPrice(new BigDecimal("3400"));
+        
+        Book book2 = new Book();
+        book2.setBookId(2);
+        book2.setBookName("SpringBoot in Cloud");
+        book2.setPublisher(publisher);
+        book2.setPrice(new BigDecimal("3000"));
+        
+        when(bookDao.findById(1)).thenReturn(book1);
+        when(bookDao.findById(2)).thenReturn(book2);
         
         OrderTran orderTran = new OrderTran();
         orderTran.setOrderTranId(1);
