@@ -106,6 +106,15 @@ public class LoginBean implements Serializable {
         return loggedIn;
     }
     
+    /**
+     * ログイン状態を設定します
+     * 
+     * @param loggedIn ログイン状態
+     */
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
+    }
+    
     
     // Getters and Setters
     

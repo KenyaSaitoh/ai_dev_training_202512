@@ -2,8 +2,12 @@
 
 **機能ID:** F-004  
 **機能名:** 顧客管理・認証  
-**バージョン:** 1.1.0  
-**最終更新日:** 2025-12-16
+**バージョン:** 1.1.1  
+**最終更新日:** 2025-12-21
+
+**変更履歴:**
+- v1.1.1 (2025-12-21): バグ修正 - Scenario 6追加（新規登録後の認証状態確認）、登録後の自動ログイン処理を明記
+- v1.1.0 (2025-12-16): 初版
 
 ---
 
@@ -50,8 +54,11 @@ And CustomerRestClient.getCustomerByEmail("alice@gmail.com")でREST API呼び出
 And 重複がないことを確認（404 Not Found）
 And CustomerTOが作成される
 And CustomerRestClient.registerCustomer(customerTO)でREST API経由でデータベースに保存される
+And CustomerBean.customerフィールドに登録済み顧客情報が設定される
+And LoginBean.setLoggedIn(true)が呼び出され、ログイン状態が設定される
 And 登録完了画面（customerOutput.xhtml）に遷移する
 And 登録された顧客情報が表示される
+And ユーザーは認証済み状態となり、書籍選択ページなど保護ページにアクセス可能
 ```
 
 **受入基準:**
@@ -59,6 +66,8 @@ And 登録された顧客情報が表示される
 - [ ] メールアドレスが一意性チェックされる（BR-030）
 - [ ] パスワードが平文で保存される（BR-031、学習用のみ）
 - [ ] 登録後、顧客IDが自動採番される
+- [ ] 登録成功後、自動的にログイン状態となる（LoginBean.loggedIn=true）
+- [ ] 登録完了画面から書籍選択ページへ遷移可能
 
 ---
 
@@ -158,7 +167,31 @@ And ログイン画面（index.xhtml）にリダイレクトされる
 
 ---
 
-### Scenario 6: ログアウト
+### Scenario 6: 新規登録後の認証状態確認
+
+```gherkin
+Given ユーザーがログイン画面（index.xhtml）にアクセスしている
+When ユーザーが新規顧客登録を完了する（Scenario 1と同様）
+Then 登録完了画面（customerOutput.xhtml）が表示される
+And CustomerBean.customerに登録済み顧客情報が保持されている
+And LoginBean.isLoggedIn()がtrueを返す
+When ユーザーが登録完了画面で「書籍の選択ページへ」リンクをクリックする
+Then 書籍選択画面（bookSelect.xhtml）に遷移する
+And AuthenticationFilterが動作する
+And LoginBean.isLoggedIn()がtrueを返すため、認証チェックを通過する
+And bookSelect.xhtmlが正常に表示される
+And ログイン画面にリダイレクトされない
+```
+
+**受入基準:**
+- [ ] 新規登録後、LoginBean.loggedInフラグがtrueに設定される
+- [ ] 登録完了画面から保護ページ（書籍選択画面など）に直接遷移できる
+- [ ] AuthenticationFilterが新規登録後のユーザーを認証済みとして扱う
+- [ ] ログイン画面にリダイレクトされずにページ遷移が完了する
+
+---
+
+### Scenario 7: ログアウト
 
 ```gherkin
 Given ユーザーがログイン済みの状態（CustomerBeanにCustomerが存在）
@@ -188,7 +221,7 @@ And ログイン画面（index.xhtml）に遷移する
 | BR-031 | パスワードは平文保存（学習用のみ、本番環境では非推奨） | Scenario 1, 3 |
 | BR-032 | セッションタイムアウト: 60分 | Scenario 3 |
 | BR-033 | 公開ページ: ログイン画面、新規登録画面、登録完了画面 | Scenario 5 |
-| BR-034 | 公開ページ以外は認証必須 | Scenario 3, 5 |
+| BR-034 | 公開ページ以外は認証必須 | Scenario 3, 5, 6 |
 
 ---
 
@@ -199,5 +232,6 @@ And ログイン画面（index.xhtml）に遷移する
 - [ ] Scenario 3: ログイン（正常系）
 - [ ] Scenario 4: ログイン失敗（異常系）
 - [ ] Scenario 5: 未ログインユーザーのアクセス制限
-- [ ] Scenario 6: ログアウト
+- [ ] Scenario 6: 新規登録後の認証状態確認
+- [ ] Scenario 7: ログアウト
 

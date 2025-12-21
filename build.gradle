@@ -1004,14 +1004,19 @@ task createConnectionPool doLast {
     
     println "Creating connection pool with URL: ${conf.hsqldb.general.url}"
     println "User: ${conf.hsqldb.general.user}"
-    println "Password: (none - HSQLDB SA default)"
+    println "Password: ${conf.hsqldb.general.password.isEmpty() ? '(empty - using space placeholder)' : '(set)'}"
+    
+    // HSQLDBは空パスワードの場合、Driverクラスを使用
+    // HSQLDB SAユーザーは空パスワードだが、Payaraは空値を受け付けないため
+    // スペース文字をパスワードとして設定（HSQLDBは空でもスペースでも認証可能）
+    def passwordValue = conf.hsqldb.general.password.isEmpty() ? " " : conf.hsqldb.general.password
     
     exec {
         executable asadmin.absolutePath
         args "create-jdbc-connection-pool"
-        args "--datasourceclassname", conf.hsqldb.datasourceClass
-        args "--restype", "javax.sql.DataSource"
-        args "--property", "url=${escapedUrl}:user=${conf.hsqldb.general.user}"
+        args "--driverclassname", conf.hsqldb.driverClass
+        args "--restype", "java.sql.Driver"
+        args "--property", "user=${conf.hsqldb.general.user}:password=${passwordValue}:url=${escapedUrl}"
         args conf.hsqldb.general.connPoolName
     }
     

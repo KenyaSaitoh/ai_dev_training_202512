@@ -21,6 +21,7 @@ import pro.kensait.berrybooks.entity.Customer;
 import pro.kensait.berrybooks.service.customer.CustomerService;
 import pro.kensait.berrybooks.service.customer.EmailAlreadyExistsException;
 import pro.kensait.berrybooks.util.AddressUtil;
+import pro.kensait.berrybooks.web.login.LoginBean;
 
 // 顧客登録画面のバッキングBean
 @Named
@@ -32,6 +33,9 @@ public class CustomerBean implements Serializable {
 
     @Inject
     private CustomerService customerService;
+    
+    @Inject
+    private LoginBean loginBean;
 
     // 現在ログイン中の顧客
     private Customer customer;
@@ -95,6 +99,9 @@ public class CustomerBean implements Serializable {
             customer = customerService.registerCustomer(newCustomer);
 
             logger.info("Customer registered: " + customer);
+            
+            // ログイン状態を設定（登録後は自動的にログイン状態にする）
+            loginBean.setLoggedIn(true);
 
             // 登録完了ページへ遷移
             return "customerOutput?faces-redirect=true";
