@@ -20,7 +20,7 @@
 - [X] **T_F004_001**: EmailAlreadyExistsExceptionの作成
   - **目的**: メールアドレス重複時にスローするカスタム例外クラスを実装する
   - **対象**: `pro.kensait.berrybooks.service.customer.EmailAlreadyExistsException`（例外クラス）
-  - **参照SPEC**: architecture_design.md の例外階層
+  - **参照SPEC**: [architecture_design.md](../specs/baseline/system/architecture_design.md) の「8. エラーハンドリング方針」
   - **注意事項**: 
     - `RuntimeException`を継承
     - フィールド: `email`（String）
@@ -33,7 +33,9 @@
 - [X] **T_F004_002**: CustomerRestClientの作成
   - **目的**: berry-books-rest APIへのREST API呼び出しを実装する
   - **対象**: `pro.kensait.berrybooks.client.customer.CustomerRestClient`（REST APIクライアント）
-  - **参照SPEC**: external_interface.md のberry-books-rest API連携、architecture_design.md の外部API層
+  - **参照SPEC**: 
+    - [external_interface.md](../specs/baseline/system/external_interface.md) の「2. berry-books-rest API連携」
+    - [architecture_design.md](../specs/baseline/system/architecture_design.md) の「2.2 コンポーネントの責務」
   - **注意事項**: 
     - `@ApplicationScoped`を付与
     - Jakarta REST Clientを使用（`ClientBuilder`）
@@ -60,7 +62,9 @@
 - [X] **T_F004_003**: CustomerServiceの作成
   - **目的**: 顧客管理のビジネスロジックを実装する
   - **対象**: `pro.kensait.berrybooks.service.customer.CustomerService`（サービスクラス）
-  - **参照SPEC**: functional_design.md（F-004）のCustomerService設計、behaviors.md（BR-030, BR-031）
+  - **参照SPEC**: 
+    - [functional_design.md](../specs/baseline/features/F_004_customer_auth/functional_design.md) の「6.2 ビジネスロジック層」
+    - [behaviors.md](../specs/baseline/system/behaviors.md) の「BR-030, BR-031」
   - **注意事項**: 
     - `@ApplicationScoped`を付与
     - `@Inject`で`CustomerRestClient`をインジェクト
@@ -83,7 +87,7 @@
 - [X] **T_F004_004**: CustomerBeanの作成
   - **目的**: 顧客情報とログイン状態を管理するセッションスコープBeanを実装する
   - **対象**: `pro.kensait.berrybooks.web.customer.CustomerBean`（セッションスコープBean）
-  - **参照SPEC**: functional_design.md（F-004）のCustomerBean設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_004_customer_auth/functional_design.md) の「6.3 プレゼンテーション層」
   - **注意事項**: 
     - `@Named`、`@SessionScoped`を付与
     - `Serializable`を実装
@@ -101,7 +105,7 @@
 - [X] **T_F004_005**: LoginBeanの作成
   - **目的**: ログイン処理のコントローラーを実装する
   - **対象**: `pro.kensait.berrybooks.web.login.LoginBean`（Managed Bean）
-  - **参照SPEC**: functional_design.md（F-004）のLoginBean設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_004_customer_auth/functional_design.md) の「6.3 プレゼンテーション層」
   - **注意事項**: 
     - `@Named`、`@ViewScoped`を付与
     - `Serializable`を実装
@@ -118,7 +122,7 @@
 - [X] **T_F004_006**: CustomerRegisterBeanの作成
   - **目的**: 新規顧客登録処理のコントローラーを実装する
   - **対象**: `pro.kensait.berrybooks.web.customer.CustomerRegisterBean`（Managed Bean）
-  - **参照SPEC**: functional_design.md（F-004）の新規登録フロー
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_004_customer_auth/functional_design.md) の「6.3 プレゼンテーション層」
   - **注意事項**: 
     - `@Named`、`@ViewScoped`を付与
     - `Serializable`を実装
@@ -137,7 +141,7 @@
 - [X] **T_F004_007**: index.xhtmlの作成
   - **目的**: ログイン画面のビューを実装する
   - **対象**: `src/main/webapp/index.xhtml`（Facelets XHTML）
-  - **参照SPEC**: screen_design.md（F-004）のログイン画面
+  - **参照SPEC**: [screen_design.md](../specs/baseline/features/F_004_customer_auth/screen_design.md) の「1. ログイン画面」
   - **注意事項**: 
     - `<h:form>`でログインフォームを作成
     - メールアドレス入力: `<h:inputText value="#{loginBean.email}"/>`（必須検証）
@@ -148,7 +152,7 @@
 - [X] **T_F004_008**: customerInput.xhtmlの作成
   - **目的**: 新規登録画面のビューを実装する
   - **対象**: `src/main/webapp/customerInput.xhtml`（Facelets XHTML）
-  - **参照SPEC**: screen_design.md（F-004）の新規登録画面
+  - **参照SPEC**: [screen_design.md](../specs/baseline/features/F_004_customer_auth/screen_design.md) の「2. 新規登録画面」
   - **注意事項**: 
     - `<h:form>`で登録フォームを作成
     - 顧客名入力: `<h:inputText value="#{customerRegisterBean.customer.customerName}"/>`（必須検証）
@@ -161,7 +165,7 @@
 - [X] **T_F004_009**: customerOutput.xhtmlの作成
   - **目的**: 登録完了画面のビューを実装する
   - **対象**: `src/main/webapp/customerOutput.xhtml`（Facelets XHTML）
-  - **参照SPEC**: screen_design.md（F-004）の登録完了画面
+  - **参照SPEC**: [screen_design.md](../specs/baseline/features/F_004_customer_auth/screen_design.md) の「3. 登録完了画面」
   - **注意事項**: 
     - 登録完了メッセージ表示: 「登録が完了しました」
     - 登録内容（顧客名、メールアドレス）を表示
@@ -174,7 +178,9 @@
 - [X] **T_F004_010**: AuthenticationFilterの動作確認
   - **目的**: 認証フィルターが正しく動作することを確認する
   - **対象**: `pro.kensait.berrybooks.web.filter.AuthenticationFilter`（common_tasksで作成済み）
-  - **参照SPEC**: functional_design.md（F-004）の認証フィルター、behaviors.md（BR-033, BR-034）
+  - **参照SPEC**: 
+    - [functional_design.md](../specs/baseline/features/F_004_customer_auth/functional_design.md) の「6.4 認証フィルター」
+    - [behaviors.md](../specs/baseline/system/behaviors.md) の「BR-033, BR-034」
   - **注意事項**: 
     - 公開ページ（`index.xhtml`, `customerInput.xhtml`, `customerOutput.xhtml`）はスキップ（BR-033）
     - 未ログインユーザーが保護ページにアクセスした場合、`index.xhtml`にリダイレクト（BR-034）
@@ -187,7 +193,9 @@
 - [X] **T_F004_011**: CustomerServiceのユニットテストの作成
   - **目的**: CustomerServiceのビジネスロジックをテストする
   - **対象**: `src/test/java/.../service/customer/CustomerServiceTest.java`（JUnit 5テスト）
-  - **参照SPEC**: constitution.md のテストカバレッジ基準
+  - **参照SPEC**: 
+    - [constitution.md](../memory/constitution.md) の「原則3: テスト駆動品質」
+    - [functional_design.md](../specs/baseline/features/F_004_customer_auth/functional_design.md) の「6.2 ビジネスロジック層」
   - **注意事項**: 
     - Mockitoで`CustomerRestClient`をモック
     - テストケース: 
@@ -223,7 +231,7 @@
 - [X] メールアドレス重複チェックが正しく実装されている（BR-030）
 - [X] パスワードは平文保存されている（BR-031）
 - [X] セッションタイムアウトが60分に設定されている（BR-032）
-- [X] ユニットテストが実装され、カバレッジ80%以上
+- [X] 単体テストが実装されている
 - [X] プロジェクトがビルドでき、エラーがない
 - [ ] 手動テスト: 新規登録、ログイン、ログアウト、認証フィルターが正常に動作する
 

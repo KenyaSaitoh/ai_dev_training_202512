@@ -20,7 +20,7 @@
 - [X] **T_INTEG_001**: ログイン → 書籍検索 → カート追加の結合テスト
   - **目的**: F-004（顧客管理・認証）→ F-001（書籍検索）→ F-002（ショッピングカート）の連携を確認する
   - **対象**: ログイン画面 → 書籍検索画面 → カート画面
-  - **参照SPEC**: behaviors.md の全体フロー
+  - **参照SPEC**: [behaviors.md](../specs/baseline/system/behaviors.md) の「全体フロー」
   - **テストシナリオ**:
     1. ログイン画面でログイン
     2. 書籍検索画面でカテゴリ「Java」を選択して検索
@@ -32,7 +32,7 @@
 - [X] **T_INTEG_002**: カート → 注文処理 → 注文履歴の結合テスト
   - **目的**: F-002（ショッピングカート）→ F-003（注文処理）→ F-005（注文履歴）の連携を確認する
   - **対象**: カート画面 → 注文入力画面 → 注文完了画面 → 注文履歴画面
-  - **参照SPEC**: behaviors.md の注文処理フロー
+  - **参照SPEC**: [behaviors.md](../specs/baseline/system/behaviors.md) の「注文処理フロー」
   - **テストシナリオ**:
     1. カート画面で「注文に進む」ボタンをクリック
     2. 注文入力画面で配送先住所を入力
@@ -46,7 +46,9 @@
 - [X] **T_INTEG_003**: 在庫減算と楽観的ロックの結合テスト
   - **目的**: F-003（注文処理）の在庫減算と楽観的ロック制御を確認する
   - **対象**: 注文処理、在庫管理
-  - **参照SPEC**: behaviors.md の楽観的ロックシナリオ、architecture_design.md の楽観的ロック戦略
+  - **参照SPEC**: 
+    - [behaviors.md](../specs/baseline/system/behaviors.md) の「楽観的ロックシナリオ」
+    - [architecture_design.md](../specs/baseline/system/architecture_design.md) の「7. 並行制御」
   - **テストシナリオ**:
     1. 2つのブラウザで同じ書籍をカートに追加（同じVERSION値を保存）
     2. ブラウザ1で注文確定（成功、在庫減算、VERSION=1）
@@ -56,7 +58,7 @@
 - [X] **T_INTEG_004**: 認証フィルターの結合テスト
   - **目的**: F-004（顧客管理・認証）の認証フィルターを確認する
   - **対象**: 認証フィルター、全保護ページ
-  - **参照SPEC**: behaviors.md の認証・セッションシナリオ
+  - **参照SPEC**: [behaviors.md](../specs/baseline/system/behaviors.md) の「認証・セッションシナリオ」
   - **テストシナリオ**:
     1. 未ログイン状態で保護ページ（`bookSearch.xhtml`）に直接アクセス
     2. ログイン画面にリダイレクトされることを確認
@@ -75,7 +77,9 @@
 - [X] **T_INTEG_005**: 新規顧客の完全購入フロー
   - **目的**: 新規顧客が登録から購入までの全フローを実行できることを確認する
   - **対象**: 全画面（新規登録 → ログイン → 書籍検索 → カート追加 → 注文確定 → 注文履歴）
-  - **参照SPEC**: requirements.md の業務フロー、screen_design.md の画面遷移図
+  - **参照SPEC**: 
+    - [requirements.md](../specs/baseline/system/requirements.md) の「業務フロー」
+    - [screen_design.md](../specs/baseline/system/screen_design.md) の「画面遷移図」
   - **推奨ツール**: Playwright (Java) - クロスブラウザ対応の自動E2Eテスト
   - **テストシナリオ**:
     1. 新規顧客登録（氏名、メールアドレス、パスワード入力）
@@ -95,7 +99,7 @@
 - [X] **T_INTEG_006**: 在庫不足エラーフロー
   - **目的**: 在庫不足時のエラーハンドリングを確認する
   - **対象**: 注文処理、エラー画面
-  - **参照SPEC**: behaviors.md の在庫管理シナリオ
+  - **参照SPEC**: [behaviors.md](../specs/baseline/system/behaviors.md) の「在庫管理シナリオ」
   - **テストシナリオ**:
     1. 在庫1冊の書籍をカートに追加
     2. データベースで在庫を0に変更（手動）
@@ -108,7 +112,7 @@
 - [X] **T_INTEG_007**: 配送料金計算の全パターンテスト
   - **目的**: 配送料金計算の全パターンを確認する
   - **対象**: 注文入力画面、配送料金計算
-  - **参照SPEC**: behaviors.md の配送料金計算シナリオ
+  - **参照SPEC**: [behaviors.md](../specs/baseline/system/behaviors.md) の「配送料金計算シナリオ」
   - **テストシナリオ**:
     1. パターン1: 購入金額4999円、東京都 → 配送料800円
     2. パターン2: 購入金額5000円、東京都 → 配送料0円（送料無料）
@@ -119,7 +123,9 @@
 - [X] **T_INTEG_008**: Playwright E2Eテストスイートの作成（オプション）
   - **目的**: 画面遷移図に基づいた自動E2Eテストスイートを実装する
   - **対象**: 主要画面遷移フロー全体
-  - **参照SPEC**: screen_design.md の画面遷移図、architecture_design.md のテスト戦略
+  - **参照SPEC**: 
+    - [screen_design.md](../specs/baseline/system/screen_design.md) の「画面遷移図」
+    - [architecture_design.md](../specs/baseline/system/architecture_design.md) の「13. テスト戦略」
   - **実装内容**:
     - Playwright (Java) を使用した自動E2Eテストの実装
     - 主要フロー（ログイン → 検索 → カート → 注文 → 履歴）のテストケース作成
@@ -144,7 +150,7 @@
 - [X] **T_INTEG_009**: 書籍検索のレスポンスタイムテスト
   - **目的**: 書籍検索のレスポンスタイムが2秒以内であることを確認する
   - **対象**: 書籍検索機能
-  - **参照SPEC**: requirements.md のパフォーマンス要件
+  - **参照SPEC**: [requirements.md](../specs/baseline/system/requirements.md) の「非機能要件」
   - **テストシナリオ**:
     1. カテゴリ「Java」で検索（50冊の書籍が存在すると仮定）
     2. レスポンスタイムを計測
@@ -153,7 +159,7 @@
 - [X] **T_INTEG_010**: 注文処理のレスポンスタイムテスト
   - **目的**: 注文処理のレスポンスタイムが3秒以内であることを確認する
   - **対象**: 注文処理機能
-  - **参照SPEC**: requirements.md のパフォーマンス要件
+  - **参照SPEC**: [requirements.md](../specs/baseline/system/requirements.md) の「非機能要件」
   - **テストシナリオ**:
     1. カートに5冊の書籍を追加
     2. 注文確定ボタンをクリック
@@ -163,7 +169,7 @@
 - [X] **T_INTEG_011**: 同時アクセステスト（50ユーザー）
   - **目的**: 50ユーザーの同時アクセスに対応できることを確認する
   - **対象**: システム全体
-  - **参照SPEC**: requirements.md のパフォーマンス要件
+  - **参照SPEC**: [requirements.md](../specs/baseline/system/requirements.md) の「非機能要件」
   - **テストシナリオ**:
     1. 50ユーザーが同時にログイン
     2. 各ユーザーが書籍検索を実行
@@ -179,21 +185,21 @@
 - [X] **T_INTEG_012**: Chromeでの動作確認
   - **目的**: Chrome最新版で全機能が正常に動作することを確認する
   - **対象**: 全画面
-  - **参照SPEC**: requirements.md の非機能要件
+  - **参照SPEC**: [requirements.md](../specs/baseline/system/requirements.md) の「非機能要件」
   - **テストシナリオ**: エンドツーエンドテスト（T_INTEG_005）をChromeで実行
   - **期待結果**: 全機能が正常に動作する
 
 - [X] **T_INTEG_013**: Firefoxでの動作確認
   - **目的**: Firefox最新版で全機能が正常に動作することを確認する
   - **対象**: 全画面
-  - **参照SPEC**: requirements.md の非機能要件
+  - **参照SPEC**: [requirements.md](../specs/baseline/system/requirements.md) の「非機能要件」
   - **テストシナリオ**: エンドツーエンドテスト（T_INTEG_005）をFirefoxで実行
   - **期待結果**: 全機能が正常に動作する
 
 - [X] **T_INTEG_014**: Edgeでの動作確認
   - **目的**: Edge最新版で全機能が正常に動作することを確認する
   - **対象**: 全画面
-  - **参照SPEC**: requirements.md の非機能要件
+  - **参照SPEC**: [requirements.md](../specs/baseline/system/requirements.md) の「非機能要件」
   - **テストシナリオ**: エンドツーエンドテスト（T_INTEG_005）をEdgeで実行
   - **期待結果**: 全機能が正常に動作する
 
@@ -204,7 +210,7 @@
 - [X] **T_INTEG_015**: 全受入基準の確認
   - **目的**: behaviors.md の全受入基準が満たされていることを確認する
   - **対象**: 全機能
-  - **参照SPEC**: behaviors.md の全シナリオ
+  - **参照SPEC**: [behaviors.md](../specs/baseline/system/behaviors.md) の「全シナリオ」
   - **テストシナリオ**:
     - F-001: 全4シナリオ（カテゴリ検索、キーワード検索、組み合わせ検索、在庫なし表示）
     - F-002: 全4シナリオ（カート追加、削除、クリア、同じ書籍追加）
@@ -216,7 +222,7 @@
 - [X] **T_INTEG_016**: エラーメッセージの確認
   - **目的**: behaviors.md の全エラーメッセージが正しく表示されることを確認する
   - **対象**: 全エラーシナリオ
-  - **参照SPEC**: behaviors.md のエラーメッセージ一覧
+  - **参照SPEC**: [behaviors.md](../specs/baseline/system/behaviors.md) の「エラーメッセージ一覧」
   - **テストシナリオ**:
     - VAL-001〜004: 検証エラー
     - BIZ-001〜005: ビジネスエラー
@@ -226,7 +232,7 @@
 - [X] **T_INTEG_017**: ログ出力の確認
   - **目的**: 全主要処理でログが正しく出力されることを確認する
   - **対象**: 全Serviceクラス、全Managed Beanクラス
-  - **参照SPEC**: architecture_design.md のログ戦略
+  - **参照SPEC**: [architecture_design.md](../specs/baseline/system/architecture_design.md) の「11. ログ戦略」
   - **テストシナリオ**:
     1. エンドツーエンドテスト（T_INTEG_005）を実行
     2. ログファイルを確認
@@ -237,7 +243,7 @@
 - [X] **T_INTEG_018**: テストカバレッジの確認
   - **目的**: ユニットテストのカバレッジが80%以上であることを確認する
   - **対象**: 全Serviceクラス
-  - **参照SPEC**: constitution.md のテストカバレッジ基準
+  - **参照SPEC**: [constitution.md](../memory/constitution.md) の「原則3: テスト駆動品質」
   - **テストシナリオ**:
     1. JaCoCoでカバレッジレポートを生成
     2. Serviceレイヤーのカバレッジが80%以上であることを確認
@@ -246,7 +252,7 @@
 - [X] **T_INTEG_019**: 最終ビルドとデプロイの確認
   - **目的**: プロジェクトが正常にビルドでき、デプロイできることを確認する
   - **対象**: プロジェクト全体
-  - **参照SPEC**: architecture_design.md のビルド＆デプロイ
+  - **参照SPEC**: [architecture_design.md](../specs/baseline/system/architecture_design.md) の「12. ビルド＆デプロイ」
   - **テストシナリオ**:
     1. `./gradlew clean`を実行
     2. `./gradlew :projects:java:berry-books-mvc-sdd:war`を実行
@@ -289,10 +295,10 @@
 
 全タスク完了後、以下を確認してください：
 
-- [ ] requirements.md の成功基準（12. 成功基準）が全て満たされている
-- [ ] architecture_design.md のアーキテクチャパターンが遵守されている
-- [ ] constitution.md の開発原則が遵守されている
-- [ ] behaviors.md の全受入基準が満たされている
+- [ ] [requirements.md](../specs/baseline/system/requirements.md) の「12. 成功基準」が全て満たされている
+- [ ] [architecture_design.md](../specs/baseline/system/architecture_design.md) のアーキテクチャパターンが遵守されている
+- [ ] [constitution.md](../memory/constitution.md) の開発原則が遵守されている
+- [ ] [behaviors.md](../specs/baseline/system/behaviors.md) の全受入基準が満たされている
 - [ ] プロジェクトが本番環境にデプロイ可能な状態である
 
 ---

@@ -248,3 +248,5 @@ graph TD
 
 - [constitution.md](../memory/constitution.md) - プロジェクト開発憲章
 
+**注意**: 各タスクの「参照SPEC」はMarkdownリンク形式で記述されています。クリックして直接SPECファイルに移動できます。
+

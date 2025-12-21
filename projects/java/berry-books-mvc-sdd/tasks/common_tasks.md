@@ -20,19 +20,19 @@
 - [X] **T_COMMON_001**: MessageUtilの作成
   - **目的**: メッセージリソース（messages.properties）からメッセージを取得するユーティリティクラスを実装する
   - **対象**: `pro.kensait.berrybooks.common.MessageUtil`（ユーティリティクラス）
-  - **参照SPEC**: functional_design.md の共通ユーティリティ
+  - **参照SPEC**: [architecture_design.md](../specs/baseline/system/architecture_design.md) の「8. エラーハンドリング方針」
   - **注意事項**: `final`クラス、`static`メソッドで実装。`ResourceBundle`を使用してメッセージを取得
 
 - [X] **T_COMMON_002**: SettlementTypeの作成
   - **目的**: 決済方法を表す列挙型を実装する
   - **対象**: `pro.kensait.berrybooks.common.SettlementType`（Enum）
-  - **参照SPEC**: functional_design.md の共通ユーティリティ、data_model.md のORDER_TRAN
+  - **参照SPEC**: [data_model.md](../specs/baseline/system/data_model.md) の「4.6 ORDER_TRAN（注文トランザクション）」
   - **注意事項**: 定数: `BANK_TRANSFER(1)`, `CREDIT_CARD(2)`, `CASH_ON_DELIVERY(3)`。`getLabel()`メソッドで日本語ラベルを返す
 
 - [X] **T_COMMON_003**: AddressUtilの作成
   - **目的**: 住所処理（沖縄県判定）のユーティリティクラスを実装する
   - **対象**: `pro.kensait.berrybooks.util.AddressUtil`（ユーティリティクラス）
-  - **参照SPEC**: functional_design.md（F-003: 配送料金計算）
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_003_order_processing/functional_design.md) の「6.2 ビジネスロジック層」
   - **注意事項**: `isOkinawa(String address)`メソッドで住所に「沖縄」が含まれるか判定
 
 ---
@@ -42,19 +42,19 @@
 - [X] **T_COMMON_004**: Publisherエンティティの作成
   - **目的**: 出版社マスタのエンティティクラスを実装する
   - **対象**: `pro.kensait.berrybooks.entity.Publisher`（JPAエンティティ）
-  - **参照SPEC**: data_model.md の PUBLISHER テーブル
+  - **参照SPEC**: [data_model.md](../specs/baseline/system/data_model.md) の「4.1 PUBLISHER（出版社マスタ）」
   - **注意事項**: `@Entity`、`@Id`、`@GeneratedValue(strategy = GenerationType.IDENTITY)`を使用。フィールド: `publisherId`, `publisherName`
 
 - [X] **T_COMMON_005**: Categoryエンティティの作成
   - **目的**: カテゴリマスタのエンティティクラスを実装する
   - **対象**: `pro.kensait.berrybooks.entity.Category`（JPAエンティティ）
-  - **参照SPEC**: data_model.md の CATEGORY テーブル
+  - **参照SPEC**: [data_model.md](../specs/baseline/system/data_model.md) の「4.2 CATEGORY（カテゴリマスタ）」
   - **注意事項**: `@Entity`、`@Id`、`@GeneratedValue(strategy = GenerationType.IDENTITY)`を使用。フィールド: `categoryId`, `categoryName`
 
 - [X] **T_COMMON_006**: Bookエンティティの作成
   - **目的**: 書籍マスタのエンティティクラスを実装する
   - **対象**: `pro.kensait.berrybooks.entity.Book`（JPAエンティティ）
-  - **参照SPEC**: data_model.md の BOOK テーブル
+  - **参照SPEC**: [data_model.md](../specs/baseline/system/data_model.md) の「4.3 BOOK（書籍マスタ）」
   - **注意事項**: 
     - フィールド: `bookId`, `bookName`, `author`, `categoryId`, `publisherId`, `price`
     - `@ManyToOne`で`Category`と`Publisher`を関連付け
@@ -64,7 +64,9 @@
 - [X] **T_COMMON_007**: Stockエンティティの作成
   - **目的**: 在庫情報のエンティティクラスを実装する（楽観的ロック対応）
   - **対象**: `pro.kensait.berrybooks.entity.Stock`（JPAエンティティ）
-  - **参照SPEC**: data_model.md の STOCK テーブル、architecture_design.md の楽観的ロック戦略
+  - **参照SPEC**: 
+    - [data_model.md](../specs/baseline/system/data_model.md) の「4.4 STOCK（在庫情報）」
+    - [architecture_design.md](../specs/baseline/system/architecture_design.md) の「7. 並行制御」
   - **注意事項**: 
     - フィールド: `bookId`, `quantity`, `version`
     - `@Version`アノテーションを`version`フィールドに付与（楽観的ロック用）
@@ -73,7 +75,7 @@
 - [X] **T_COMMON_008**: Customerエンティティの作成
   - **目的**: 顧客情報のエンティティクラスを実装する
   - **対象**: `pro.kensait.berrybooks.entity.Customer`（JPAエンティティ）
-  - **参照SPEC**: data_model.md の CUSTOMER テーブル
+  - **参照SPEC**: [data_model.md](../specs/baseline/system/data_model.md) の「4.5 CUSTOMER（顧客情報）」
   - **注意事項**: 
     - フィールド: `customerId`, `customerName`, `email`, `password`, `birthday`, `address`
     - `@Column(unique = true)`を`email`に付与
@@ -82,7 +84,7 @@
 - [X] **T_COMMON_009**: OrderTranエンティティの作成
   - **目的**: 注文トランザクションのエンティティクラスを実装する
   - **対象**: `pro.kensait.berrybooks.entity.OrderTran`（JPAエンティティ）
-  - **参照SPEC**: data_model.md の ORDER_TRAN テーブル
+  - **参照SPEC**: [data_model.md](../specs/baseline/system/data_model.md) の「4.6 ORDER_TRAN（注文トランザクション）」
   - **注意事項**: 
     - フィールド: `orderTranId`, `orderDate`, `customerId`, `totalPrice`, `deliveryPrice`, `deliveryAddress`, `settlementType`
     - `@ManyToOne`で`Customer`と関連付け
@@ -91,7 +93,7 @@
 - [X] **T_COMMON_010**: OrderDetailエンティティの作成
   - **目的**: 注文明細のエンティティクラスを実装する
   - **対象**: `pro.kensait.berrybooks.entity.OrderDetail`（JPAエンティティ）
-  - **参照SPEC**: data_model.md の ORDER_DETAIL テーブル
+  - **参照SPEC**: [data_model.md](../specs/baseline/system/data_model.md) の「4.7 ORDER_DETAIL（注文明細）」
   - **注意事項**: 
     - フィールド: `orderTranId`, `orderDetailId`, `bookId`, `price`, `count`
     - `@EmbeddedId`で複合主キー（`OrderDetailPK`）を使用
@@ -100,7 +102,7 @@
 - [X] **T_COMMON_011**: OrderDetailPKの作成
   - **目的**: 注文明細の複合主キークラスを実装する
   - **対象**: `pro.kensait.berrybooks.entity.OrderDetailPK`（埋め込み可能クラス）
-  - **参照SPEC**: data_model.md の ORDER_DETAIL テーブル
+  - **参照SPEC**: [data_model.md](../specs/baseline/system/data_model.md) の「4.7 ORDER_DETAIL（注文明細）」
   - **注意事項**: 
     - `@Embeddable`を付与
     - フィールド: `orderTranId`, `orderDetailId`
@@ -114,7 +116,7 @@
 - [X] **T_COMMON_012**: CategoryDaoの作成
   - **目的**: カテゴリマスタのデータアクセスクラスを実装する
   - **対象**: `pro.kensait.berrybooks.dao.CategoryDao`（DAOクラス）
-  - **参照SPEC**: architecture_design.md のデータアクセス層
+  - **参照SPEC**: [architecture_design.md](../specs/baseline/system/architecture_design.md) の「2.2 コンポーネントの責務」
   - **注意事項**: 
     - `@ApplicationScoped`を付与
     - `@PersistenceContext`で`EntityManager`をインジェクト
@@ -127,7 +129,7 @@
 - [X] **T_COMMON_013**: CategoryServiceの作成
   - **目的**: カテゴリ管理のビジネスロジックを実装する
   - **対象**: `pro.kensait.berrybooks.service.category.CategoryService`（サービスクラス）
-  - **参照SPEC**: architecture_design.md のビジネスロジック層
+  - **参照SPEC**: [architecture_design.md](../specs/baseline/system/architecture_design.md) の「2.2 コンポーネントの責務」
   - **注意事項**: 
     - `@ApplicationScoped`を付与
     - `@Inject`で`CategoryDao`をインジェクト
@@ -136,7 +138,9 @@
 - [X] **T_COMMON_014**: DeliveryFeeServiceの作成
   - **目的**: 配送料金計算のビジネスロジックを実装する
   - **対象**: `pro.kensait.berrybooks.service.delivery.DeliveryFeeService`（サービスクラス）
-  - **参照SPEC**: functional_design.md（F-003: 配送料金計算）、behaviors.md（BR-020）
+  - **参照SPEC**: 
+    - [functional_design.md](../specs/baseline/features/F_003_order_processing/functional_design.md) の「6.2 ビジネスロジック層」
+    - [behaviors.md](../specs/baseline/system/behaviors.md) の「BR-020」
   - **注意事項**: 
     - `@ApplicationScoped`を付与
     - メソッド: `calculateDeliveryFee(BigDecimal totalPrice, String deliveryAddress)`
@@ -150,7 +154,9 @@
 - [X] **T_COMMON_015**: AuthenticationFilterの作成
   - **目的**: 未ログインユーザーの保護ページアクセスを制限する認証フィルターを実装する
   - **対象**: `pro.kensait.berrybooks.web.filter.AuthenticationFilter`（Servlet Filter）
-  - **参照SPEC**: architecture_design.md の認証フロー、behaviors.md（BR-034）
+  - **参照SPEC**: 
+    - [architecture_design.md](../specs/baseline/system/architecture_design.md) の「9. セキュリティ」
+    - [behaviors.md](../specs/baseline/system/behaviors.md) の「BR-034」
   - **注意事項**: 
     - `@WebFilter(urlPatterns = "/*")`を付与
     - セッションから`CustomerBean`を取得

@@ -20,7 +20,9 @@
 - [X] **T_F005_001**: OrderTranDaoへのメソッド追加
   - **目的**: 注文履歴と注文詳細取得のためのメソッドを追加する
   - **対象**: `pro.kensait.berrybooks.dao.OrderTranDao`（F-003で作成済み）
-  - **参照SPEC**: functional_design.md（F-005）のOrderTranDao設計、behaviors.md（BR-040, BR-041, BR-042）
+  - **参照SPEC**: 
+    - [functional_design.md](../specs/baseline/features/F_005_order_history/functional_design.md) の「6.2 データアクセス層」
+    - [behaviors.md](../specs/baseline/system/behaviors.md) の「BR-040, BR-041, BR-042」
   - **注意事項**: 
     - メソッド: `findByCustomerId(Integer customerId)`（既にF-003で実装済みの場合はスキップ）
       - 顧客IDで注文履歴を取得（BR-040）
@@ -33,7 +35,7 @@
 - [X] **T_F005_002**: OrderDetailDaoへのメソッド追加確認
   - **目的**: 注文明細取得のためのメソッドを確認する
   - **対象**: `pro.kensait.berrybooks.dao.OrderDetailDao`（F-003で作成済み）
-  - **参照SPEC**: functional_design.md（F-005）のOrderDetailDao設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_005_order_history/functional_design.md) の「6.2 データアクセス層」
   - **注意事項**: 
     - メソッド: `findByOrderTranId(Long orderTranId)`（既にF-003で実装済みの場合はスキップ）
 
@@ -44,7 +46,7 @@
 - [X] **T_F005_003**: OrderServiceへのメソッド追加
   - **目的**: 注文履歴と注文詳細取得のためのメソッドを追加する
   - **対象**: `pro.kensait.berrybooks.service.order.OrderService`（F-003で作成済み）
-  - **参照SPEC**: functional_design.md（F-005）のOrderService設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_005_order_history/functional_design.md) の「6.3 ビジネスロジック層」
   - **注意事項**: 
     - メソッド: `getOrderHistory(Integer customerId)`（既にF-003で実装済みの場合はスキップ）
       - `orderTranDao.findByCustomerId(customerId)`を呼び出し
@@ -62,7 +64,7 @@
 - [X] **T_F005_004**: OrderHistoryBeanの作成
   - **目的**: 注文履歴画面のコントローラーを実装する
   - **対象**: `pro.kensait.berrybooks.web.order.OrderHistoryBean`（Managed Bean）
-  - **参照SPEC**: functional_design.md（F-005）のOrderBean設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_005_order_history/functional_design.md) の「6.4 プレゼンテーション層」
   - **注意事項**: 
     - `@Named`、`@ViewScoped`を付与
     - `Serializable`を実装
@@ -86,7 +88,7 @@
 - [X] **T_F005_005**: orderHistory.xhtmlの作成
   - **目的**: 注文履歴一覧画面のビューを実装する
   - **対象**: `src/main/webapp/orderHistory.xhtml`（Facelets XHTML）
-  - **参照SPEC**: screen_design.md（F-005）の注文履歴画面
+  - **参照SPEC**: [screen_design.md](../specs/baseline/features/F_005_order_history/screen_design.md) の「1. 注文履歴一覧画面」
   - **注意事項**: 
     - `<h:dataTable>`で注文履歴を表示（`#{orderHistoryBean.orderHistoryList}`をソース）
     - 各行に注文情報（注文番号、注文日、合計金額、配送料金、決済方法名）を表示
@@ -97,7 +99,7 @@
 - [X] **T_F005_006**: orderDetail.xhtmlの作成
   - **目的**: 注文詳細画面のビューを実装する
   - **対象**: `src/main/webapp/orderDetail.xhtml`（Facelets XHTML）
-  - **参照SPEC**: screen_design.md（F-005）の注文詳細画面
+  - **参照SPEC**: [screen_design.md](../specs/baseline/features/F_005_order_history/screen_design.md) の「2. 注文詳細画面」
   - **注意事項**: 
     - 注文情報表示: 注文番号、注文日、配送先住所、決済方法、配送料金、合計金額
     - `<h:dataTable>`で注文明細を表示（`#{orderHistoryBean.orderSummary.orderDetails}`をソース）
@@ -111,7 +113,9 @@
 - [X] **T_F005_007**: OrderServiceのユニットテストの追加
   - **目的**: OrderServiceの注文履歴・詳細取得ロジックをテストする
   - **対象**: `src/test/java/.../service/order/OrderServiceTest.java`（F-003で作成済み、テストケース追加）
-  - **参照SPEC**: constitution.md のテストカバレッジ基準
+  - **参照SPEC**: 
+    - [constitution.md](../memory/constitution.md) の「原則3: テスト駆動品質」
+    - [functional_design.md](../specs/baseline/features/F_005_order_history/functional_design.md) の「6.3 ビジネスロジック層」
   - **注意事項**: 
     - Mockitoで`OrderTranDao`, `OrderDetailDao`をモック
     - テストケース: 
@@ -143,7 +147,7 @@
 - [X] 注文日降順でソートされている（BR-041）
 - [X] 注文詳細が注文IDで取得されている（BR-042）
 - [X] JOIN FETCHでN+1問題を回避している
-- [X] ユニットテストが追加され、カバレッジ80%以上
+- [X] 単体テストが追加されている
 - [X] プロジェクトがビルドでき、エラーがない
 - [ ] 手動テスト: 注文履歴一覧、注文詳細が正常に表示される
 

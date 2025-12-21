@@ -1,49 +1,40 @@
-# berry-books Spec-Driven Development Constitution
+# berry-books 仕様駆動開発憲章
 
-**Version:** 1.0.0  
-**Ratification Date:** 2025-12-13  
-**Last Amended:** 2025-12-13
+**バージョン:** 1.0.0  
+**制定日:** 2025-12-13  
+**最終更新日:** 2025-12-13
 
-## Project Overview
+## プロジェクト概要
 
-**Project Name:** berry-books Spec-Driven  
-**Description:** Jakarta EE 10とJSF (Jakarta Server Faces) 4.0を使用したオンライン書店アプリケーション  
-**Technology Stack:** Jakarta EE 10, JSF 4.0, JPA 3.1, Payara Server 6, HSQLDB
+**プロジェクト名:** berry-books Spec-Driven  
+**説明:** Jakarta EE 10とJSF (Jakarta Server Faces) 4.0を使用したオンライン書店アプリケーション  
+**技術スタック:** Jakarta EE 10, JSF 4.0, JPA 3.1, Payara Server 6, HSQLDB
 
-## Development Principles
+## 開発原則
 
-### Principle 1: Specification-First Development
+### 原則1: 仕様ファースト開発
 すべての機能開発は、詳細な仕様書の作成から始めます。実装前に仕様を明確化し、レビューを経て承認されたものだけを実装します。
 
-**Rationale:** 仕様駆動開発により、実装の手戻りを最小化し、品質の高いソフトウェアを効率的に開発します。
+**根拠:** 仕様駆動開発により、実装の手戻りを最小化し、品質の高いソフトウェアを効率的に開発します。
 
-### Principle 2: Architecture Consistency
+### 原則2: アーキテクチャの一貫性
 Jakarta EE 10のベストプラクティスに従い、レイヤーアーキテクチャ（Presentation、Business Logic、Data Access、Entity）を厳格に守ります。
 
-**Rationale:** 一貫したアーキテクチャにより、保守性と拡張性を確保します。
+**根拠:** 一貫したアーキテクチャにより、保守性と拡張性を確保します。
 
-### Principle 3: Test-Driven Quality
-すべてのビジネスロジックに対してユニットテストを作成し、カバレッジ80%以上を維持します。
+### 原則3: テスト駆動品質
+すべてのビジネスロジックに対して単体テストを作成します。
 
-**Rationale:** 自動テストにより、リグレッションを防ぎ、継続的な品質を保証します。
+**根拠:** 自動テストにより、リグレッションを防ぎ、継続的な品質を保証します。
 
-### Principle 4: Documentation Excellence
-コードだけでなく、アーキテクチャガイドライン、詳細設計書、API仕様書を常に最新の状態に保ちます。
+### 原則4: ドキュメント品質の追求
+コードだけでなく、以下のSPECドキュメントを常に最新の状態に保ちます：
+- 要件定義書（requirements.md）
+- アーキテクチャ設計書（architecture_design.md）
+- 機能設計書（functional_design.md）
+- データモデル設計書（data_model.md）
+- 画面設計書（screen_design.md）
+- 振る舞い仕様書（behaviors.md）
+- 外部インターフェース仕様書（external_interface.md）
 
-**Rationale:** 優れたドキュメントは、チーム間の知識共有とオンボーディングを加速します。
-
-## Governance
-
-### Amendment Procedure
-1. 提案者が変更内容をドキュメント化
-2. チームレビュー（最低2名の承認が必要）
-3. 承認後、バージョンを更新して適用
-
-### Versioning Policy
-- **MAJOR**: 後方互換性のない変更
-- **MINOR**: 新機能の追加
-- **PATCH**: バグ修正、ドキュメント改善
-
-### Compliance Review
-四半期ごとに、プロジェクトが本憲章の原則に従っているかレビューを実施します。
-
+**根拠:** 優れたドキュメントは、チーム間の知識共有とオンボーディングを加速します。

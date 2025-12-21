@@ -20,7 +20,7 @@
 - [X] **T_F001_001**: BookDaoの作成
   - **目的**: 書籍エンティティのCRUD操作を実装する
   - **対象**: `pro.kensait.berrybooks.dao.BookDao`（DAOクラス）
-  - **参照SPEC**: functional_design.md（F-001）のBookDao設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_001_book_search/functional_design.md) の「6.3 データアクセス層」
   - **注意事項**: 
     - `@ApplicationScoped`を付与
     - `@PersistenceContext`で`EntityManager`をインジェクト
@@ -37,7 +37,7 @@
 - [X] **T_F001_002**: BookServiceの作成
   - **目的**: 書籍検索のビジネスロジックを実装する
   - **対象**: `pro.kensait.berrybooks.service.book.BookService`（サービスクラス）
-  - **参照SPEC**: functional_design.md（F-001）のBookService設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_001_book_search/functional_design.md) の「6.2 ビジネスロジック層」
   - **注意事項**: 
     - `@ApplicationScoped`を付与
     - `@Inject`で`BookDao`をインジェクト
@@ -55,7 +55,7 @@
 - [X] **T_F001_003**: SearchParamクラスの作成
   - **目的**: 書籍検索パラメータを保持するDTOクラスを実装する
   - **対象**: `pro.kensait.berrybooks.web.book.SearchParam`（DTOクラス）
-  - **参照SPEC**: functional_design.md（F-001）のSearchParam設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_001_book_search/functional_design.md) の「6.1 プレゼンテーション層」
   - **注意事項**: 
     - フィールド: `categoryId`（Integer）、`keyword`（String）
     - getter/setterを実装
@@ -68,7 +68,7 @@
 - [X] **T_F001_004**: BookSearchBeanの作成
   - **目的**: 書籍検索画面のコントローラーを実装する
   - **対象**: `pro.kensait.berrybooks.web.book.BookSearchBean`（Managed Bean）
-  - **参照SPEC**: functional_design.md（F-001）のBookSearchBean設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_001_book_search/functional_design.md) の「6.1 プレゼンテーション層」
   - **注意事項**: 
     - `@Named`、`@ViewScoped`を付与
     - `Serializable`を実装
@@ -86,7 +86,7 @@
 - [X] **T_F001_005**: bookSearch.xhtmlの作成
   - **目的**: 書籍検索画面のビューを実装する
   - **対象**: `src/main/webapp/bookSearch.xhtml`（Facelets XHTML）
-  - **参照SPEC**: screen_design.md（F-001）の書籍検索画面
+  - **参照SPEC**: [screen_design.md](../specs/baseline/features/F_001_book_search/screen_design.md) の「1. 書籍検索画面」
   - **注意事項**: 
     - `<h:form>`で検索フォームを作成
     - `<h:selectOneMenu>`でカテゴリ選択（`categoryList`をソース）
@@ -98,7 +98,9 @@
 - [X] **T_F001_006**: bookSelect.xhtmlの作成
   - **目的**: 検索結果画面のビューを実装する
   - **対象**: `src/main/webapp/bookSelect.xhtml`（Facelets XHTML）
-  - **参照SPEC**: screen_design.md（F-001）の検索結果画面、behaviors.md（BR-005, BR-006, BR-007）
+  - **参照SPEC**: 
+    - [screen_design.md](../specs/baseline/features/F_001_book_search/screen_design.md) の「2. 検索結果画面」
+    - [functional_design.md](../specs/baseline/features/F_001_book_search/functional_design.md) の「3. ビジネスルール」（BR-005, BR-006, BR-007）
   - **注意事項**: 
     - `<h:dataTable>`で検索結果を表示（`#{bookSearchBean.bookList}`をソース）
     - 各行に書籍情報（カバー画像、書籍名、著者、出版社、価格、在庫状況）を表示
@@ -111,10 +113,12 @@
 
 ### セクション6: テスト
 
-- [X] **T_F001_007**: BookServiceのユニットテストの作成
+- [X] **T_F001_007**: BookServiceの単体テストの作成
   - **目的**: BookServiceのビジネスロジックをテストする
   - **対象**: `src/test/java/.../service/book/BookServiceTest.java`（JUnit 5テスト）
-  - **参照SPEC**: constitution.md のテストカバレッジ基準
+  - **参照SPEC**: 
+    - [constitution.md](../memory/constitution.md) の「原則3: テスト駆動品質」
+    - [functional_design.md](../specs/baseline/features/F_001_book_search/functional_design.md) の「6.2 ビジネスロジック層」
   - **注意事項**: 
     - Mockitoで`BookDao`をモック
     - テストケース: 
@@ -126,7 +130,9 @@
 - [X] **T_F001_008**: BookDaoの結合テストの作成
   - **目的**: BookDaoのクエリ実行をテストする
   - **対象**: `src/test/java/.../dao/BookDaoTest.java`（JUnit 5テスト）
-  - **参照SPEC**: constitution.md のテストカバレッジ基準
+  - **参照SPEC**: 
+    - [constitution.md](../memory/constitution.md) の「原則3: テスト駆動品質」
+    - [functional_design.md](../specs/baseline/features/F_001_book_search/functional_design.md) の「6.3 データアクセス層」
   - **注意事項**: 
     - インメモリデータベース（HSQLDB）を使用
     - テストケース: 
@@ -155,7 +161,7 @@
 - [X] bookSearch.xhtml、bookSelect.xhtmlが実装されている
 - [X] カバー画像が正しく表示される（画像ファイル名生成ロジック: `bookName + ".jpg"`）
 - [X] 在庫0の書籍は「在庫なし」と表示され、カート追加ボタンが無効化されている
-- [X] ユニットテストと結合テストが実装され、カバレッジ80%以上
+- [X] 単体テストと結合テストが実装されている
 - [X] プロジェクトがビルドでき、エラーがない
 - [ ] 手動テスト: 書籍検索が正常に動作する
 

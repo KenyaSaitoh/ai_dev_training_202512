@@ -20,7 +20,7 @@
 - [X] **T_F003_001**: OutOfStockExceptionの作成
   - **目的**: 在庫不足時にスローするカスタム例外クラスを実装する
   - **対象**: `pro.kensait.berrybooks.service.order.OutOfStockException`（例外クラス）
-  - **参照SPEC**: architecture_design.md の例外階層
+  - **参照SPEC**: [architecture_design.md](../specs/baseline/system/architecture_design.md) の「8. エラーハンドリング方針」
   - **注意事項**: 
     - `RuntimeException`を継承
     - フィールド: `bookId`（Integer）、`bookName`（String）
@@ -33,7 +33,7 @@
 - [X] **T_F003_002**: OrderTOの作成
   - **目的**: 注文情報をレイヤー間で転送するTOクラスを実装する
   - **対象**: `pro.kensait.berrybooks.service.order.OrderTO`（転送オブジェクト）
-  - **参照SPEC**: functional_design.md（F-003）のOrderTO設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_003_order_processing/functional_design.md) の「6.1 転送オブジェクト（TO）」
   - **注意事項**: 
     - フィールド: `customerId`, `deliveryAddress`, `deliveryPrice`, `settlementCode`, `cartItems`（List<CartItem>）
     - getter/setterを実装
@@ -42,7 +42,7 @@
 - [X] **T_F003_003**: OrderHistoryTOの作成
   - **目的**: 注文履歴情報をレイヤー間で転送するTOクラスを実装する
   - **対象**: `pro.kensait.berrybooks.service.order.OrderHistoryTO`（転送オブジェクト）
-  - **参照SPEC**: functional_design.md（F-003）のOrderHistoryTO設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_003_order_processing/functional_design.md) の「6.1 転送オブジェクト（TO）」
   - **注意事項**: 
     - フィールド: `orderTranId`, `orderDate`, `totalPrice`, `deliveryPrice`, `settlementName`
     - getter/setterを実装
@@ -50,7 +50,7 @@
 - [X] **T_F003_004**: OrderSummaryTOの作成
   - **目的**: 注文サマリー情報をレイヤー間で転送するTOクラスを実装する
   - **対象**: `pro.kensait.berrybooks.service.order.OrderSummaryTO`（転送オブジェクト）
-  - **参照SPEC**: functional_design.md（F-003）のOrderSummaryTO設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_003_order_processing/functional_design.md) の「6.1 転送オブジェクト（TO）」
   - **注意事項**: 
     - フィールド: `orderTran`（OrderTran）、`orderDetails`（List<OrderDetail>）
     - getter/setterを実装
@@ -62,7 +62,9 @@
 - [X] **T_F003_005**: StockDaoの作成
   - **目的**: 在庫エンティティのCRUD操作を実装する（楽観的ロック付き）
   - **対象**: `pro.kensait.berrybooks.dao.StockDao`（DAOクラス）
-  - **参照SPEC**: functional_design.md（F-003）のStockDao設計、architecture_design.md の楽観的ロック戦略
+  - **参照SPEC**: 
+    - [functional_design.md](../specs/baseline/features/F_003_order_processing/functional_design.md) の「6.3 データアクセス層」
+    - [architecture_design.md](../specs/baseline/system/architecture_design.md) の「7. 並行制御」
   - **注意事項**: 
     - `@ApplicationScoped`を付与
     - `@PersistenceContext`で`EntityManager`をインジェクト
@@ -75,7 +77,7 @@
 - [X] **T_F003_006**: OrderTranDaoの作成
   - **目的**: 注文トランザクションエンティティのCRUD操作を実装する
   - **対象**: `pro.kensait.berrybooks.dao.OrderTranDao`（DAOクラス）
-  - **参照SPEC**: functional_design.md（F-003）のOrderTranDao設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_003_order_processing/functional_design.md) の「6.3 データアクセス層」
   - **注意事項**: 
     - `@ApplicationScoped`を付与
     - `@PersistenceContext`で`EntityManager`をインジェクト
@@ -86,7 +88,7 @@
 - [X] **T_F003_007**: OrderDetailDaoの作成
   - **目的**: 注文明細エンティティのCRUD操作を実装する
   - **対象**: `pro.kensait.berrybooks.dao.OrderDetailDao`（DAOクラス）
-  - **参照SPEC**: functional_design.md（F-003）のOrderDetailDao設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_003_order_processing/functional_design.md) の「6.3 データアクセス層」
   - **注意事項**: 
     - `@ApplicationScoped`を付与
     - `@PersistenceContext`で`EntityManager`をインジェクト
@@ -100,7 +102,9 @@
 - [X] **T_F003_008**: OrderServiceの作成
   - **目的**: 注文処理のビジネスロジックを実装する
   - **対象**: `pro.kensait.berrybooks.service.order.OrderService`（サービスクラス）
-  - **参照SPEC**: functional_design.md（F-003）のOrderService設計、behaviors.md（BR-022, BR-023, BR-024, BR-025）
+  - **参照SPEC**: 
+    - [functional_design.md](../specs/baseline/features/F_003_order_processing/functional_design.md) の「6.2 ビジネスロジック層」
+    - [behaviors.md](../specs/baseline/system/behaviors.md) の「BR-022, BR-023, BR-024, BR-025」
   - **注意事項**: 
     - `@ApplicationScoped`を付与
     - `@Inject`で`StockDao`, `OrderTranDao`, `OrderDetailDao`をインジェクト
@@ -126,7 +130,7 @@
 - [X] **T_F003_009**: OrderBeanの作成
   - **目的**: 注文処理のコントローラーを実装する
   - **対象**: `pro.kensait.berrybooks.web.order.OrderBean`（Managed Bean）
-  - **参照SPEC**: functional_design.md（F-003）のOrderBean設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_003_order_processing/functional_design.md) の「6.4 プレゼンテーション層」
   - **注意事項**: 
     - `@Named`、`@ViewScoped`を付与
     - `Serializable`を実装
@@ -151,7 +155,7 @@
 - [X] **T_F003_010**: bookOrder.xhtmlの作成
   - **目的**: 注文入力画面のビューを実装する
   - **対象**: `src/main/webapp/bookOrder.xhtml`（Facelets XHTML）
-  - **参照SPEC**: screen_design.md（F-003）の注文入力画面
+  - **参照SPEC**: [screen_design.md](../specs/baseline/features/F_003_order_processing/screen_design.md) の「1. 注文入力画面」
   - **注意事項**: 
     - `<h:form>`で注文入力フォームを作成
     - カート内容を表示（`<h:dataTable>`で`#{cartSession.cartItems}`）
@@ -165,7 +169,7 @@
 - [X] **T_F003_011**: orderSuccess.xhtmlの作成
   - **目的**: 注文完了画面のビューを実装する
   - **対象**: `src/main/webapp/orderSuccess.xhtml`（Facelets XHTML）
-  - **参照SPEC**: screen_design.md（F-003）の注文完了画面
+  - **参照SPEC**: [screen_design.md](../specs/baseline/features/F_003_order_processing/screen_design.md) の「2. 注文完了画面」
   - **注意事項**: 
     - 注文完了メッセージ表示: 「注文が完了しました」
     - 注文番号、注文日、合計金額を表示
@@ -175,7 +179,7 @@
 - [X] **T_F003_012**: orderError.xhtmlの作成
   - **目的**: 注文エラー画面のビューを実装する
   - **対象**: `src/main/webapp/orderError.xhtml`（Facelets XHTML）
-  - **参照SPEC**: screen_design.md（F-003）の注文エラー画面
+  - **参照SPEC**: [screen_design.md](../specs/baseline/features/F_003_order_processing/screen_design.md) の「3. 注文エラー画面」
   - **注意事項**: 
     - エラーメッセージ表示: 「在庫不足」または「他のユーザーが購入済み」
     - 「カートに戻る」ボタン: `cartView.xhtml`に遷移
@@ -187,7 +191,9 @@
 - [X] **T_F003_013**: DeliveryFeeServiceのユニットテストの作成
   - **目的**: 配送料金計算ロジックをテストする
   - **対象**: `src/test/java/.../service/delivery/DeliveryFeeServiceTest.java`（JUnit 5テスト）
-  - **参照SPEC**: behaviors.md の配送料金計算ルール、constitution.md のテストカバレッジ基準
+  - **参照SPEC**: 
+    - [behaviors.md](../specs/baseline/system/behaviors.md) の「BR-020」
+    - [constitution.md](../memory/constitution.md) の「原則3: テスト駆動品質」
   - **注意事項**: 
     - テストケース: 
       - 購入金額4999円、東京都 → 配送料800円
@@ -198,7 +204,9 @@
 - [X] **T_F003_014**: OrderServiceのユニットテストの作成
   - **目的**: 注文処理のビジネスロジックをテストする
   - **対象**: `src/test/java/.../service/order/OrderServiceTest.java`（JUnit 5テスト）
-  - **参照SPEC**: constitution.md のテストカバレッジ基準
+  - **参照SPEC**: 
+    - [constitution.md](../memory/constitution.md) の「原則3: テスト駆動品質」
+    - [functional_design.md](../specs/baseline/features/F_003_order_processing/functional_design.md) の「6.2 ビジネスロジック層」
   - **注意事項**: 
     - Mockitoで`StockDao`, `OrderTranDao`, `OrderDetailDao`をモック
     - テストケース: 
@@ -232,7 +240,7 @@
 - [X] 在庫チェック・在庫減算が正しく実装されている（BR-022, BR-023）
 - [X] 楽観的ロック制御が正しく実装されている（BR-024）
 - [X] トランザクション境界が正しく設定されている（BR-025）
-- [X] ユニットテストが実装され、カバレッジ80%以上
+- [X] 単体テストが実装されている
 - [ ] プロジェクトがビルドでき、エラーがない
 - [ ] 手動テスト: 注文確定、在庫不足、楽観的ロック競合が正常に動作する
 

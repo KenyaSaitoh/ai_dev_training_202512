@@ -20,7 +20,7 @@
 - [X] **T_F002_001**: CartItemクラスの作成
   - **目的**: カート内の書籍情報を保持するDTOクラスを実装する
   - **対象**: `pro.kensait.berrybooks.web.cart.CartItem`（DTOクラス）
-  - **参照SPEC**: functional_design.md（F-002）のCartItem設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_002_shopping_cart/functional_design.md) の「6.1 プレゼンテーション層」
   - **注意事項**: 
     - フィールド: `bookId`, `bookName`, `publisherName`, `price`, `count`, `version`（在庫バージョン番号、楽観的ロック用）, `remove`（削除フラグ）
     - `Serializable`を実装
@@ -34,7 +34,9 @@
 - [X] **T_F002_002**: CartSessionの作成
   - **目的**: セッションスコープでカート状態を管理するBeanを実装する
   - **対象**: `pro.kensait.berrybooks.web.cart.CartSession`（セッションスコープBean）
-  - **参照SPEC**: functional_design.md（F-002）のCartSession設計、behaviors.md（BR-010, BR-011, BR-012, BR-013）
+  - **参照SPEC**: 
+    - [functional_design.md](../specs/baseline/features/F_002_shopping_cart/functional_design.md) の「6.1 プレゼンテーション層」
+    - [behaviors.md](../specs/baseline/system/behaviors.md) の「BR-010, BR-011, BR-012, BR-013」
   - **注意事項**: 
     - `@Named`、`@SessionScoped`を付与
     - `Serializable`を実装
@@ -56,7 +58,7 @@
 - [X] **T_F002_003**: CartBeanの作成
   - **目的**: カート画面のコントローラーを実装する
   - **対象**: `pro.kensait.berrybooks.web.cart.CartBean`（Managed Bean）
-  - **参照SPEC**: functional_design.md（F-002）のCartBean設計
+  - **参照SPEC**: [functional_design.md](../specs/baseline/features/F_002_shopping_cart/functional_design.md) の「6.1 プレゼンテーション層」
   - **注意事項**: 
     - `@Named`、`@ViewScoped`を付与
     - `Serializable`を実装
@@ -77,7 +79,9 @@
 - [X] **T_F002_004**: BookSearchBeanのaddToCart()メソッドの実装
   - **目的**: 書籍検索画面からカートに追加する機能を実装する
   - **対象**: `pro.kensait.berrybooks.web.book.BookSearchBean`の`addToCart()`メソッド（F-001で作成したクラスに追加）
-  - **参照SPEC**: functional_design.md（F-002）のカート追加フロー、behaviors.md（BR-012）
+  - **参照SPEC**: 
+    - [functional_design.md](../specs/baseline/features/F_002_shopping_cart/functional_design.md) の「4. 機能フロー」
+    - [behaviors.md](../specs/baseline/system/behaviors.md) の「BR-012」
   - **注意事項**: 
     - `@Inject`で`CartSession`をインジェクト
     - メソッド: `addToCart(Book book)`
@@ -95,7 +99,7 @@
 - [X] **T_F002_005**: cartView.xhtmlの作成
   - **目的**: カート確認画面のビューを実装する
   - **対象**: `src/main/webapp/cartView.xhtml`（Facelets XHTML）
-  - **参照SPEC**: screen_design.md（F-002）のカート画面
+  - **参照SPEC**: [screen_design.md](../specs/baseline/features/F_002_shopping_cart/screen_design.md) の「1. カート確認画面」
   - **注意事項**: 
     - `<h:form>`でカート編集フォームを作成
     - `<h:dataTable>`でカートアイテムを表示（`#{cartSession.cartItems}`をソース）
@@ -112,10 +116,12 @@
 
 ### セクション6: テスト
 
-- [X] **T_F002_006**: CartSessionのユニットテストの作成
+- [X] **T_F002_006**: CartSessionの単体テストの作成
   - **目的**: CartSessionのカート管理ロジックをテストする
   - **対象**: `src/test/java/.../web/cart/CartSessionTest.java`（JUnit 5テスト）
-  - **参照SPEC**: constitution.md のテストカバレッジ基準
+  - **参照SPEC**: 
+    - [constitution.md](../memory/constitution.md) の「原則3: テスト駆動品質」
+    - [functional_design.md](../specs/baseline/features/F_002_shopping_cart/functional_design.md) の「6.1 プレゼンテーション層」
   - **注意事項**: 
     - テストケース: 
       - カートアイテム追加（正常系）
@@ -147,7 +153,7 @@
 - [X] カート追加時に在庫バージョン番号を保存している（BR-012）
 - [X] 同じ書籍を追加した場合、数量が加算される（BR-011）
 - [X] 合計金額が自動計算される（BR-013）
-- [X] ユニットテストが実装され、カバレッジ80%以上
+- [X] 単体テストが実装されている
 - [ ] プロジェクトがビルドでき、エラーがない
 - [ ] 手動テスト: カート追加、カート更新、カート削除が正常に動作する
 
